@@ -41,6 +41,7 @@ MainFrameBaseClass::MainFrameBaseClass(wxWindow* parent, wxWindowID id, const wx
     boxSizer1->Add(boxSizer70, 4, wxALL|wxEXPAND, 0);
     
     m_scrollWin = new MyImageWin(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxHSCROLL|wxVSCROLL);
+    m_scrollWin->SetBackgroundColour(wxColour(wxT("rgb(205,205,205)")));
     m_scrollWin->SetScrollRate(5, 5);
     
     boxSizer70->Add(m_scrollWin, 1, wxALL|wxEXPAND, 1);
@@ -57,6 +58,7 @@ MainFrameBaseClass::MainFrameBaseClass(wxWindow* parent, wxWindowID id, const wx
     m_mainPanel->SetSizer(boxSizer11);
     
     m_richTextCtrl = new wxRichTextCtrl(m_mainPanel, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), wxTE_MULTILINE|wxTE_PROCESS_TAB|wxTE_PROCESS_ENTER|wxWANTS_CHARS);
+    m_richTextCtrl->SetBackgroundColour(wxColour(wxT("rgb(204,204,204)")));
     
     boxSizer11->Add(m_richTextCtrl, 3, wxALL|wxEXPAND, 5);
     
@@ -78,7 +80,7 @@ MainFrameBaseClass::MainFrameBaseClass(wxWindow* parent, wxWindowID id, const wx
     m_menuItemOpenFile = new wxMenuItem(m_nenuFile, wxID_OPEN, _("OpenFile"), wxT(""), wxITEM_NORMAL);
     m_nenuFile->Append(m_menuItemOpenFile);
     
-    m_menuItemSaveAsFile = new wxMenuItem(m_nenuFile, wxID_ANY, _("Save as.."), wxT(""), wxITEM_NORMAL);
+    m_menuItemSaveAsFile = new wxMenuItem(m_nenuFile, wxID_SAVE_AS, _("Save as.."), wxT(""), wxITEM_NORMAL);
     m_nenuFile->Append(m_menuItemSaveAsFile);
     
     m_menuItemExit = new wxMenuItem(m_nenuFile, wxID_EXIT, _("Exit\tAlt-X"), _("Quit"), wxITEM_NORMAL);
@@ -158,6 +160,8 @@ MainFrameBaseClass::MainFrameBaseClass(wxWindow* parent, wxWindowID id, const wx
     
     m_mainToolbar->AddTool(wxID_OPEN, _("Tool Label"), wxXmlResource::Get()->LoadBitmap(wxT("open-file-icon")), wxNullBitmap, wxITEM_NORMAL, wxT(""), wxT(""), NULL);
     
+    m_mainToolbar->AddTool(wxID_SAVE_AS, _("Tool Label"), wxXmlResource::Get()->LoadBitmap(wxT("Actions-document-save-icon")), wxNullBitmap, wxITEM_NORMAL, wxT(""), wxT(""), NULL);
+    
     m_mainToolbar->AddTool(wxID_UNDO, _("Tool Label"), wxXmlResource::Get()->LoadBitmap(wxT("Undo-icon")), wxNullBitmap, wxITEM_NORMAL, wxT(""), wxT(""), NULL);
     
     m_mainToolbar->AddTool(wxID_REDO, _("Tool Label"), wxXmlResource::Get()->LoadBitmap(wxT("Redo-icon")), wxNullBitmap, wxITEM_NORMAL, wxT(""), wxT(""), NULL);
@@ -179,6 +183,7 @@ MainFrameBaseClass::MainFrameBaseClass(wxWindow* parent, wxWindowID id, const wx
     m_statusBar->SetFieldsCount(1);
     this->SetStatusBar(m_statusBar);
     
+    SetBackgroundColour(wxColour(wxT("rgb(205,205,205)")));
     SetName(wxT("MainFrameBaseClass"));
     SetSizeHints(800,600);
     if ( GetSizer() ) {

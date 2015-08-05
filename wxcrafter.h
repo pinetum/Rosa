@@ -38,6 +38,7 @@ class MainFrameBaseClass : public wxFrame
 public:
     enum {
         wxID_RESIZE_FIT_WINDOW = 1001,
+        wxID_SAVE_AS = 1002,
     };
 protected:
     MyImageWin* m_scrollWin;

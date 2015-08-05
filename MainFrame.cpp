@@ -131,8 +131,12 @@ void MainFrame::OnMouseMotion(wxMouseEvent& event)
     
     
 	cv::Mat mat = pImg->getMatRef().clone();
-	cv::rectangle(mat, cv::Rect(pt.x-ROI_RECT_SIZE, pt.y-ROI_RECT_SIZE, ROI_RECT_SIZE, ROI_RECT_SIZE), cv::Scalar(255, 255, 255));
-    m_scrollWin->setImage(mat);
+	if(mat.data)
+    {
+        cv::rectangle(mat, cv::Rect(pt.x-ROI_RECT_SIZE, pt.y-ROI_RECT_SIZE, ROI_RECT_SIZE, ROI_RECT_SIZE), cv::Scalar(255, 255, 255));
+        m_scrollWin->setImage(mat);
+    
+    }
     
     
 	
@@ -392,12 +396,11 @@ void MainFrame::OnMenuItemResizeFitWindow(wxCommandEvent& event)
     {
         MyImage * pNewImg = pImg->resize(scale);
         if(pNewImg != NULL)
-        {		
+        {
             addNewImageState(pNewImg);
             UpdateView();
         }
     }
-     
 	else
         MainFrame::showMessage("resize scale is zero...");
     
