@@ -22,6 +22,16 @@ MainFrameBaseClass::MainFrameBaseClass(wxWindow* parent, wxWindowID id, const wx
         wxC9ED9InitBitmapResources();
         bBitmapLoaded = true;
     }
+    // Set icon(s) to the application/dialog
+    wxIconBundle app_icons;
+    {
+        wxBitmap iconBmp = wxXmlResource::Get()->LoadBitmap(wxT("chest"));
+        wxIcon icn;
+        icn.CopyFromBitmap(iconBmp);
+        app_icons.AddIcon( icn );
+    }
+    SetIcons( app_icons );
+
     
     wxBoxSizer* boxSizer1 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer1);
@@ -146,13 +156,23 @@ MainFrameBaseClass::MainFrameBaseClass(wxWindow* parent, wxWindowID id, const wx
     m_mainToolbar = this->CreateToolBar(wxTB_FLAT, wxID_ANY);
     m_mainToolbar->SetToolBitmapSize(wxSize(16,16));
     
-    m_mainToolbar->AddTool(wxID_OPEN, _("Tool Label"), wxArtProvider::GetBitmap(wxART_FILE_OPEN, wxART_TOOLBAR, wxDefaultSize), wxNullBitmap, wxITEM_NORMAL, wxT(""), wxT(""), NULL);
+    m_mainToolbar->AddTool(wxID_OPEN, _("Tool Label"), wxXmlResource::Get()->LoadBitmap(wxT("open-file-icon")), wxNullBitmap, wxITEM_NORMAL, wxT(""), wxT(""), NULL);
     
-    m_mainToolbar->AddTool(wxID_UNDO, _("Tool Label"), wxArtProvider::GetBitmap(wxART_UNDO, wxART_TOOLBAR, wxDefaultSize), wxNullBitmap, wxITEM_NORMAL, wxT(""), wxT(""), NULL);
+    m_mainToolbar->AddTool(wxID_UNDO, _("Tool Label"), wxXmlResource::Get()->LoadBitmap(wxT("Undo-icon")), wxNullBitmap, wxITEM_NORMAL, wxT(""), wxT(""), NULL);
     
-    m_mainToolbar->AddTool(wxID_REDO, _("Tool Label"), wxArtProvider::GetBitmap(wxART_REDO, wxART_TOOLBAR, wxDefaultSize), wxNullBitmap, wxITEM_NORMAL, wxT(""), wxT(""), NULL);
+    m_mainToolbar->AddTool(wxID_REDO, _("Tool Label"), wxXmlResource::Get()->LoadBitmap(wxT("Redo-icon")), wxNullBitmap, wxITEM_NORMAL, wxT(""), wxT(""), NULL);
     
-    m_mainToolbar->AddTool(wxID_RESIZE_FIT_WINDOW, _("Tool Label"), wxArtProvider::GetBitmap(wxART_MINUS, wxART_FRAME_ICON, wxDefaultSize), wxNullBitmap, wxITEM_NORMAL, wxT(""), wxT(""), NULL);
+    m_mainToolbar->AddTool(wxID_RESIZE_FIT_WINDOW, _("Tool Label"), wxXmlResource::Get()->LoadBitmap(wxT("Full-Screen-2-icon")), wxNullBitmap, wxITEM_NORMAL, wxT(""), wxT(""), NULL);
+    
+    m_mainToolbar->AddTool(wxID_ANY, _("Rotaion"), wxXmlResource::Get()->LoadBitmap(wxT("Rotation-icon")), wxNullBitmap, wxITEM_NORMAL, wxT(""), wxT(""), NULL);
+    
+    m_mainToolbar->AddTool(wxID_ANY, _("Tool Label"), wxXmlResource::Get()->LoadBitmap(wxT("creeper")), wxNullBitmap, wxITEM_NORMAL, wxT(""), wxT(""), NULL);
+    
+    m_mainToolbar->AddTool(wxID_ANY, _("Tool Label"), wxXmlResource::Get()->LoadBitmap(wxT("enderman")), wxNullBitmap, wxITEM_NORMAL, wxT(""), wxT(""), NULL);
+    
+    m_mainToolbar->AddTool(wxID_ANY, _("Tool Label"), wxXmlResource::Get()->LoadBitmap(wxT("Ghast")), wxNullBitmap, wxITEM_NORMAL, wxT(""), wxT(""), NULL);
+    
+    m_mainToolbar->AddTool(wxID_ANY, _("Tool Label"), wxXmlResource::Get()->LoadBitmap(wxT("tnt")), wxNullBitmap, wxITEM_NORMAL, wxT(""), wxT(""), NULL);
     m_mainToolbar->Realize();
     
     m_statusBar = new wxStatusBar(this, wxID_ANY, wxSTB_DEFAULT_STYLE);
