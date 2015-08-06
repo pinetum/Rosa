@@ -4,8 +4,8 @@
 // Do not modify this file by hand!
 //////////////////////////////////////////////////////////////////////
 
-#ifndef CODING_ROSA_WXCRAFTER_BASE_CLASSES_H
-#define CODING_ROSA_WXCRAFTER_BASE_CLASSES_H
+#ifndef ROSA_WXCRAFTER_BASE_CLASSES_H
+#define ROSA_WXCRAFTER_BASE_CLASSES_H
 
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>

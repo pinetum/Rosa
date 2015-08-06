@@ -2,13 +2,13 @@
 <CodeLite_Workspace Name="Rosa" Database="" SWTLW="No">
   <Project Name="Rosa" Path="Rosa.project" Active="Yes"/>
   <BuildMatrix>
-    <WorkspaceConfiguration Name="Debug" Selected="yes">
+    <WorkspaceConfiguration Name="Debug" Selected="no">
       <Project Name="Rosa" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Release" Selected="no">
       <Project Name="Rosa" ConfigName="Release"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="win-64" Selected="no">
+    <WorkspaceConfiguration Name="win-64" Selected="yes">
       <Project Name="Rosa" ConfigName="win64-Debug"/>
     </WorkspaceConfiguration>
   </BuildMatrix>

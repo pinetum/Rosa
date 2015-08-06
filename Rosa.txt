@@ -1,1 +1,1 @@
-./Debug/main.cpp.o ./Debug/MainFrame.cpp.o ./Debug/wxcrafter.cpp.o ./Debug/wxcrafter_bitmaps.cpp.o ./Debug/CDlgGetValue.cpp.o ./Debug/highDMeanShift.cpp.o ./Debug/MyImage.cpp.o ./Debug/MyImageWin.cpp.o
+./Debug-win64/main.cpp.o ./Debug-win64/MainFrame.cpp.o ./Debug-win64/wxcrafter.cpp.o ./Debug-win64/wxcrafter_bitmaps.cpp.o ./Debug-win64/CDlgGetValue.cpp.o ./Debug-win64/highDMeanShift.cpp.o ./Debug-win64/MyImage.cpp.o ./Debug-win64/MyImageWin.cpp.o ./Debug-win64/win_resources.rc.o   

@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resource xmlns="http://www.wxwidgets.org/wxxrc">
-  <object class="wxBitmap" name="Actions-document-save-icon">icons/Actions-document-save-icon.png</object>
-  <object class="wxBitmap" name="Full-Screen-2-icon">icons/Full-Screen-2-icon.png</object>
-  <object class="wxBitmap" name="Ghast">icons/Ghast.png</object>
-  <object class="wxBitmap" name="Redo-icon">icons/Redo-icon.png</object>
-  <object class="wxBitmap" name="Rotation-icon">icons/Rotation-icon.png</object>
-  <object class="wxBitmap" name="Undo-icon">icons/Undo-icon.png</object>
-  <object class="wxBitmap" name="chest">icons/chest.png</object>
-  <object class="wxBitmap" name="creeper">icons/creeper.png</object>
-  <object class="wxBitmap" name="enderman">icons/enderman.png</object>
-  <object class="wxBitmap" name="open-file-icon">icons/open-file-icon.png</object>
-  <object class="wxBitmap" name="tnt">icons/tnt.png</object>
+  <object class="wxBitmap" name="Actions-document-save-icon">icons\Actions-document-save-icon.png</object>
+  <object class="wxBitmap" name="Full-Screen-2-icon">icons\Full-Screen-2-icon.png</object>
+  <object class="wxBitmap" name="Ghast">icons\Ghast.png</object>
+  <object class="wxBitmap" name="Redo-icon">icons\Redo-icon.png</object>
+  <object class="wxBitmap" name="Rotation-icon">icons\Rotation-icon.png</object>
+  <object class="wxBitmap" name="Undo-icon">icons\Undo-icon.png</object>
+  <object class="wxBitmap" name="chest">icons\chest.png</object>
+  <object class="wxBitmap" name="creeper">icons\creeper.png</object>
+  <object class="wxBitmap" name="enderman">icons\enderman.png</object>
+  <object class="wxBitmap" name="open-file-icon">icons\open-file-icon.png</object>
+  <object class="wxBitmap" name="tnt">icons\tnt.png</object>
 </resource>
