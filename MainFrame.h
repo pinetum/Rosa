@@ -17,6 +17,7 @@ public:
 	static void showMessage(wxString msg);
     void OnExit(wxCommandEvent& event);
     void OnAbout(wxCommandEvent& event);
+    void OnDropFile(wxDropFilesEvent& event);
 	void openFile(wxString &pathName);
 	void DeleteContents();
 	void addNewImageState(MyImage* plmg);

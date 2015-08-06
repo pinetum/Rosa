@@ -2,6 +2,7 @@
 #include <wx/aboutdlg.h>
 #include <wx/filedlg.h>
 #include <wx/dcclient.h>
+#include <wx/dnd.h>
 #include "CDlgGetValue.h"
 #include "gnuplot_i.hpp"
 #include "highDMeanShift.h"
@@ -10,17 +11,21 @@ MainFrame *MainFrame::m_pThis = NULL;
 
 MainFrame::MainFrame(wxWindow* parent): MainFrameBaseClass(parent)
 {
+    
 	m_nCurrentImg = -1;
 	m_pThis = this;
-	int statuWidth[4] = { 250, 80, 40, 140};
+    int statuWidth[4] = { 250, 80, 40, 140};
 	m_statusBar->SetFieldsCount(4, statuWidth);
-	//SetSize(900, 800);
+	m_scrollWin->Connect(wxEVT_DROP_FILES, wxDropFilesEventHandler(MainFrame::OnDropFile), NULL, this);
+    //SetSize(900, 800);
 	//Center();
+    m_mainToolbar->HeightDefault(32);
     Maximize(true);
 }
 
 MainFrame::~MainFrame()
 {
+    m_scrollWin->Disconnect(wxEVT_DROP_FILES, wxDropFilesEventHandler(MainFrame::OnDropFile), NULL, this);
 	DeleteContents();
 }
 void MainFrame::showMessage(wxString msg){
@@ -44,6 +49,13 @@ void MainFrame::OnAbout(wxCommandEvent& event)
     info.SetLicence(_("GPL v2 or later"));
     info.SetDescription(_("Short description goes here"));
     ::wxAboutBox(info);*/
+}
+void MainFrame::OnDropFile(wxDropFilesEvent& event){
+    if (event.GetNumberOfFiles() == 1) {
+        wxString* dropped = event.GetFiles();
+        MainFrame::showMessage(dropped[0]);
+    }
+            
 }
 void MainFrame::OnOpenFile(wxCommandEvent& event)
 {
