@@ -17,6 +17,7 @@ MainFrame::MainFrame(wxWindow* parent): MainFrameBaseClass(parent)
     int statuWidth[4] = { 250, 80, 40, 140};
 	m_statusBar->SetFieldsCount(4, statuWidth);
 	m_scrollWin->Connect(wxEVT_DROP_FILES, wxDropFilesEventHandler(MainFrame::OnDropFile), NULL, this);
+    m_scrollWin->DragAcceptFiles(true);
     //SetSize(900, 800);
 	//Center();
     m_mainToolbar->SetSize(-1, 32);
