@@ -20,7 +20,8 @@ MainFrame::MainFrame(wxWindow* parent): MainFrameBaseClass(parent)
     m_scrollWin->DragAcceptFiles(true);
     //SetSize(900, 800);
 	//Center();
-    m_mainToolbar->SetSize(-1, 32);
+    
+    m_mainToolbar->SetToolBitmapSize(wxSize(24, 24));
     Maximize(true);
 }
 
@@ -54,7 +55,7 @@ void MainFrame::OnAbout(wxCommandEvent& event)
 void MainFrame::OnDropFile(wxDropFilesEvent& event){
     if (event.GetNumberOfFiles() == 1) {
         wxString* dropped = event.GetFiles();
-        MainFrame::showMessage(dropped[0]);
+        openFile(dropped[0]);
     }
             
 }
