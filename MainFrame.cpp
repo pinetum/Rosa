@@ -19,7 +19,7 @@ MainFrame::MainFrame(wxWindow* parent): MainFrameBaseClass(parent)
 	m_scrollWin->Connect(wxEVT_DROP_FILES, wxDropFilesEventHandler(MainFrame::OnDropFile), NULL, this);
     //SetSize(900, 800);
 	//Center();
-    m_mainToolbar->HeightDefault(32);
+    m_mainToolbar->SetSize(-1, 32);
     Maximize(true);
 }
 
