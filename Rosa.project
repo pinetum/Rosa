@@ -28,6 +28,7 @@
     <File Name="highDMeanShift.cpp"/>
     <File Name="MyImage.cpp"/>
     <File Name="MyImageWin.cpp"/>
+    <File Name="MyJSParser.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <File Name="MainFrame.h"/>
@@ -37,6 +38,7 @@
     <File Name="highDMeanShift.h"/>
     <File Name="MyImage.h"/>
     <File Name="MyImageWin.h"/>
+    <File Name="MyJSParser.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="resources">
     <File Name="wxcrafter.wxcp"/>
