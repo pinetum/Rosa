@@ -32458,6 +32458,6 @@ void wxC9ED9InitBitmapResources()
     XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_bitmaps.cpp$icons_enderman.png"), xml_res_file_8, xml_res_size_8, wxT("image/png"));
     XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_bitmaps.cpp$icons_open-file-icon.png"), xml_res_file_9, xml_res_size_9, wxT("image/png"));
     XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_bitmaps.cpp$icons_tnt.png"), xml_res_file_10, xml_res_size_10, wxT("image/png"));
-    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_bitmaps.cpp$Z__coding_Rosa_wxcrafter_bitmaps.xrc"), xml_res_file_11, xml_res_size_11, wxT("text/xml"));
-    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/wxcrafter_bitmaps.cpp$Z__coding_Rosa_wxcrafter_bitmaps.xrc"));
+    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_bitmaps.cpp$_Users_Pinetum_coding_Rosa_wxcrafter_bitmaps.xrc"), xml_res_file_11, xml_res_size_11, wxT("text/xml"));
+    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/wxcrafter_bitmaps.cpp$_Users_Pinetum_coding_Rosa_wxcrafter_bitmaps.xrc"));
 }

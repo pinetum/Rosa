@@ -1,7 +1,6 @@
 #ifndef MAINFRAME_H
 #define MAINFRAME_H
 
-#define ROI_RECT_SIZE 15
 #include "MyImageWin.h"
 #include "MyImage.h"
 //#include "gnuplot_i.hpp"
@@ -27,6 +26,7 @@ public:
 	
 	
 protected:
+    virtual void OnMenuClickLoadOralCancerRois(wxCommandEvent& event);
     virtual void OnMenuItemResizeFitWindow(wxCommandEvent& event);
     virtual void OnMenuItemResizeManual(wxCommandEvent& event);
     virtual void OnItemDestroyWindowClose(wxCommandEvent& event);

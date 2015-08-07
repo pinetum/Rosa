@@ -6,6 +6,12 @@
 #include "CDlgGetValue.h"
 #include "gnuplot_i.hpp"
 #include "highDMeanShift.h"
+#include "MyJSParser.h"
+
+
+
+#define ROI_RECT_SIZE 15
+
 Gnuplot g1("lines");
 MainFrame *MainFrame::m_pThis = NULL;
 
@@ -423,4 +429,53 @@ void MainFrame::OnMenuItemResizeFitWindow(wxCommandEvent& event)
 void MainFrame::OnMenuItemResizeManual(wxCommandEvent& event)
 {
     
+}
+void MainFrame::OnMenuClickLoadOralCancerRois(wxCommandEvent& event)
+{
+    //open Dialog
+    wxString str_fileName = "";
+    wxString fileType = _("All suported formats(*.txt)|*.txt");
+	wxFileDialog* openDialog = new wxFileDialog(this,_("openFile"),wxEmptyString,wxEmptyString,fileType,wxFD_OPEN,wxDefaultPosition);
+	if(openDialog->ShowModal() == wxID_OK){
+		str_fileName = openDialog->GetPath();
+	}
+	openDialog->Destroy();
+    if(!str_fileName.empty())
+    {
+        FILE* fp                = NULL;
+        char* str_filecontent   = NULL;
+        int   n_contentSizr     = 0;
+        fp = fopen(str_fileName.mb_str(), "r");
+        // Is open file success?
+        if(fp==NULL)
+        {
+            MainFrame::showMessage("open Roi json File fail.");
+            return;
+        }
+        
+        fseek(fp, 0L, SEEK_END);                                            // get the number of char in txt file.
+        n_contentSizr = ftell(fp) + 1;
+        
+        str_filecontent = new char[n_contentSizr];                          // new char array.
+        fseek(fp, 0L, SEEK_SET);
+        
+        fgets(str_filecontent, n_contentSizr, fp);                          // read content of txt to char array.
+        
+        MyJSParser parser;                              
+        parser.setJsonStr(str_filecontent);                                 // parse!
+        std::vector<std::vector<cv::Point > > rois = parser.getRois();      // get Rois (二階Vector，最裡面存放cv::Point)
+        if(rois.size() > 0)
+        {
+            if(rois[0].size() > 0)
+            {
+                cv::Point a = rois[0][0];
+                MainFrame::showMessage(wxString::Format("%d, %d", a.x, a.y));
+            }
+        }
+        else
+        {
+            MainFrame::showMessage("Vector's size is zero");
+        }
+         
+    }
 }

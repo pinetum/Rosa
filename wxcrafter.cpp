@@ -155,6 +155,12 @@ MainFrameBaseClass::MainFrameBaseClass(wxWindow* parent, wxWindowID id, const wx
     m_menuItemMSBase = new wxMenuItem(m_menu104, wxID_ANY, _("base"), wxT(""), wxITEM_NORMAL);
     m_menu104->Append(m_menuItemMSBase);
     
+    m_menuOralCancer = new wxMenu();
+    m_menuBar->Append(m_menuOralCancer, _("OralCancer"));
+    
+    m_menuItemLoadRois = new wxMenuItem(m_menuOralCancer, wxID_ANY, _("Load Rois From jsFile(*.txt)"), wxT(""), wxITEM_NORMAL);
+    m_menuOralCancer->Append(m_menuItemLoadRois);
+    
     m_mainToolbar = this->CreateToolBar(wxTB_FLAT, wxID_ANY);
     m_mainToolbar->SetToolBitmapSize(wxSize(16,16));
     
@@ -232,6 +238,7 @@ MainFrameBaseClass::MainFrameBaseClass(wxWindow* parent, wxWindowID id, const wx
     this->Connect(m_menuItemSplitChnl->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnMenuItemSplit), NULL, this);
     this->Connect(m_menuPlot1->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnGnuplotSample), NULL, this);
     this->Connect(m_menuItemMSBase->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnMeanShiftBase), NULL, this);
+    this->Connect(m_menuItemLoadRois->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnMenuClickLoadOralCancerRois), NULL, this);
     
 }
 
@@ -271,6 +278,7 @@ MainFrameBaseClass::~MainFrameBaseClass()
     this->Disconnect(m_menuItemSplitChnl->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnMenuItemSplit), NULL, this);
     this->Disconnect(m_menuPlot1->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnGnuplotSample), NULL, this);
     this->Disconnect(m_menuItemMSBase->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnMeanShiftBase), NULL, this);
+    this->Disconnect(m_menuItemLoadRois->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnMenuClickLoadOralCancerRois), NULL, this);
     
 }
 

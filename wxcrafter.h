@@ -4,8 +4,8 @@
 // Do not modify this file by hand!
 //////////////////////////////////////////////////////////////////////
 
-#ifndef ROSA_WXCRAFTER_BASE_CLASSES_H
-#define ROSA_WXCRAFTER_BASE_CLASSES_H
+#ifndef CODING_ROSA_WXCRAFTER_BASE_CLASSES_H
+#define CODING_ROSA_WXCRAFTER_BASE_CLASSES_H
 
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
@@ -74,6 +74,8 @@ protected:
     wxMenuItem* m_menuPlot1;
     wxMenu* m_menu104;
     wxMenuItem* m_menuItemMSBase;
+    wxMenu* m_menuOralCancer;
+    wxMenuItem* m_menuItemLoadRois;
     wxToolBar* m_mainToolbar;
     wxStatusBar* m_statusBar;
 
@@ -102,6 +104,7 @@ protected:
     virtual void OnMenuItemSplit(wxCommandEvent& event) { event.Skip(); }
     virtual void OnGnuplotSample(wxCommandEvent& event) { event.Skip(); }
     virtual void OnMeanShiftBase(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnMenuClickLoadOralCancerRois(wxCommandEvent& event) { event.Skip(); }
 
 public:
     MyImageWin* GetScrollWin() { return m_scrollWin; }

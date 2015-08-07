@@ -60,7 +60,7 @@ AS       := /usr/bin/as
 ## User defined environment variables
 ##
 CodeLiteDir:=/Users/Pinetum/Downloads/codelite.app/Contents/SharedSupport/
-Objects0=$(IntermediateDirectory)/main.cpp$(ObjectSuffix) $(IntermediateDirectory)/MainFrame.cpp$(ObjectSuffix) $(IntermediateDirectory)/wxcrafter.cpp$(ObjectSuffix) $(IntermediateDirectory)/wxcrafter_bitmaps.cpp$(ObjectSuffix) $(IntermediateDirectory)/CDlgGetValue.cpp$(ObjectSuffix) $(IntermediateDirectory)/highDMeanShift.cpp$(ObjectSuffix) $(IntermediateDirectory)/MyImage.cpp$(ObjectSuffix) $(IntermediateDirectory)/MyImageWin.cpp$(ObjectSuffix) 
+Objects0=$(IntermediateDirectory)/main.cpp$(ObjectSuffix) $(IntermediateDirectory)/MainFrame.cpp$(ObjectSuffix) $(IntermediateDirectory)/wxcrafter.cpp$(ObjectSuffix) $(IntermediateDirectory)/wxcrafter_bitmaps.cpp$(ObjectSuffix) $(IntermediateDirectory)/CDlgGetValue.cpp$(ObjectSuffix) $(IntermediateDirectory)/highDMeanShift.cpp$(ObjectSuffix) $(IntermediateDirectory)/MyImage.cpp$(ObjectSuffix) $(IntermediateDirectory)/MyImageWin.cpp$(ObjectSuffix) $(IntermediateDirectory)/MyJSParser.cpp$(ObjectSuffix) 
 
 
 
@@ -154,6 +154,14 @@ $(IntermediateDirectory)/MyImageWin.cpp$(DependSuffix): MyImageWin.cpp
 
 $(IntermediateDirectory)/MyImageWin.cpp$(PreprocessSuffix): MyImageWin.cpp
 	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/MyImageWin.cpp$(PreprocessSuffix) "MyImageWin.cpp"
+
+$(IntermediateDirectory)/MyJSParser.cpp$(ObjectSuffix): MyJSParser.cpp $(IntermediateDirectory)/MyJSParser.cpp$(DependSuffix)
+	$(CXX) $(IncludePCH) $(SourceSwitch) "/Users/Pinetum/coding/Rosa/MyJSParser.cpp" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/MyJSParser.cpp$(ObjectSuffix) $(IncludePath)
+$(IntermediateDirectory)/MyJSParser.cpp$(DependSuffix): MyJSParser.cpp
+	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) -MG -MP -MT$(IntermediateDirectory)/MyJSParser.cpp$(ObjectSuffix) -MF$(IntermediateDirectory)/MyJSParser.cpp$(DependSuffix) -MM "MyJSParser.cpp"
+
+$(IntermediateDirectory)/MyJSParser.cpp$(PreprocessSuffix): MyJSParser.cpp
+	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/MyJSParser.cpp$(PreprocessSuffix) "MyJSParser.cpp"
 
 
 -include $(IntermediateDirectory)/*$(DependSuffix)

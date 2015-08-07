@@ -1,1 +1,1 @@
-./Debug/main.cpp.o ./Debug/MainFrame.cpp.o ./Debug/wxcrafter.cpp.o ./Debug/wxcrafter_bitmaps.cpp.o ./Debug/CDlgGetValue.cpp.o ./Debug/highDMeanShift.cpp.o ./Debug/MyImage.cpp.o ./Debug/MyImageWin.cpp.o
+./Debug/main.cpp.o ./Debug/MainFrame.cpp.o ./Debug/wxcrafter.cpp.o ./Debug/wxcrafter_bitmaps.cpp.o ./Debug/CDlgGetValue.cpp.o ./Debug/highDMeanShift.cpp.o ./Debug/MyImage.cpp.o ./Debug/MyImageWin.cpp.o ./Debug/MyJSParser.cpp.o
