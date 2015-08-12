@@ -133,19 +133,19 @@ wxString 	MyImage::getFormatString(){
 	return strFormat;
 }
 MyImage* 	MyImage::Gray2BGR(){
-	MyImage * pNew = new MyImage();
+	MyImage* pNew = new MyImage();
 	cv::cvtColor(m_cvMat , pNew->m_cvMat , CV_GRAY2BGR);
 	return pNew;
 	
 }
 MyImage* 	MyImage::BGR2Gray(){
-	MyImage * pNew = new MyImage();
+	MyImage* pNew = new MyImage();
 	cv::cvtColor(m_cvMat , pNew->m_cvMat , CV_BGR2GRAY);
 	return pNew;
 	
 }
 MyImage* 	MyImage::split(int nTargetCh){
-		MyImage * pNew = new MyImage();
+		MyImage* pNew = new MyImage();
 		std::vector<cv::Mat> mats_splited;
 		if(m_cvMat.channels() <= nTargetCh){
 			MainFrame::showMessage("Error:chanel not exist.");
@@ -168,7 +168,7 @@ bool 		MyImage::saveHisBmpImage(std::string filename){
 }
 MyImage* 	MyImage::Threshold(int thV,bool inverse){
 	
-	MyImage * pNew = NULL;
+	MyImage* pNew = NULL;
 	int type = getType();
 	double thsValue = thV;
 	if(type==CV_8UC1)
@@ -199,7 +199,7 @@ MyImage* 	MyImage::Threshold(int thV,bool inverse){
 }
 MyImage* 	MyImage::HoughCircles(){
 	
-	MyImage * pNew;
+	MyImage* pNew;
 	int type = getType();
 	if(type==CV_8UC1)
 		pNew = clone();
@@ -235,7 +235,7 @@ MyImage* 	MyImage::HoughCircles(){
 	return pNew;
 }
 MyImage* 	MyImage::medianBlur(int k_size){
-	MyImage * pNew;
+	MyImage* pNew;
 	pNew = clone();
 	cv::medianBlur(pNew->m_cvMat,pNew->m_cvMat,k_size);
 	MainFrame::showMessage(wxString::Format(_("MedianBlur: k_size = %d \n") , k_size));
@@ -256,7 +256,7 @@ MyImage* 	MyImage::faceDetection(){
 	wxString mouth_cascade_name = "obj_det_xml//haarcascade_mcs_mouth.xml";
 	cv::CascadeClassifier face_cascade;
 	cv::CascadeClassifier mouth_cascade;
-	MyImage * pNew;
+	MyImage* pNew;
 	pNew = clone();
 	cv::Mat src_gray;
 	int type = getType();
@@ -331,21 +331,39 @@ MyImage* 	MyImage::faceDetection(){
 	
 }
 MyImage* 	MyImage::mouthDetection(){
-	MyImage * pNew;
+	MyImage* pNew;
 	pNew = clone();
 	return pNew;
 }
 MyImage* 	MyImage::resize(cv::Size size){
-	MyImage * pNew;
+	MyImage* pNew;
 	pNew = clone();
 	cv::resize(pNew->m_cvMat,pNew->m_cvMat,size);
 	return pNew;
 }
 MyImage* 	MyImage::resize(double zoom){
-	MyImage * pNew;
+	MyImage* pNew;
 	pNew = clone();
 	cv::resize(pNew->m_cvMat,pNew->m_cvMat,cv::Size(0, 0), zoom, zoom);
 	return pNew;
+}
+MyImage*    MyImage::drawPolygon(std::vector<cv::Point* > polygon)
+{
+    MyImage* pNew;
+    pNew = clone();
+    for(int n_iPt= 0; n_iPt < polygon.size(); n_iPt++)
+    {
+        if(n_iPt == polygon.size() - 1)
+        {
+            cv::line(pNew->m_cvMat, *polygon[n_iPt], *polygon[0], cv::Scalar(COLOR_LINE_POLYGON));
+        }
+        else
+        {
+            cv::line(pNew->m_cvMat, *polygon[n_iPt], *polygon[n_iPt+1], cv::Scalar(COLOR_LINE_POLYGON));
+        }
+        
+    }
+    return pNew;
 }
 MyImage* MyImage::meanShift(int *x, int* y){
     double dBandwidth_k = 10;
@@ -353,7 +371,7 @@ MyImage* MyImage::meanShift(int *x, int* y){
     
     
     
-	MyImage * pNew;
+	MyImage* pNew;
 	pNew = clone();
     cv::Mat mDataMat = pNew->m_cvMat;
     

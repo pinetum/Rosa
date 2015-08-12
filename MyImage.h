@@ -4,6 +4,7 @@
 #include <string>
 #ifndef MYIMAGE_H
 #define MYIMAGE_H
+#define COLOR_LINE_POLYGON 255, 255, 255
 
 class MyImage
 {
@@ -42,7 +43,7 @@ public:
 	MyImage* resize(cv::Size size);
     MyImage* resize(double zoom);
 	MyImage* split(int nTargetCh);
-	
+	MyImage* drawPolygon(std::vector<cv::Point* > polygon);
 	MyImage* meanShift(int *x, int* y);
 private:
 	cv::Mat m_cvMat;

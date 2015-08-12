@@ -19,11 +19,12 @@ public:
     ~MyJSParser();
     void                                    setJsonStr(char *jsonStr);
     void                                    setJsonFile(FILE* jsonFp);
-    std::vector<std::vector<cv::Point > >     getRois();
+    std::vector<std::vector<cv::Point* > >     getRois();
 private:
     //
-    std::vector<std::vector<cv::Point > >     m_vv_Rois;
+    std::vector<std::vector<cv::Point* > >     m_vv_Rois;
     rapidjson::Document                     m_doc;
+    void releaseMem();
 };
 
 #endif // MYJSPARSER_H

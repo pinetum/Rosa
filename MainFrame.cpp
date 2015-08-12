@@ -10,17 +10,20 @@
 
 
 
-#define ROI_RECT_SIZE 15
+#define ROI_RECT_SIZE 13
 
 Gnuplot g1("lines");
 MainFrame *MainFrame::m_pThis = NULL;
 
+
+// some inital action
 MainFrame::MainFrame(wxWindow* parent): MainFrameBaseClass(parent)
 {
     
-	m_nCurrentImg = -1;
-	m_pThis = this;
-    int statuWidth[4] = { 250, 80, 40, 140};
+	m_nCurrentImg       = -1;
+	m_pThis             = this;  // for some static fun use. ex:MainFrame::showMessage()
+    int statuWidth[4]   = { 250, 80, 40, 140};
+    
 	m_statusBar->SetFieldsCount(4, statuWidth);
 	m_scrollWin->Connect(wxEVT_DROP_FILES, wxDropFilesEventHandler(MainFrame::OnDropFile), NULL, this);
     m_scrollWin->DragAcceptFiles(true);
@@ -40,7 +43,6 @@ void MainFrame::showMessage(wxString msg){
 		m_pThis->m_richTextCtrl->AppendText(msg);
 		int last_pos = m_pThis->m_richTextCtrl->GetLastPosition();
 		m_pThis->m_richTextCtrl->ShowPosition(last_pos);
-	
 }
 void MainFrame::OnExit(wxCommandEvent& event)
 {
@@ -63,7 +65,6 @@ void MainFrame::OnDropFile(wxDropFilesEvent& event){
         wxString* dropped = event.GetFiles();
         openFile(dropped[0]);
     }
-            
 }
 void MainFrame::OnOpenFile(wxCommandEvent& event)
 {
@@ -96,7 +97,7 @@ void MainFrame::OnMouseMotion(wxMouseEvent& event)
 	wxPoint pt ;
 	m_scrollWin->CalcUnscrolledPosition(pt1.x,pt1.y,&pt.x,&pt.y);
 	
-	MyImage * pImg = getCurrentImg();
+	MyImage* pImg = getCurrentImg();
 	if(pImg == NULL) return;
 	cv::Size sz = pImg->getSize();
 	if(pt.x >=sz.width || pt.y >= sz.height) return;
@@ -247,13 +248,13 @@ void MainFrame::addNewImageState(MyImage* plmg){
 		return;
 	if(current != szList-1){
 		for(int i = current +1 ; i<szList ; i++){
-				MyImage * ppO = m_imgList[i];
+				MyImage* ppO = m_imgList[i];
 				delete ppO;
 		}
 		m_imgList.erase(m_imgList.begin()+current+1,m_imgList.end() );
 	}
 	if(szList > 6){
-			MyImage * pObj = m_imgList.front();
+			MyImage* pObj = m_imgList.front();
 			delete pObj;
 			m_imgList.pop_front();
 			m_nCurrentImg -- ;
@@ -271,8 +272,8 @@ void MainFrame::OnImageConnectComponents(wxCommandEvent& event)
 }
 void MainFrame::OnImageFindCircles(wxCommandEvent& event)
 {
-	MyImage * pImg = getCurrentImg();
-	MyImage * pNewImg = pImg->HoughCircles();
+	MyImage* pImg = getCurrentImg();
+	MyImage* pNewImg = pImg->HoughCircles();
 	if(pNewImg != NULL){
 		addNewImageState(pNewImg);
 		UpdateView();
@@ -286,8 +287,8 @@ void MainFrame::OnImageThreshold(wxCommandEvent& event)
 	dlg.setDefaultValue(_("-1"));
 	if( dlg.ShowModal() == 1001 )
 	{
-		MyImage * pImg = getCurrentImg();
-		MyImage * pNewImg = pImg->Threshold(dlg.getIntValue(),false);
+		MyImage* pImg = getCurrentImg();
+		MyImage* pNewImg = pImg->Threshold(dlg.getIntValue(),false);
 		if(pNewImg != NULL){
 			addNewImageState(pNewImg);
 			UpdateView();
@@ -298,8 +299,8 @@ void MainFrame::OnImageThreshold(wxCommandEvent& event)
 void MainFrame::OnImageThresholdOtsu(wxCommandEvent& event)
 {	
 	
-	MyImage * pImg = getCurrentImg();
-	MyImage * pNewImg = pImg->Threshold(-1,false);
+	MyImage* pImg = getCurrentImg();
+	MyImage* pNewImg = pImg->Threshold(-1,false);
 	if(pNewImg != NULL){
 		
 		addNewImageState(pNewImg);
@@ -315,8 +316,8 @@ void MainFrame::OnImageMedianBlur(wxCommandEvent& event)
 	dlg.SetTitle(_("MedianBlur"));
 	if( dlg.ShowModal() != 1001 )
 		return;
-	MyImage * pImg = getCurrentImg();
-	MyImage * pNewImg = pImg->medianBlur(dlg.getIntValue());
+	MyImage* pImg = getCurrentImg();
+	MyImage* pNewImg = pImg->medianBlur(dlg.getIntValue());
 	if(pNewImg != NULL){
 		
 		addNewImageState(pNewImg);
@@ -325,7 +326,7 @@ void MainFrame::OnImageMedianBlur(wxCommandEvent& event)
 }
 void MainFrame::OnSaveAsFile(wxCommandEvent& event)
 {
-	MyImage * pImg = getCurrentImg();
+	MyImage* pImg = getCurrentImg();
 	wxString fileType = _("All suported graphic formats(*.jpg,*.bmp,*.jpeg,*.png,*.tif)|*.jpg;*.bmp;*.jpeg;*.png;*.tif");
 	wxFileDialog* saveDialog = new wxFileDialog(this,_("SaveFile"),wxEmptyString,wxEmptyString,fileType,wxFD_SAVE|wxFD_OVERWRITE_PROMPT,wxDefaultPosition);
 	if(saveDialog->ShowModal() == wxID_OK){
@@ -341,8 +342,8 @@ void MainFrame::OnSaveAsFile(wxCommandEvent& event)
 
 void MainFrame::OnImageFindFace(wxCommandEvent& event)
 {
-	MyImage * pImg = getCurrentImg();
-	MyImage * pNewImg = pImg->faceDetection();
+	MyImage* pImg = getCurrentImg();
+	MyImage* pNewImg = pImg->faceDetection();
 	if(pNewImg != NULL){
 		
 		addNewImageState(pNewImg);
@@ -351,8 +352,8 @@ void MainFrame::OnImageFindFace(wxCommandEvent& event)
 }
 void MainFrame::OnImageFindMouth(wxCommandEvent& event)
 {
-	MyImage * pImg = getCurrentImg();
-	MyImage * pNewImg = pImg->mouthDetection();
+	MyImage* pImg = getCurrentImg();
+	MyImage* pNewImg = pImg->mouthDetection();
 	if(pNewImg != NULL){
 		
 		addNewImageState(pNewImg);
@@ -369,8 +370,8 @@ void MainFrame::OnMenuItemSplit(wxCommandEvent& event)
 	dlg.SetTitle(_("Split Chanel"));
 	if( dlg.ShowModal() != 1001 )
 		return;
-	MyImage * pImg = getCurrentImg();
-	MyImage * pNewImg = pImg->split(dlg.getIntValue());
+	MyImage* pImg = getCurrentImg();
+	MyImage* pNewImg = pImg->split(dlg.getIntValue());
 	if(pNewImg != NULL){
 		
 		addNewImageState(pNewImg);
@@ -398,7 +399,7 @@ void MainFrame::OnItemDestroyWindowClose(wxCommandEvent& event)
 void MainFrame::OnMenuItemResizeFitWindow(wxCommandEvent& event)
 {
     wxSize size_window = m_scrollWin->GetClientSize();
-    MyImage * pImg = getCurrentImg();
+    MyImage* pImg = getCurrentImg();
     
     
     
@@ -414,7 +415,7 @@ void MainFrame::OnMenuItemResizeFitWindow(wxCommandEvent& event)
         scale = scale_h;
     if(scale>0)
     {
-        MyImage * pNewImg = pImg->resize(scale);
+        MyImage* pNewImg = pImg->resize(scale);
         if(pNewImg != NULL)
         {
             addNewImageState(pNewImg);
@@ -463,18 +464,31 @@ void MainFrame::OnMenuClickLoadOralCancerRois(wxCommandEvent& event)
         
         MyJSParser parser;                              
         parser.setJsonStr(str_filecontent);                                 // parse!
-        std::vector<std::vector<cv::Point > > rois = parser.getRois();      // get Rois (二階Vector，最裡面存放cv::Point)
+        std::vector<std::vector<cv::Point* > > rois = parser.getRois();      // get Rois (二階Vector，最裡面存放cv::Point)
         if(rois.size() > 0)
         {
-            if(rois[0].size() > 0)
+            MyImage* img = getCurrentImg();
+            for(int n_iRoi= 0; n_iRoi< rois.size(); n_iRoi++)
             {
-                cv::Point a = rois[0][0];
-                MainFrame::showMessage(wxString::Format("%d, %d", a.x, a.y));
+                if(img == NULL)
+                    break;
+                img = img->drawPolygon(rois[n_iRoi]);
+            
+                if(img != NULL)
+                {
+                    addNewImageState(img);
+                    UpdateView();
+                }
+                else
+                {
+                    MainFrame::showMessage("img pt NULL when Call \"drawPolygon\"");
+                }
             }
+            
         }
         else
         {
-            MainFrame::showMessage("Vector's size is zero");
+            MainFrame::showMessage("ROI size is zero");
         }
          
     }
