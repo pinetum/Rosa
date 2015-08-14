@@ -347,23 +347,50 @@ MyImage* 	MyImage::resize(double zoom){
 	cv::resize(pNew->m_cvMat,pNew->m_cvMat,cv::Size(0, 0), zoom, zoom);
 	return pNew;
 }
-MyImage*    MyImage::drawPolygon(std::vector<cv::Point* > polygon)
+MyImage*    MyImage::drawPolygon(std::vector<cv::Point > polygon)
 {
+    drawPolygonHis(polygon);
     MyImage* pNew;
     pNew = clone();
+    
+    
+    //cv::Mat matCalHis(matRef.rows, matRef.cols, CV_8UC1, cv::Scalar(0));
+    //cv::imshow("hisMat", matCalHis);
+    
     for(int n_iPt= 0; n_iPt < polygon.size(); n_iPt++)
     {
         if(n_iPt == polygon.size() - 1)
         {
-            cv::line(pNew->m_cvMat, *polygon[n_iPt], *polygon[0], cv::Scalar(COLOR_LINE_POLYGON));
+            cv::line(pNew->m_cvMat, polygon[n_iPt], polygon[0], cv::Scalar(COLOR_LINE_POLYGON));
         }
         else
         {
-            cv::line(pNew->m_cvMat, *polygon[n_iPt], *polygon[n_iPt+1], cv::Scalar(COLOR_LINE_POLYGON));
+            cv::line(pNew->m_cvMat, polygon[n_iPt], polygon[n_iPt+1], cv::Scalar(COLOR_LINE_POLYGON));
         }
         
     }
     return pNew;
+}
+void MyImage::drawPolygonHis(std::vector<cv::Point > polygon)
+{
+    int h = m_cvMat.rows;
+    int w = m_cvMat.cols;
+    
+    MainFrame::showMessage(wxString::Format("Mat Size:%d*%d", h, w));
+    for(int j = 0; j < m_cvMat.rows-10; j++ )
+    {   
+        for(int i = 0; i < m_cvMat.cols-10; i++ )
+        {
+            //判斷是不是在ROI之內
+            if(cv::pointPolygonTest(polygon, cv::Point(i, j), true) > 0 )
+            {
+                char val = m_cvMat.at<char>(j, i);
+                wxString info = wxString::Format("point(%d,%d):Value:%d\n", i, j, val);
+                MainFrame::showMessage(info);
+            }
+        }
+    }
+    return;
 }
 MyImage* MyImage::meanShift(int *x, int* y){
     double dBandwidth_k = 10;

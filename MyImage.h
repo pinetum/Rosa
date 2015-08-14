@@ -43,8 +43,9 @@ public:
 	MyImage* resize(cv::Size size);
     MyImage* resize(double zoom);
 	MyImage* split(int nTargetCh);
-	MyImage* drawPolygon(std::vector<cv::Point* > polygon);
-	MyImage* meanShift(int *x, int* y);
+	MyImage* drawPolygon(std::vector<cv::Point > polygon);
+	void drawPolygonHis(std::vector<cv::Point > polygon);
+    MyImage* meanShift(int *x, int* y);
 private:
 	cv::Mat m_cvMat;
 };

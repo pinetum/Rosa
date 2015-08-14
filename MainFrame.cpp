@@ -464,7 +464,7 @@ void MainFrame::OnMenuClickLoadOralCancerRois(wxCommandEvent& event)
         
         MyJSParser parser;                              
         parser.setJsonStr(str_filecontent);                                 // parse!
-        std::vector<std::vector<cv::Point* > > rois = parser.getRois();      // get Rois (二階Vector，最裡面存放cv::Point)
+        std::vector<std::vector<cv::Point > > rois = parser.getRois();      // get Rois (二階Vector，最裡面存放cv::Point)
         if(rois.size() > 0)
         {
             MyImage* img = getCurrentImg();

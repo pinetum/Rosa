@@ -1,5 +1,8 @@
 #include "MyJSParser.h"
 #include "MainFrame.h"
+
+
+
 MyJSParser::MyJSParser()
 {
 
@@ -46,18 +49,10 @@ void MyJSParser::setJsonStr(char *jsonStr)
 }
 void MyJSParser::releaseMem()
 {
-    for(int i = 0; i< m_vv_Rois.size(); i++)
-    {
-        for(int j = 0; j< m_vv_Rois[i].size(); j++)
-        {
-            delete m_vv_Rois[i][j];
-        }
-        m_vv_Rois[i].clear();
-    }
     
     m_vv_Rois.clear();
 }
-std::vector<std::vector<cv::Point* > > MyJSParser::getRois()
+std::vector<std::vector<cv::Point > > MyJSParser::getRois()
 {
     releaseMem();
     if(m_doc.IsArray())
@@ -69,12 +64,12 @@ std::vector<std::vector<cv::Point* > > MyJSParser::getRois()
             if(m_doc[n_numRois].IsArray())
             {
                 //loop for get points in one Roi
-                std::vector<cv::Point* > v_pts;
+                std::vector<cv::Point > v_pts;
                 for(int n_numPts = 0; n_numPts < m_doc[n_numRois].Size(); n_numPts++)
                 {
                     int n_ptX = m_doc[n_numRois][n_numPts]["x"].GetInt();
                     int n_ptY = m_doc[n_numRois][n_numPts]["y"].GetInt();
-                    cv::Point* pt = new cv::Point(n_ptX, n_ptY);
+                    cv::Point pt(n_ptX, n_ptY);
                     v_pts.push_back(pt);
                 }
                  m_vv_Rois.push_back(v_pts);
