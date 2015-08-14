@@ -375,6 +375,12 @@ void MyImage::drawPolygonHis(std::vector<cv::Point > polygon)
 {
     int h = m_cvMat.rows;
     int w = m_cvMat.cols;
+    int totalPts = 0;
+    int his[256] ;
+    for(int i = 0; i<256; i++)
+    {
+        his[i]=0;
+    }
     
     MainFrame::showMessage(wxString::Format("Mat Size:%d*%d", h, w));
     for(int j = 0; j < m_cvMat.rows-10; j++ )
@@ -384,12 +390,28 @@ void MyImage::drawPolygonHis(std::vector<cv::Point > polygon)
             //判斷是不是在ROI之內
             if(cv::pointPolygonTest(polygon, cv::Point(i, j), true) > 0 )
             {
-                char val = m_cvMat.at<char>(j, i);
-                wxString info = wxString::Format("point(%d,%d):Value:%d\n", i, j, val);
-                MainFrame::showMessage(info);
+                totalPts++;
+                char v = m_cvMat.at<char>(j, i);
+                his[(int)v]++;
+                //wxString info = wxString::Format("point(%d,%d):Value:%d\n", i, j, val);
+                //MainFrame::showMessage(info);
             }
         }
     }
+   
+    int maxuma =0;
+    for(int i = 0; i<256; i++)
+    {
+        if(maxuma < his[i])
+            maxuma =  his[i];
+    }
+    cv::Mat mhis = cv::Mat::zeros(maxuma, 256, CV_8UC1);
+    for(int i = 0; i<256; i++)
+    {
+        mhis.at<char>(i,his[i])=-1;
+    }
+    cv::imshow("his", mhis);
+     MainFrame::showMessage(wxString::Format("Total:%d", maxuma));
     return;
 }
 MyImage* MyImage::meanShift(int *x, int* y){
