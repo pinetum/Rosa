@@ -7,9 +7,9 @@
 #include "gnuplot_i.hpp"
 #include "highDMeanShift.h"
 #include "MyJSParser.h"
+#include "myUtil.h"
 
-
-
+#define SLIDER_MAX_VALUE 255
 #define ROI_RECT_SIZE 13
 
 Gnuplot g1("lines");
@@ -19,11 +19,13 @@ MainFrame *MainFrame::m_pThis = NULL;
 // some inital action
 MainFrame::MainFrame(wxWindow* parent): MainFrameBaseClass(parent)
 {
-    
+    m_sliderFilterWidth->SetMax(SLIDER_MAX_VALUE);
+    rois_cancer.clear();
+    rois_normal.clear();
 	m_nCurrentImg       = -1;
 	m_pThis             = this;  // for some static fun use. ex:MainFrame::showMessage()
     int statuWidth[4]   = { 250, 80, 40, 140};
-    
+    m_nFilterWidth      = 0;
 	m_statusBar->SetFieldsCount(4, statuWidth);
 	m_scrollWin->Connect(wxEVT_DROP_FILES, wxDropFilesEventHandler(MainFrame::OnDropFile), NULL, this);
     m_scrollWin->DragAcceptFiles(true);
@@ -150,14 +152,14 @@ void MainFrame::OnMouseMotion(wxMouseEvent& event)
 		}
 	m_statusBar->SetStatusText(str, 3);
     
-    
-	cv::Mat mat = pImg->getMatRef().clone();
-	if(mat.data)
-    {
-        cv::rectangle(mat, cv::Rect(pt.x-ROI_RECT_SIZE, pt.y-ROI_RECT_SIZE, ROI_RECT_SIZE, ROI_RECT_SIZE), cv::Scalar(255, 255, 255));
-        m_scrollWin->setImage(mat);
-    
-    }
+    //draw block
+//	cv::Mat mat = m_scrollWin->getBGRMat();
+//	if(mat.data)
+//    {
+//        cv::rectangle(mat, cv::Rect(pt.x-ROI_RECT_SIZE, pt.y-ROI_RECT_SIZE, ROI_RECT_SIZE, ROI_RECT_SIZE), cv::Scalar(255, 255, 255));
+//        m_scrollWin->setImage(mat);
+//    
+//    }
     
     
 	
@@ -183,7 +185,7 @@ void MainFrame::openFile(wxString &pathName)
 void MainFrame::UpdateView()
 {
 	MyImage* pImg = getCurrentImg();
-	cv::Mat & mat = pImg->getMatRef();
+	cv::Mat mat = pImg->getMatRef().clone();
 	cv::Mat histogram = pImg->getMatHistogram();
 	if(mat.empty())
 		showMessage("UpdateView:Mat is empty");
@@ -196,9 +198,29 @@ void MainFrame::UpdateView()
         wxSize size_window = m_scrollWinHis->GetClientSize();
         cv::resize(histogram, histogram, cv::Size(size_window.x, size_window.y));
         m_scrollWinHis->setImage(histogram);
+        
+        //draw rois
+        if(mat.type() == CV_8UC1)
+        {
+            cv::Mat cpy = mat.clone();
+            cv::cvtColor(cpy, cpy, CV_GRAY2BGR);
+            if(rois_cancer.size() > 0)
+            {
+                cv::drawContours(cpy, rois_cancer, -1, cv::Scalar(255,255,255), 2);
+                
+            }
+//            if(rois_cancer.size() > 0)
+//            {
+//                cv::drawContours(cpy, rois_cancer, -1, cv::Scalar(255,255,255));
+//                
+//            }
+            m_scrollWin->setImage(cpy);
+        }
+        
     }
 	
-
+    
+    
 	wxString strSize;
 	strSize.Printf("W%d H%d",mat.cols, mat.rows);
 	m_statusBar->SetStatusText(strSize, 1);
@@ -443,6 +465,8 @@ void MainFrame::OnMenuClickLoadOralCancerRois(wxCommandEvent& event)
 	openDialog->Destroy();
     if(!str_fileName.empty())
     {
+        rois_cancer.clear();
+        rois_normal.clear();
         FILE* fp                = NULL;
         char* str_filecontent   = NULL;
         int   n_contentSizr     = 0;
@@ -464,32 +488,115 @@ void MainFrame::OnMenuClickLoadOralCancerRois(wxCommandEvent& event)
         
         MyJSParser parser;                              
         parser.setJsonStr(str_filecontent);                                 // parse!
-        std::vector<std::vector<cv::Point > > rois = parser.getRois();      // get Rois (二階Vector，最裡面存放cv::Point)
-        if(rois.size() > 0)
-        {
-            MyImage* img = getCurrentImg();
-            for(int n_iRoi= 0; n_iRoi< rois.size(); n_iRoi++)
-            {
-                if(img == NULL)
-                    break;
-                img = img->drawPolygon(rois[n_iRoi]);
-            
-                if(img != NULL)
-                {
-                    addNewImageState(img);
-                    UpdateView();
-                }
-                else
-                {
-                    MainFrame::showMessage("img pt NULL when Call \"drawPolygon\"");
-                }
-            }
-            
-        }
-        else
-        {
-            MainFrame::showMessage("ROI size is zero");
-        }
-         
+        rois_cancer = parser.getRois();      // get Rois (二階Vector，最裡面存放cv::Point)
+            //最後交由updateView畫出
+         UpdateView();
     }
 }
+
+
+void MainFrame::OnSliderChangeFilterWidth(wxScrollEvent& event)
+{
+    m_nFilterWidth = m_sliderFilterWidth->GetValue();
+    m_staticTextSlideValue->SetLabel(wxString::Format(wxT("%d"), m_nFilterWidth));
+
+}
+void MainFrame::updateHistorgamAndDrawFilter(wxMouseEvent& event)
+{
+    if(m_nFilterWidth == 0)
+        return;
+    //get mouse position
+    wxClientDC dc(this);
+	wxPoint pt1 = event.GetLogicalPosition(dc);
+	wxPoint pt ;
+	m_scrollWinHis->CalcUnscrolledPosition(pt1.x,pt1.y,&pt.x,&pt.y);
+    
+    //get size of scrollwin
+    wxSize size_scrollWinHis = m_scrollWinHis->GetClientSize();
+    //get historgam image(w=512)
+    cv::Mat histogram  ;
+    cv::resize(getCurrentImg()->getMatHistogram(), histogram, cv::Size(size_scrollWinHis.x, size_scrollWinHis.y));
+    
+    
+    int realWidth = m_nFilterWidth*2*histogram.cols/512;
+    int half_width = realWidth/2;
+    int n_rect_x = 0;
+    int n_rect_y = 0;
+    int n_rect_w = 0;
+    int n_rect_h = 0;
+    
+    
+    n_rect_h = histogram.cols;
+    if(pt.x < half_width)
+    {
+        n_rect_x = 0;
+        n_rect_w = half_width+pt.x;
+    }
+    else if(histogram.cols - pt.x < half_width)
+    {
+        n_rect_x = pt.x-half_width;
+        n_rect_w =  half_width-pt.x+histogram.cols;;
+    }
+    else
+    {
+        n_rect_x = pt.x-half_width;
+        n_rect_w = half_width*2;
+    }
+    
+    //draw transperent area
+    drawTransparentRect(histogram, cv::Rect(n_rect_x, n_rect_y, n_rect_w, n_rect_h), cv::Scalar(0,0,255), 0.3);
+    //draw rect
+    //cv::rectangle(histogram, cv::Rect(n_rect_x, n_rect_y, n_rect_w, n_rect_h), cv::Scalar(0,0,255));
+
+    m_scrollWinHis->setImage(histogram);
+    
+    //處理filter
+    double alpha            = 0.4;
+    int middle_point        = pt.x*256/size_scrollWinHis.x;
+    int n_maxuma            = middle_point + m_nFilterWidth/2;
+    int n_minuma            = middle_point - m_nFilterWidth/2;
+    
+    if(n_maxuma > 255)
+        n_maxuma = 255;
+    if(n_minuma < 0)
+        n_minuma = 0;
+    
+    cv::Mat filterCpy       = getCurrentImg()->getMat().clone();
+    cv::Mat mat_drawPoint   = filterCpy.clone();
+    cv::cvtColor(mat_drawPoint, mat_drawPoint, CV_GRAY2BGR);
+    int n_valueInPt = 0;
+    for(int i= 0; i<mat_drawPoint.cols; i++)
+    {
+        for(int j= 0; j<mat_drawPoint.rows; j++)
+        {
+            // get gray value 
+            n_valueInPt = filterCpy.at<uchar>(j,i);
+            //check value is in the target 
+            if(n_valueInPt > n_minuma && n_valueInPt < n_maxuma)
+            {
+                cv::circle(mat_drawPoint, cv::Point(i, j), 2, cv::Scalar(0, 0, 255), -1);
+            }
+        }
+    }
+    // covert gray img to bgr img for cv::addWeighted use
+    cv::cvtColor(filterCpy, filterCpy, CV_GRAY2BGR);
+    cv::addWeighted(mat_drawPoint, alpha, filterCpy, 1.0 - alpha , 0.0, filterCpy); 
+    cv::putText(    filterCpy, 
+                    std::string(wxString::Format("%d~%d", n_minuma, n_maxuma).mb_str()),
+                    cv::Point(0,30),
+                    cv::FONT_HERSHEY_SIMPLEX,
+                    1,
+                    cv::Scalar(255,255,255));
+    cv::imshow("filter result", filterCpy);
+}
+
+/*
+ * 
+cv::Mat image = cv::imread("IMG_2083s.png"); 
+    cv::Mat roi = image(cv::Rect(100, 100, 300, 300));
+    cv::Mat color(roi.size(), CV_8UC3, cv::Scalar(0, 125, 125)); 
+    double alpha = 0.3;
+    cv::addWeighted(color, alpha, roi, 1.0 - alpha , 0.0, roi); 
+
+    cv::imshow("image",image);
+ * */

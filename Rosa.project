@@ -29,6 +29,7 @@
     <File Name="MyImage.cpp"/>
     <File Name="MyImageWin.cpp"/>
     <File Name="MyJSParser.cpp"/>
+    <File Name="myUtil.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <File Name="MainFrame.h"/>

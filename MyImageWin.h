@@ -18,7 +18,8 @@ MyImageWin(wxWindow *parent, wxWindowID id = -1,
 	wxBitmap* m_pBitmap;
 	wxSize setImage(cv::Mat mat);
 	void OnDraw(wxDC& dc);
-
+    cv::Mat m_rgbOutput;
+    cv::Mat getBGRMat();
 };
 
 #endif // MYIMAGEWIN_H

@@ -19,11 +19,12 @@
 #include <wx/statline.h>
 #include <wx/panel.h>
 #include <wx/richtext/richtextctrl.h>
+#include <wx/stattext.h>
+#include <wx/slider.h>
 #include <wx/menu.h>
 #include <wx/toolbar.h>
 #include <wx/statusbr.h>
 #include <wx/dialog.h>
-#include <wx/stattext.h>
 #include <wx/textctrl.h>
 #include <wx/button.h>
 #if wxVERSION_NUMBER >= 2900
@@ -45,6 +46,8 @@ protected:
     wxStaticLine* m_staticLine74;
     wxPanel* m_mainPanel;
     wxRichTextCtrl* m_richTextCtrl;
+    wxStaticText* m_staticTextSlideValue;
+    wxSlider* m_sliderFilterWidth;
     MyImageWin* m_scrollWinHis;
     wxMenuBar* m_menuBar;
     wxMenu* m_nenuFile;
@@ -81,6 +84,9 @@ protected:
 
 protected:
     virtual void OnMouseMotion(wxMouseEvent& event) { event.Skip(); }
+    virtual void OnUpdateImageFunction(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnSliderChangeFilterWidth(wxScrollEvent& event) { event.Skip(); }
+    virtual void updateHistorgamAndDrawFilter(wxMouseEvent& event) { event.Skip(); }
     virtual void OnOpenFile(wxCommandEvent& event) { event.Skip(); }
     virtual void OnSaveAsFile(wxCommandEvent& event) { event.Skip(); }
     virtual void OnUpdateSaveAs(wxUpdateUIEvent& event) { event.Skip(); }
@@ -91,7 +97,6 @@ protected:
     virtual void OnMenuItemRedo(wxCommandEvent& event) { event.Skip(); }
     virtual void OnUpdateItemRedo(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnItemDestroyWindowClose(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnUpdateImageFunction(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnImageFindFace(wxCommandEvent& event) { event.Skip(); }
     virtual void OnImageFindMouth(wxCommandEvent& event) { event.Skip(); }
     virtual void OnImageFindCircles(wxCommandEvent& event) { event.Skip(); }
@@ -110,6 +115,8 @@ public:
     MyImageWin* GetScrollWin() { return m_scrollWin; }
     wxStaticLine* GetStaticLine74() { return m_staticLine74; }
     wxRichTextCtrl* GetRichTextCtrl() { return m_richTextCtrl; }
+    wxStaticText* GetStaticTextSlideValue() { return m_staticTextSlideValue; }
+    wxSlider* GetSliderFilterWidth() { return m_sliderFilterWidth; }
     MyImageWin* GetScrollWinHis() { return m_scrollWinHis; }
     wxPanel* GetMainPanel() { return m_mainPanel; }
     wxMenuBar* GetMenuBar() { return m_menuBar; }

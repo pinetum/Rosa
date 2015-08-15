@@ -26,6 +26,9 @@ public:
 	
 	
 protected:
+    virtual void updateHistorgamAndDrawFilter(wxMouseEvent& event);
+    virtual void OnSliderChangeFilterWidth(wxScrollEvent& event);
+    
     virtual void OnMenuClickLoadOralCancerRois(wxCommandEvent& event);
     virtual void OnMenuItemResizeFitWindow(wxCommandEvent& event);
     virtual void OnMenuItemResizeManual(wxCommandEvent& event);
@@ -53,6 +56,9 @@ protected:
 	static MainFrame * m_pThis;
 	std::deque<MyImage*> m_imgList;
 	int m_nCurrentImg;
+    int m_nFilterWidth;
 	wxString m_Filename;
+    std::vector<std::vector<cv::Point > > rois_cancer;
+    std::vector<std::vector<cv::Point > > rois_normal;
 };
 #endif // MAINFRAME_H

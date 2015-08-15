@@ -60,11 +60,23 @@ MainFrameBaseClass::MainFrameBaseClass(wxWindow* parent, wxWindowID id, const wx
     m_richTextCtrl = new wxRichTextCtrl(m_mainPanel, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), wxTE_MULTILINE|wxTE_PROCESS_TAB|wxTE_PROCESS_ENTER|wxWANTS_CHARS);
     m_richTextCtrl->SetBackgroundColour(wxColour(wxT("rgb(204,204,204)")));
     
-    boxSizer11->Add(m_richTextCtrl, 3, wxALL|wxEXPAND, 5);
+    boxSizer11->Add(m_richTextCtrl, 4, wxALL|wxEXPAND, 5);
     
-    wxBoxSizer* boxSizer78 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer78 = new wxBoxSizer(wxHORIZONTAL);
     
-    boxSizer11->Add(boxSizer78, 1, wxALL|wxEXPAND, 5);
+    boxSizer11->Add(boxSizer78, 3, wxALL|wxEXPAND, 5);
+    
+    wxBoxSizer* boxSizer146 = new wxBoxSizer(wxVERTICAL);
+    
+    boxSizer78->Add(boxSizer146, 0, wxALL|wxEXPAND, 5);
+    
+    m_staticTextSlideValue = new wxStaticText(m_mainPanel, wxID_ANY, _("0"), wxDefaultPosition, wxSize(-1,-1), wxALIGN_CENTRE);
+    
+    boxSizer146->Add(m_staticTextSlideValue, 0, wxALL|wxEXPAND, 5);
+    
+    m_sliderFilterWidth = new wxSlider(m_mainPanel, wxID_ANY, 0, 0, 255, wxDefaultPosition, wxSize(-1,-1), wxSL_INVERSE|wxSL_VERTICAL);
+    
+    boxSizer146->Add(m_sliderFilterWidth, 1, wxALL, 5);
     
     m_scrollWinHis = new MyImageWin(m_mainPanel, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxHSCROLL|wxVSCROLL);
     m_scrollWinHis->SetScrollRate(5, 5);
@@ -205,6 +217,9 @@ MainFrameBaseClass::MainFrameBaseClass(wxWindow* parent, wxWindowID id, const wx
 #endif
     // Connect events
     m_scrollWin->Connect(wxEVT_MOTION, wxMouseEventHandler(MainFrameBaseClass::OnMouseMotion), NULL, this);
+    m_sliderFilterWidth->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MainFrameBaseClass::OnUpdateImageFunction), NULL, this);
+    m_sliderFilterWidth->Connect(wxEVT_SCROLL_THUMBRELEASE, wxScrollEventHandler(MainFrameBaseClass::OnSliderChangeFilterWidth), NULL, this);
+    m_scrollWinHis->Connect(wxEVT_MOTION, wxMouseEventHandler(MainFrameBaseClass::updateHistorgamAndDrawFilter), NULL, this);
     this->Connect(m_menuItemOpenFile->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnOpenFile), NULL, this);
     this->Connect(m_menuItemSaveAsFile->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnSaveAsFile), NULL, this);
     this->Connect(m_menuItemSaveAsFile->GetId(), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MainFrameBaseClass::OnUpdateSaveAs), NULL, this);
@@ -245,6 +260,9 @@ MainFrameBaseClass::MainFrameBaseClass(wxWindow* parent, wxWindowID id, const wx
 MainFrameBaseClass::~MainFrameBaseClass()
 {
     m_scrollWin->Disconnect(wxEVT_MOTION, wxMouseEventHandler(MainFrameBaseClass::OnMouseMotion), NULL, this);
+    m_sliderFilterWidth->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MainFrameBaseClass::OnUpdateImageFunction), NULL, this);
+    m_sliderFilterWidth->Disconnect(wxEVT_SCROLL_THUMBRELEASE, wxScrollEventHandler(MainFrameBaseClass::OnSliderChangeFilterWidth), NULL, this);
+    m_scrollWinHis->Disconnect(wxEVT_MOTION, wxMouseEventHandler(MainFrameBaseClass::updateHistorgamAndDrawFilter), NULL, this);
     this->Disconnect(m_menuItemOpenFile->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnOpenFile), NULL, this);
     this->Disconnect(m_menuItemSaveAsFile->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnSaveAsFile), NULL, this);
     this->Disconnect(m_menuItemSaveAsFile->GetId(), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MainFrameBaseClass::OnUpdateSaveAs), NULL, this);

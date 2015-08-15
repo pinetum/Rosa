@@ -93,9 +93,7 @@ MyImage* 	MyImage::clone(){
 	pNew->m_cvMat = m_cvMat.clone();
 	return pNew;
 }
-
 bool 		MyImage::readImage(wxString &pathName){
-	
 	bool bRet = false ;
 	m_cvMat = cv::imread(pathName.ToStdString() , CV_LOAD_IMAGE_UNCHANGED);
 	if(m_cvMat.data) bRet = true;
@@ -381,7 +379,7 @@ void MyImage::drawPolygonHis(std::vector<cv::Point > polygon)
     {
         his[i]=0;
     }
-    
+    FILE* fp = fopen("pts.txt","w");
     MainFrame::showMessage(wxString::Format("Mat Size:%d*%d", h, w));
     for(int j = 0; j < m_cvMat.rows-10; j++ )
     {   
@@ -391,27 +389,37 @@ void MyImage::drawPolygonHis(std::vector<cv::Point > polygon)
             if(cv::pointPolygonTest(polygon, cv::Point(i, j), true) > 0 )
             {
                 totalPts++;
-                char v = m_cvMat.at<char>(j, i);
-                his[(int)v]++;
+                
+                int v = m_cvMat.at<uchar>(j, i);
+                his[v]++;
+                 fprintf(fp, "%d,",v);
                 //wxString info = wxString::Format("point(%d,%d):Value:%d\n", i, j, val);
                 //MainFrame::showMessage(info);
             }
         }
     }
-   
+   fclose(fp);
     int maxuma =0;
     for(int i = 0; i<256; i++)
     {
         if(maxuma < his[i])
             maxuma =  his[i];
     }
-    cv::Mat mhis = cv::Mat::zeros(maxuma, 256, CV_8UC1);
-    for(int i = 0; i<256; i++)
+    double scale = 100.0/maxuma;
+    cv::Mat mhis = cv::Mat::zeros(100, 256, CV_8UC1);
+    fp = fopen("ptHis.txt", "w");
+    for(int i = 1; i<256; i++)
     {
-        mhis.at<char>(i,his[i])=-1;
+        fprintf(fp, "%d\n", his[i]*scale);
+        cv::line(mhis, cv::Point(i-1,his[i-1]*scale), cv::Point(i,his[i]*scale), cv::Scalar(COLOR_LINE_POLYGON));
     }
+    fclose(fp);
     cv::imshow("his", mhis);
-     MainFrame::showMessage(wxString::Format("Total:%d", maxuma));
+    //cv::createTrackbar("w", "his", NULL, 30,)
+    //cv::createTrackbar("w", "his", NULL, 30,)
+    
+    
+    MainFrame::showMessage(wxString::Format("Total:%d", maxuma));
     return;
 }
 MyImage* MyImage::meanShift(int *x, int* y){
