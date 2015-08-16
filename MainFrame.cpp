@@ -11,7 +11,7 @@
 #include <wx/arrstr.h> 
 #include <wx/colour.h>
 
-#define SLIDER_MAX_VALUE 70
+#define SLIDER_MAX_VALUE 128
 #define ROI_RECT_SIZE 13
 
 Gnuplot g1("lines");
@@ -21,22 +21,44 @@ MainFrame *MainFrame::m_pThis = NULL;
 // some inital action
 MainFrame::MainFrame(wxWindow* parent): MainFrameBaseClass(parent)
 {
+    // for redo undo function (index)
+	m_nCurrentImg       = -1;
+    
+    //for all statice function use ex: MainFrame::showMessage(wxString str);
+	m_pThis             = this;  // for some static fun use. ex:MainFrame::showMessage()
+    
+    
+    //setting slider's Max value~~
     m_sliderFilterWidth->SetMax(SLIDER_MAX_VALUE);
+    m_nFilterWidth      = 0;
+    
+    //stroe rois~~
     m_rois_cancer.clear();
     m_rois_normal.clear();
+    
+    // record which roi is active?!
     m_n_index_ofSelCancerRoi = -1;
     m_n_index_ofSelNormalRoi = -1;
+    
+    //record for point in scroll win for change slider(filter width) can draw realtime
     m_wxpt_lastptInScrollWinHis.x = 0;
     m_wxpt_lastptInScrollWinHis.y = 0;
+    
+    // roi copntour drawing color
     m_c_roi_cancer = cv::Scalar(34, 34, 255);
     m_c_roi_normal = cv::Scalar(255, 255, 0);
-	m_nCurrentImg       = -1;
-	m_pThis             = this;  // for some static fun use. ex:MainFrame::showMessage()
+    
+    //set status bar width
     int statuWidth[4]   = { 250, 80, 40, 140};
-    m_nFilterWidth      = 0;
 	m_statusBar->SetFieldsCount(4, statuWidth);
-	m_scrollWin->Connect(wxEVT_DROP_FILES, wxDropFilesEventHandler(MainFrame::OnDropFile), NULL, this);
+	
+   
+    // connect drag file event (can drag file into windw to open)
+    m_scrollWin->Connect(wxEVT_DROP_FILES, wxDropFilesEventHandler(MainFrame::OnDropFile), NULL, this);
     m_scrollWin->DragAcceptFiles(true);
+    
+    
+    // in mac os x
     //SetSize(900, 800);
 	//Center();
     
@@ -45,6 +67,7 @@ MainFrame::MainFrame(wxWindow* parent): MainFrameBaseClass(parent)
 
 MainFrame::~MainFrame()
 {
+    // disconnect drag event
     m_scrollWin->Disconnect(wxEVT_DROP_FILES, wxDropFilesEventHandler(MainFrame::OnDropFile), NULL, this);
 	DeleteContents();
 }
@@ -130,16 +153,20 @@ void MainFrame::OnMouseLeftUp(wxMouseEvent& event)
 }
 void MainFrame::OnMouseMotion(wxMouseEvent& event)
 {
+    // get position in the scroll win 
 	wxClientDC dc(this);
-	wxPoint pt1 = event.GetLogicalPosition(dc);
-	wxPoint pt ;
+	wxPoint pt1 = event.GetLogicalPosition(dc); // position in screen in scrollwin
+	wxPoint pt ; // position in "scrllWin" (mouse on image's position)
 	m_scrollWin->CalcUnscrolledPosition(pt1.x,pt1.y,&pt.x,&pt.y);
 	
+    // get image information..
 	MyImage* pImg = getCurrentImg();
 	if(pImg == NULL) return;
 	cv::Size sz = pImg->getSize();
 	if(pt.x >=sz.width || pt.y >= sz.height) return;
-	wxString str;
+	
+    // setting staturBar info string:image type and num of channel and depth
+    wxString str;
 	int type = pImg->getType();
 	switch(type){
 			case CV_8UC3:{
@@ -188,10 +215,14 @@ void MainFrame::OnMouseMotion(wxMouseEvent& event)
 		}
 	m_statusBar->SetStatusText(str, 3);
     
+    
+    // very low effective
     //draw block
+    //UpdateView();
 //	cv::Mat mat = m_scrollWin->getBGRMat();
 //	if(mat.data)
 //    {
+//        
 //        cv::rectangle(mat, cv::Rect(pt.x-ROI_RECT_SIZE, pt.y-ROI_RECT_SIZE, ROI_RECT_SIZE, ROI_RECT_SIZE), cv::Scalar(255, 255, 255));
 //        m_scrollWin->setImage(mat);
 //    
