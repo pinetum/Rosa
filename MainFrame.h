@@ -23,18 +23,26 @@ public:
 	void UpdateView();
     void loadCancerRoi(wxString filePath);
     void loadNormalRoi(wxString filePath);
+    cv::Mat getHistorgram();
+    void drawAllRois(cv::Mat img);
 	MyImage* getCurrentImg();
 	//Gnuplot g1;
 	
 	
 protected:
+    virtual void OnMouseMotionScrollWinHistorgam(wxMouseEvent& event);
+    virtual void UpdateUISliderText(wxUpdateUIEvent& event);
+    virtual void OnScrollWinHisLineDown(wxScrollWinEvent& event);
+    virtual void OnScrollWinHisLineUp(wxScrollWinEvent& event);
+    virtual void UpdateUITextRoiCount(wxUpdateUIEvent& event);
+    virtual void OnMouseLeftUp(wxMouseEvent& event);
     virtual void OnColorChangeCancer(wxColourPickerEvent& event);
     virtual void OnColorChangeNormal(wxColourPickerEvent& event);
     virtual void OnMouseLeaveScrollWinHis(wxMouseEvent& event);
     virtual void OnUpdateCheckBoxRoiCancer(wxUpdateUIEvent& event);
     virtual void OnUpdateCheckBoxRoiNormal(wxUpdateUIEvent& event);
     virtual void OnCheckBoxCheckRoi(wxCommandEvent& event);
-    virtual void updateHistorgamAndDrawFilter(wxMouseEvent& event);
+    virtual void drawHistorgamMask();
     virtual void OnSliderChangeFilterWidth(wxScrollEvent& event);
     
     virtual void OnMenuClickLoadOralCancerRois(wxCommandEvent& event);
@@ -71,5 +79,8 @@ protected:
     std::vector<std::vector<cv::Point > > m_rois_normal;
     cv::Scalar m_c_roi_cancer;
     cv::Scalar m_c_roi_normal;
+    int m_n_index_ofSelCancerRoi;
+    int m_n_index_ofSelNormalRoi;
+    wxPoint m_wxpt_lastptInScrollWinHis;
 };
 #endif // MAINFRAME_H

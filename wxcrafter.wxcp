@@ -1,7 +1,7 @@
 {
 	"metadata":	{
 		"m_generatedFilesDir":	".",
-		"m_objCounter":	166,
+		"m_objCounter":	174,
 		"m_includeFiles":	[],
 		"m_bitmapFunction":	"wxC9ED9InitBitmapResources",
 		"m_bitmapsFile":	"wxcrafter_bitmaps.cpp",
@@ -288,6 +288,13 @@
 													"m_functionNameAndSignature":	"OnMouseMotion(wxMouseEvent& event)",
 													"m_description":	"Process a wxEVT_MOTION event",
 													"m_noBody":	false
+												}, {
+													"m_eventName":	"wxEVT_LEFT_UP",
+													"m_eventClass":	"wxMouseEvent",
+													"m_eventHandler":	"wxMouseEventHandler",
+													"m_functionNameAndSignature":	"OnMouseLeftUp(wxMouseEvent& event)",
+													"m_description":	"Process a wxEVT_LEFT_UP event.",
+													"m_noBody":	false
 												}],
 											"m_children":	[]
 										}]
@@ -298,7 +305,7 @@
 									"gbSpan":	"1,1",
 									"gbPosition":	"0,0",
 									"m_styles":	[],
-									"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
+									"m_sizerFlags":	["wxEXPAND"],
 									"m_properties":	[{
 											"type":	"string",
 											"m_label":	"Minimum Size:",
@@ -346,13 +353,13 @@
 												}],
 											"m_events":	[],
 											"m_children":	[{
-													"m_type":	4429,
+													"m_type":	4405,
 													"proportion":	0,
 													"border":	5,
 													"gbSpan":	"1,1",
 													"gbPosition":	"0,0",
-													"m_styles":	["wxCLRP_DEFAULT_STYLE"],
-													"m_sizerFlags":	[],
+													"m_styles":	[],
+													"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
 													"m_properties":	[{
 															"type":	"winid",
 															"m_label":	"ID:",
@@ -368,7 +375,7 @@
 														}, {
 															"type":	"string",
 															"m_label":	"Name:",
-															"m_value":	"m_colourPickerCancerRoi"
+															"m_value":	"m_staticTextCancerRoiCount"
 														}, {
 															"type":	"multi-string",
 															"m_label":	"Tooltip:",
@@ -410,22 +417,19 @@
 															"m_label":	"Style:",
 															"m_value":	""
 														}, {
-															"type":	"colour",
-															"m_label":	"Value:",
-															"colour":	"(255,34,34)"
+															"type":	"multi-string",
+															"m_label":	"Label:",
+															"m_value":	"0/0"
+														}, {
+															"type":	"string",
+															"m_label":	"Wrap:",
+															"m_value":	"-1"
 														}],
 													"m_events":	[{
-															"m_eventName":	"wxEVT_COMMAND_COLOURPICKER_CHANGED",
-															"m_eventClass":	"wxColourPickerEvent",
-															"m_eventHandler":	"wxColourPickerEventHandler",
-															"m_functionNameAndSignature":	"OnColorChangeCancer(wxColourPickerEvent& event)",
-															"m_description":	"The user changed the colour selected in the control either using the button or using text control\n(see wxCLRP_USE_TEXTCTRL; note that in this case the event is fired only if the user's input is valid, i.e. recognizable).",
-															"m_noBody":	false
-														}, {
 															"m_eventName":	"wxEVT_UPDATE_UI",
 															"m_eventClass":	"wxUpdateUIEvent",
 															"m_eventHandler":	"wxUpdateUIEventHandler",
-															"m_functionNameAndSignature":	"OnUpdateCheckBoxRoiCancer(wxUpdateUIEvent& event)",
+															"m_functionNameAndSignature":	"UpdateUITextRoiCount(wxUpdateUIEvent& event)",
 															"m_description":	"Process a wxEVT_UPDATE_UI event",
 															"m_noBody":	false
 														}],
@@ -519,35 +523,7 @@
 															"m_noBody":	false
 														}],
 													"m_children":	[]
-												}]
-										}, {
-											"m_type":	4401,
-											"proportion":	0,
-											"border":	5,
-											"gbSpan":	"1,1",
-											"gbPosition":	"0,0",
-											"m_styles":	[],
-											"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
-											"m_properties":	[{
-													"type":	"string",
-													"m_label":	"Minimum Size:",
-													"m_value":	"-1,-1"
 												}, {
-													"type":	"string",
-													"m_label":	"Name:",
-													"m_value":	"boxSizer162"
-												}, {
-													"type":	"string",
-													"m_label":	"Style:",
-													"m_value":	""
-												}, {
-													"type":	"choice",
-													"m_label":	"Orientation:",
-													"m_selection":	1,
-													"m_options":	["wxVERTICAL", "wxHORIZONTAL"]
-												}],
-											"m_events":	[],
-											"m_children":	[{
 													"m_type":	4429,
 													"proportion":	0,
 													"border":	5,
@@ -570,7 +546,7 @@
 														}, {
 															"type":	"string",
 															"m_label":	"Name:",
-															"m_value":	"m_colourPickerNormalRoi"
+															"m_value":	"m_colourPickerCancerRoi"
 														}, {
 															"type":	"multi-string",
 															"m_label":	"Tooltip:",
@@ -614,20 +590,130 @@
 														}, {
 															"type":	"colour",
 															"m_label":	"Value:",
-															"colour":	"(0,255,255)"
+															"colour":	"(255,34,34)"
 														}],
 													"m_events":	[{
 															"m_eventName":	"wxEVT_COMMAND_COLOURPICKER_CHANGED",
 															"m_eventClass":	"wxColourPickerEvent",
 															"m_eventHandler":	"wxColourPickerEventHandler",
-															"m_functionNameAndSignature":	"OnColorChangeNormal(wxColourPickerEvent& event)",
+															"m_functionNameAndSignature":	"OnColorChangeCancer(wxColourPickerEvent& event)",
 															"m_description":	"The user changed the colour selected in the control either using the button or using text control\n(see wxCLRP_USE_TEXTCTRL; note that in this case the event is fired only if the user's input is valid, i.e. recognizable).",
 															"m_noBody":	false
 														}, {
 															"m_eventName":	"wxEVT_UPDATE_UI",
 															"m_eventClass":	"wxUpdateUIEvent",
 															"m_eventHandler":	"wxUpdateUIEventHandler",
-															"m_functionNameAndSignature":	"OnUpdateCheckBoxRoiNormal(wxUpdateUIEvent& event)",
+															"m_functionNameAndSignature":	"OnUpdateCheckBoxRoiCancer(wxUpdateUIEvent& event)",
+															"m_description":	"Process a wxEVT_UPDATE_UI event",
+															"m_noBody":	false
+														}],
+													"m_children":	[]
+												}]
+										}, {
+											"m_type":	4401,
+											"proportion":	0,
+											"border":	5,
+											"gbSpan":	"1,1",
+											"gbPosition":	"0,0",
+											"m_styles":	[],
+											"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
+											"m_properties":	[{
+													"type":	"string",
+													"m_label":	"Minimum Size:",
+													"m_value":	"-1,-1"
+												}, {
+													"type":	"string",
+													"m_label":	"Name:",
+													"m_value":	"boxSizer162"
+												}, {
+													"type":	"string",
+													"m_label":	"Style:",
+													"m_value":	""
+												}, {
+													"type":	"choice",
+													"m_label":	"Orientation:",
+													"m_selection":	1,
+													"m_options":	["wxVERTICAL", "wxHORIZONTAL"]
+												}],
+											"m_events":	[],
+											"m_children":	[{
+													"m_type":	4405,
+													"proportion":	0,
+													"border":	5,
+													"gbSpan":	"1,1",
+													"gbPosition":	"0,0",
+													"m_styles":	[],
+													"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
+													"m_properties":	[{
+															"type":	"winid",
+															"m_label":	"ID:",
+															"m_winid":	"wxID_ANY"
+														}, {
+															"type":	"string",
+															"m_label":	"Size:",
+															"m_value":	"-1,-1"
+														}, {
+															"type":	"string",
+															"m_label":	"Minimum Size:",
+															"m_value":	"-1,-1"
+														}, {
+															"type":	"string",
+															"m_label":	"Name:",
+															"m_value":	"m_staticTextNormalRoiCount"
+														}, {
+															"type":	"multi-string",
+															"m_label":	"Tooltip:",
+															"m_value":	""
+														}, {
+															"type":	"colour",
+															"m_label":	"Bg Colour:",
+															"colour":	"<Default>"
+														}, {
+															"type":	"colour",
+															"m_label":	"Fg Colour:",
+															"colour":	"<Default>"
+														}, {
+															"type":	"font",
+															"m_label":	"Font:",
+															"m_value":	""
+														}, {
+															"type":	"bool",
+															"m_label":	"Hidden",
+															"m_value":	false
+														}, {
+															"type":	"bool",
+															"m_label":	"Disabled",
+															"m_value":	false
+														}, {
+															"type":	"bool",
+															"m_label":	"Focused",
+															"m_value":	false
+														}, {
+															"type":	"string",
+															"m_label":	"Class Name:",
+															"m_value":	""
+														}, {
+															"type":	"string",
+															"m_label":	"Include File:",
+															"m_value":	""
+														}, {
+															"type":	"string",
+															"m_label":	"Style:",
+															"m_value":	""
+														}, {
+															"type":	"multi-string",
+															"m_label":	"Label:",
+															"m_value":	"0/0"
+														}, {
+															"type":	"string",
+															"m_label":	"Wrap:",
+															"m_value":	"-1"
+														}],
+													"m_events":	[{
+															"m_eventName":	"wxEVT_UPDATE_UI",
+															"m_eventClass":	"wxUpdateUIEvent",
+															"m_eventHandler":	"wxUpdateUIEventHandler",
+															"m_functionNameAndSignature":	"UpdateUITextRoiCount(wxUpdateUIEvent& event)",
 															"m_description":	"Process a wxEVT_UPDATE_UI event",
 															"m_noBody":	false
 														}],
@@ -711,6 +797,91 @@
 															"m_eventHandler":	"wxCommandEventHandler",
 															"m_functionNameAndSignature":	"OnCheckBoxCheckRoi(wxCommandEvent& event)",
 															"m_description":	"Process a wxEVT_COMMAND_CHECKBOX_CLICKED event, when the checkbox is clicked.",
+															"m_noBody":	false
+														}, {
+															"m_eventName":	"wxEVT_UPDATE_UI",
+															"m_eventClass":	"wxUpdateUIEvent",
+															"m_eventHandler":	"wxUpdateUIEventHandler",
+															"m_functionNameAndSignature":	"OnUpdateCheckBoxRoiNormal(wxUpdateUIEvent& event)",
+															"m_description":	"Process a wxEVT_UPDATE_UI event",
+															"m_noBody":	false
+														}],
+													"m_children":	[]
+												}, {
+													"m_type":	4429,
+													"proportion":	0,
+													"border":	5,
+													"gbSpan":	"1,1",
+													"gbPosition":	"0,0",
+													"m_styles":	["wxCLRP_DEFAULT_STYLE"],
+													"m_sizerFlags":	[],
+													"m_properties":	[{
+															"type":	"winid",
+															"m_label":	"ID:",
+															"m_winid":	"wxID_ANY"
+														}, {
+															"type":	"string",
+															"m_label":	"Size:",
+															"m_value":	"-1,-1"
+														}, {
+															"type":	"string",
+															"m_label":	"Minimum Size:",
+															"m_value":	"-1,-1"
+														}, {
+															"type":	"string",
+															"m_label":	"Name:",
+															"m_value":	"m_colourPickerNormalRoi"
+														}, {
+															"type":	"multi-string",
+															"m_label":	"Tooltip:",
+															"m_value":	""
+														}, {
+															"type":	"colour",
+															"m_label":	"Bg Colour:",
+															"colour":	"<Default>"
+														}, {
+															"type":	"colour",
+															"m_label":	"Fg Colour:",
+															"colour":	"<Default>"
+														}, {
+															"type":	"font",
+															"m_label":	"Font:",
+															"m_value":	""
+														}, {
+															"type":	"bool",
+															"m_label":	"Hidden",
+															"m_value":	false
+														}, {
+															"type":	"bool",
+															"m_label":	"Disabled",
+															"m_value":	false
+														}, {
+															"type":	"bool",
+															"m_label":	"Focused",
+															"m_value":	false
+														}, {
+															"type":	"string",
+															"m_label":	"Class Name:",
+															"m_value":	""
+														}, {
+															"type":	"string",
+															"m_label":	"Include File:",
+															"m_value":	""
+														}, {
+															"type":	"string",
+															"m_label":	"Style:",
+															"m_value":	""
+														}, {
+															"type":	"colour",
+															"m_label":	"Value:",
+															"colour":	"(0,255,255)"
+														}],
+													"m_events":	[{
+															"m_eventName":	"wxEVT_COMMAND_COLOURPICKER_CHANGED",
+															"m_eventClass":	"wxColourPickerEvent",
+															"m_eventHandler":	"wxColourPickerEventHandler",
+															"m_functionNameAndSignature":	"OnColorChangeNormal(wxColourPickerEvent& event)",
+															"m_description":	"The user changed the colour selected in the control either using the button or using text control\n(see wxCLRP_USE_TEXTCTRL; note that in this case the event is fired only if the user's input is valid, i.e. recognizable).",
 															"m_noBody":	false
 														}, {
 															"m_eventName":	"wxEVT_UPDATE_UI",
@@ -1082,7 +1253,14 @@
 																	"m_label":	"Wrap:",
 																	"m_value":	"-1"
 																}],
-															"m_events":	[],
+															"m_events":	[{
+																	"m_eventName":	"wxEVT_UPDATE_UI",
+																	"m_eventClass":	"wxUpdateUIEvent",
+																	"m_eventHandler":	"wxUpdateUIEventHandler",
+																	"m_functionNameAndSignature":	"UpdateUISliderText(wxUpdateUIEvent& event)",
+																	"m_description":	"Process a wxEVT_UPDATE_UI event",
+																	"m_noBody":	false
+																}],
 															"m_children":	[]
 														}, {
 															"m_type":	4419,
@@ -1255,7 +1433,7 @@
 															"m_eventName":	"wxEVT_MOTION",
 															"m_eventClass":	"wxMouseEvent",
 															"m_eventHandler":	"wxMouseEventHandler",
-															"m_functionNameAndSignature":	"updateHistorgamAndDrawFilter(wxMouseEvent& event)",
+															"m_functionNameAndSignature":	"OnMouseMotionScrollWinHistorgam(wxMouseEvent& event)",
 															"m_description":	"Process a wxEVT_MOTION event",
 															"m_noBody":	false
 														}, {
@@ -1264,6 +1442,20 @@
 															"m_eventHandler":	"wxMouseEventHandler",
 															"m_functionNameAndSignature":	"OnMouseLeaveScrollWinHis(wxMouseEvent& event)",
 															"m_description":	"Process a wxEVT_LEAVE_WINDOW event.",
+															"m_noBody":	false
+														}, {
+															"m_eventName":	"wxEVT_SCROLLWIN_LINEUP",
+															"m_eventClass":	"wxScrollWinEvent",
+															"m_eventHandler":	"wxScrollWinEventHandler",
+															"m_functionNameAndSignature":	"OnScrollWinHisLineUp(wxScrollWinEvent& event)",
+															"m_description":	"Since wxWidgets 2.9.X\nProcess wxEVT_SCROLLWIN_LINEUP line up events.",
+															"m_noBody":	false
+														}, {
+															"m_eventName":	"wxEVT_SCROLLWIN_LINEDOWN",
+															"m_eventClass":	"wxScrollWinEvent",
+															"m_eventHandler":	"wxScrollWinEventHandler",
+															"m_functionNameAndSignature":	"OnScrollWinHisLineDown(wxScrollWinEvent& event)",
+															"m_description":	"Since wxWidgets 2.9.X\nProcess wxEVT_SCROLLWIN_LINEDOWN line down events",
 															"m_noBody":	false
 														}],
 													"m_children":	[]

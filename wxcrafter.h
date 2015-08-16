@@ -16,12 +16,12 @@
 #include <wx/sizer.h>
 #include <wx/scrolwin.h>
 #include "MyImageWin.h"
-#include <wx/clrpicker.h>
+#include <wx/stattext.h>
 #include <wx/checkbox.h>
+#include <wx/clrpicker.h>
 #include <wx/statline.h>
 #include <wx/panel.h>
 #include <wx/richtext/richtextctrl.h>
-#include <wx/stattext.h>
 #include <wx/slider.h>
 #include <wx/menu.h>
 #include <wx/toolbar.h>
@@ -45,10 +45,12 @@ public:
     };
 protected:
     MyImageWin* m_scrollWin;
-    wxColourPickerCtrl* m_colourPickerCancerRoi;
+    wxStaticText* m_staticTextCancerRoiCount;
     wxCheckBox* m_checkBoxCancerRoi;
-    wxColourPickerCtrl* m_colourPickerNormalRoi;
+    wxColourPickerCtrl* m_colourPickerCancerRoi;
+    wxStaticText* m_staticTextNormalRoiCount;
     wxCheckBox* m_checkBoxNormalRoi;
+    wxColourPickerCtrl* m_colourPickerNormalRoi;
     wxStaticLine* m_staticLine74;
     wxPanel* m_mainPanel;
     wxRichTextCtrl* m_richTextCtrl;
@@ -90,15 +92,20 @@ protected:
 
 protected:
     virtual void OnMouseMotion(wxMouseEvent& event) { event.Skip(); }
-    virtual void OnColorChangeCancer(wxColourPickerEvent& event) { event.Skip(); }
-    virtual void OnUpdateCheckBoxRoiCancer(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnMouseLeftUp(wxMouseEvent& event) { event.Skip(); }
+    virtual void UpdateUITextRoiCount(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnCheckBoxCheckRoi(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnColorChangeNormal(wxColourPickerEvent& event) { event.Skip(); }
+    virtual void OnUpdateCheckBoxRoiCancer(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnColorChangeCancer(wxColourPickerEvent& event) { event.Skip(); }
     virtual void OnUpdateCheckBoxRoiNormal(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnColorChangeNormal(wxColourPickerEvent& event) { event.Skip(); }
+    virtual void UpdateUISliderText(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnUpdateImageFunction(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnSliderChangeFilterWidth(wxScrollEvent& event) { event.Skip(); }
-    virtual void updateHistorgamAndDrawFilter(wxMouseEvent& event) { event.Skip(); }
+    virtual void OnMouseMotionScrollWinHistorgam(wxMouseEvent& event) { event.Skip(); }
     virtual void OnMouseLeaveScrollWinHis(wxMouseEvent& event) { event.Skip(); }
+    virtual void OnScrollWinHisLineUp(wxScrollWinEvent& event) { event.Skip(); }
+    virtual void OnScrollWinHisLineDown(wxScrollWinEvent& event) { event.Skip(); }
     virtual void OnOpenFile(wxCommandEvent& event) { event.Skip(); }
     virtual void OnSaveAsFile(wxCommandEvent& event) { event.Skip(); }
     virtual void OnUpdateSaveAs(wxUpdateUIEvent& event) { event.Skip(); }
@@ -125,10 +132,12 @@ protected:
 
 public:
     MyImageWin* GetScrollWin() { return m_scrollWin; }
-    wxColourPickerCtrl* GetColourPickerCancerRoi() { return m_colourPickerCancerRoi; }
+    wxStaticText* GetStaticTextCancerRoiCount() { return m_staticTextCancerRoiCount; }
     wxCheckBox* GetCheckBoxCancerRoi() { return m_checkBoxCancerRoi; }
-    wxColourPickerCtrl* GetColourPickerNormalRoi() { return m_colourPickerNormalRoi; }
+    wxColourPickerCtrl* GetColourPickerCancerRoi() { return m_colourPickerCancerRoi; }
+    wxStaticText* GetStaticTextNormalRoiCount() { return m_staticTextNormalRoiCount; }
     wxCheckBox* GetCheckBoxNormalRoi() { return m_checkBoxNormalRoi; }
+    wxColourPickerCtrl* GetColourPickerNormalRoi() { return m_colourPickerNormalRoi; }
     wxStaticLine* GetStaticLine74() { return m_staticLine74; }
     wxRichTextCtrl* GetRichTextCtrl() { return m_richTextCtrl; }
     wxStaticText* GetStaticTextSlideValue() { return m_staticTextSlideValue; }

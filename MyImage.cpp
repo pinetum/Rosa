@@ -2,6 +2,10 @@
 #include "MainFrame.h"
 #include <wx/log.h> 
 #include <vector>
+
+#define WIDTH_HISTORGAM_IMG     512
+#define HEIGHT_HISTORGAM_IMG    300
+
 MyImage::MyImage()
 {
 	
@@ -29,10 +33,8 @@ MyImage::~MyImage()
 
 
 cv::Mat 	MyImage::getMatHistogram(){
-    const int size_h       = 300;
-    const int size_w       = 512;
-    
-	cv::Mat cvMat_HisRet( size_h, size_w, CV_8UC3, cv::Scalar( 0,0,0) );
+
+	cv::Mat cvMat_HisRet(HEIGHT_HISTORGAM_IMG, WIDTH_HISTORGAM_IMG, CV_8UC3, cv::Scalar( 0,0,0) );
 	int 			histSize 	= 256;// Establish the number of bins
 	float 			range[] 	= { 0, 255 } ;// Set the ranges ( for B,G,R) )
 	const float* 	histRange 	= { range };
@@ -44,43 +46,43 @@ cv::Mat 	MyImage::getMatHistogram(){
 	switch(m_cvMat.type()){
 			case CV_8UC3:
 			{
-						std::vector<cv::Mat> bgr_planes;
-						cv::split( m_cvMat, bgr_planes );
-						cv::Mat b_hist, g_hist, r_hist;
-						cv::calcHist( &bgr_planes[0], 1, 0, cv::Mat(), b_hist, 1, &histSize, &histRange, uniform, accumulate );
-						cv::calcHist( &bgr_planes[1], 1, 0, cv::Mat(), g_hist, 1, &histSize, &histRange, uniform, accumulate );
-						cv::calcHist( &bgr_planes[2], 1, 0, cv::Mat(), r_hist, 1, &histSize, &histRange, uniform, accumulate );
-						cv::normalize(b_hist, b_hist, 0, cvMat_HisRet.rows, cv::NORM_MINMAX, -1, cv::Mat() );
-						cv::normalize(g_hist, g_hist, 0, cvMat_HisRet.rows, cv::NORM_MINMAX, -1, cv::Mat() );
-						cv::normalize(r_hist, r_hist, 0, cvMat_HisRet.rows, cv::NORM_MINMAX, -1, cv::Mat() );
-						
-						for( int i = 1; i < histSize; i++ )
-						{
-							cv::line( cvMat_HisRet, cv::Point( bin_w*(i-1), hist_h - cvRound(b_hist.at<float>(i-1)) ) ,
-										cv::Point( bin_w*(i), hist_h - cvRound(b_hist.at<float>(i)) ),
-										cv::Scalar( 255, 0, 0), 1, CV_AA, 0  );
-							cv::line( cvMat_HisRet, cv::Point( bin_w*(i-1), hist_h - cvRound(g_hist.at<float>(i-1)) ) ,
-										cv::Point( bin_w*(i), hist_h - cvRound(g_hist.at<float>(i)) ),
-										cv::Scalar( 0, 255, 0), 1, CV_AA, 0  );
-							cv::line( cvMat_HisRet, cv::Point( bin_w*(i-1), hist_h - cvRound(r_hist.at<float>(i-1)) ) ,
-										cv::Point( bin_w*(i), hist_h - cvRound(r_hist.at<float>(i)) ),
-										cv::Scalar( 0, 0, 255), 1, CV_AA, 0  );
-						}
-						break;
+                std::vector<cv::Mat> bgr_planes;
+                cv::split( m_cvMat, bgr_planes );
+                cv::Mat b_hist, g_hist, r_hist;
+                cv::calcHist( &bgr_planes[0], 1, 0, cv::Mat(), b_hist, 1, &histSize, &histRange, uniform, accumulate );
+                cv::calcHist( &bgr_planes[1], 1, 0, cv::Mat(), g_hist, 1, &histSize, &histRange, uniform, accumulate );
+                cv::calcHist( &bgr_planes[2], 1, 0, cv::Mat(), r_hist, 1, &histSize, &histRange, uniform, accumulate );
+                cv::normalize(b_hist, b_hist, 0, cvMat_HisRet.rows, cv::NORM_MINMAX, -1, cv::Mat() );
+                cv::normalize(g_hist, g_hist, 0, cvMat_HisRet.rows, cv::NORM_MINMAX, -1, cv::Mat() );
+                cv::normalize(r_hist, r_hist, 0, cvMat_HisRet.rows, cv::NORM_MINMAX, -1, cv::Mat() );
+                
+                for( int i = 1; i < histSize; i++ )
+                {
+                    cv::line( cvMat_HisRet, cv::Point( bin_w*(i-1), hist_h - cvRound(b_hist.at<float>(i-1)) ) ,
+                                cv::Point( bin_w*(i), hist_h - cvRound(b_hist.at<float>(i)) ),
+                                cv::Scalar( 255, 0, 0), 1, CV_AA, 0  );
+                    cv::line( cvMat_HisRet, cv::Point( bin_w*(i-1), hist_h - cvRound(g_hist.at<float>(i-1)) ) ,
+                                cv::Point( bin_w*(i), hist_h - cvRound(g_hist.at<float>(i)) ),
+                                cv::Scalar( 0, 255, 0), 1, CV_AA, 0  );
+                    cv::line( cvMat_HisRet, cv::Point( bin_w*(i-1), hist_h - cvRound(r_hist.at<float>(i-1)) ) ,
+                                cv::Point( bin_w*(i), hist_h - cvRound(r_hist.at<float>(i)) ),
+                                cv::Scalar( 0, 0, 255), 1, CV_AA, 0  );
+                }
+                break;
 			}
 			
 			case CV_8UC1:
 			{
-						cv::Mat hist;
-						cv::calcHist( &m_cvMat, 1, 0, cv::Mat(), hist, 1, &histSize, &histRange, uniform, accumulate );
-						cv::normalize(hist, hist, 0, cvMat_HisRet.rows, cv::NORM_MINMAX, -1, cv::Mat() );
-						for( int i = 1; i < histSize; i++ )
-						{
-							cv::line( cvMat_HisRet, cv::Point( bin_w*(i-1), hist_h - cvRound(hist.at<float>(i-1)) ) ,
-										cv::Point( bin_w*(i), hist_h - cvRound(hist.at<float>(i)) ),
-										cv::Scalar( 255, 255, 255), 2, 8, 0  );
-						}
-						break;
+                    cv::Mat hist;
+                    cv::calcHist( &m_cvMat, 1, 0, cv::Mat(), hist, 1, &histSize, &histRange, uniform, accumulate );
+                    cv::normalize(hist, hist, 0, cvMat_HisRet.rows, cv::NORM_MINMAX, -1, cv::Mat() );
+                    for( int i = 1; i < histSize; i++ )
+                    {
+                        cv::line( cvMat_HisRet, cv::Point( bin_w*(i-1), hist_h - cvRound(hist.at<float>(i-1)) ) ,
+                                    cv::Point( bin_w*(i), hist_h - cvRound(hist.at<float>(i)) ),
+                                    cv::Scalar( 255, 255, 255), 2, 8, 0  );
+                    }
+                    break;
 			}
 		
 	}
@@ -346,7 +348,7 @@ MyImage* 	MyImage::resize(double zoom){
 	return pNew;
 }
 
-void MyImage::drawPolygonHis(std::vector<cv::Point > polygon)
+cv::Mat MyImage::getContourHistorgam(std::vector<cv::Point > contour)
 {
     int h = m_cvMat.rows;
     int w = m_cvMat.cols;
@@ -357,19 +359,19 @@ void MyImage::drawPolygonHis(std::vector<cv::Point > polygon)
         his[i]=0;
     }
     FILE* fp = fopen("pts.txt","w");
-    MainFrame::showMessage(wxString::Format("Mat Size:%d*%d", h, w));
+    //MainFrame::showMessage(wxString::Format("Mat Size:%d*%d", h, w));
     for(int j = 0; j < m_cvMat.rows-10; j++ )
     {   
         for(int i = 0; i < m_cvMat.cols-10; i++ )
         {
             //判斷是不是在ROI之內
-            if(cv::pointPolygonTest(polygon, cv::Point(i, j), true) > 0 )
+            if(cv::pointPolygonTest(contour, cv::Point(i, j), true) > 0 )
             {
                 totalPts++;
                 
                 int v = m_cvMat.at<uchar>(j, i);
                 his[v]++;
-                 fprintf(fp, "%d,",v);
+                fprintf(fp, "%d,",v);
                 //wxString info = wxString::Format("point(%d,%d):Value:%d\n", i, j, val);
                 //MainFrame::showMessage(info);
             }
@@ -382,22 +384,23 @@ void MyImage::drawPolygonHis(std::vector<cv::Point > polygon)
         if(maxuma < his[i])
             maxuma =  his[i];
     }
-    double scale = 100.0/maxuma;
-    cv::Mat mhis = cv::Mat::zeros(100, 256, CV_8UC1);
+    double scale = HEIGHT_HISTORGAM_IMG*1.0/maxuma;
+    cv::Mat mhis = cv::Mat::zeros(HEIGHT_HISTORGAM_IMG, WIDTH_HISTORGAM_IMG, CV_8UC3);
     fp = fopen("ptHis.txt", "w");
+    fprintf(fp, "Max %d\n", maxuma);
+    fprintf(fp, "%f\n", scale);
     for(int i = 1; i<256; i++)
     {
-        fprintf(fp, "%d\n", his[i]*scale);
-        cv::line(mhis, cv::Point(i-1,his[i-1]*scale), cv::Point(i,his[i]*scale), cv::Scalar(COLOR_LINE_POLYGON));
+        fprintf(fp, "%d, %d\n", i*2, (int)floor(his[i]*1.0*scale));
+        cv::line(   mhis, 
+                    cv::Point((i-1)*2,  (int)floor(his[i-1]*1.0*scale)), 
+                    cv::Point(i*2,      (int)floor(his[i]*1.0*scale)), 
+                    cv::Scalar(255, 255, 255),
+                    2
+                );
     }
     fclose(fp);
-    cv::imshow("his", mhis);
-    //cv::createTrackbar("w", "his", NULL, 30,)
-    //cv::createTrackbar("w", "his", NULL, 30,)
-    
-    
-    MainFrame::showMessage(wxString::Format("Total:%d", maxuma));
-    return;
+    return mhis;
 }
 MyImage* MyImage::meanShift(int *x, int* y){
     double dBandwidth_k = 10;

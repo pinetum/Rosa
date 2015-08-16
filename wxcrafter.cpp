@@ -52,33 +52,41 @@ MainFrameBaseClass::MainFrameBaseClass(wxWindow* parent, wxWindowID id, const wx
     
     wxBoxSizer* boxSizer152 = new wxBoxSizer(wxVERTICAL);
     
-    boxSizer70->Add(boxSizer152, 1, wxALL|wxEXPAND, 5);
+    boxSizer70->Add(boxSizer152, 1, wxEXPAND, 5);
     
     wxBoxSizer* boxSizer160 = new wxBoxSizer(wxHORIZONTAL);
     
     boxSizer152->Add(boxSizer160, 0, wxALL, 5);
     
-    m_colourPickerCancerRoi = new wxColourPickerCtrl(this, wxID_ANY, wxColour(wxT("rgb(255,34,34)")), wxDefaultPosition, wxSize(-1,-1), wxCLRP_DEFAULT_STYLE);
+    m_staticTextCancerRoiCount = new wxStaticText(this, wxID_ANY, _("0/0"), wxDefaultPosition, wxSize(-1,-1), 0);
     
-    boxSizer160->Add(m_colourPickerCancerRoi, 0, 0, 5);
+    boxSizer160->Add(m_staticTextCancerRoiCount, 0, wxALL, 5);
     
     m_checkBoxCancerRoi = new wxCheckBox(this, wxID_ANY, _("Cancer Roi"), wxDefaultPosition, wxSize(-1,-1), 0);
     m_checkBoxCancerRoi->SetValue(false);
     
     boxSizer160->Add(m_checkBoxCancerRoi, 0, wxALL, 5);
     
+    m_colourPickerCancerRoi = new wxColourPickerCtrl(this, wxID_ANY, wxColour(wxT("rgb(255,34,34)")), wxDefaultPosition, wxSize(-1,-1), wxCLRP_DEFAULT_STYLE);
+    
+    boxSizer160->Add(m_colourPickerCancerRoi, 0, 0, 5);
+    
     wxBoxSizer* boxSizer162 = new wxBoxSizer(wxHORIZONTAL);
     
     boxSizer152->Add(boxSizer162, 0, wxALL, 5);
     
-    m_colourPickerNormalRoi = new wxColourPickerCtrl(this, wxID_ANY, wxColour(wxT("rgb(0,255,255)")), wxDefaultPosition, wxSize(-1,-1), wxCLRP_DEFAULT_STYLE);
+    m_staticTextNormalRoiCount = new wxStaticText(this, wxID_ANY, _("0/0"), wxDefaultPosition, wxSize(-1,-1), 0);
     
-    boxSizer162->Add(m_colourPickerNormalRoi, 0, 0, 5);
+    boxSizer162->Add(m_staticTextNormalRoiCount, 0, wxALL, 5);
     
     m_checkBoxNormalRoi = new wxCheckBox(this, wxID_ANY, _("Normal Roi"), wxDefaultPosition, wxSize(-1,-1), 0);
     m_checkBoxNormalRoi->SetValue(false);
     
     boxSizer162->Add(m_checkBoxNormalRoi, 0, wxALL, 5);
+    
+    m_colourPickerNormalRoi = new wxColourPickerCtrl(this, wxID_ANY, wxColour(wxT("rgb(0,255,255)")), wxDefaultPosition, wxSize(-1,-1), wxCLRP_DEFAULT_STYLE);
+    
+    boxSizer162->Add(m_colourPickerNormalRoi, 0, 0, 5);
     
     m_staticLine74 = new wxStaticLine(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxLI_HORIZONTAL);
     
@@ -251,18 +259,24 @@ MainFrameBaseClass::MainFrameBaseClass(wxWindow* parent, wxWindowID id, const wx
 #endif
     // Connect events
     m_scrollWin->Connect(wxEVT_MOTION, wxMouseEventHandler(MainFrameBaseClass::OnMouseMotion), NULL, this);
-    m_colourPickerCancerRoi->Connect(wxEVT_COMMAND_COLOURPICKER_CHANGED, wxColourPickerEventHandler(MainFrameBaseClass::OnColorChangeCancer), NULL, this);
-    m_colourPickerCancerRoi->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MainFrameBaseClass::OnUpdateCheckBoxRoiCancer), NULL, this);
+    m_scrollWin->Connect(wxEVT_LEFT_UP, wxMouseEventHandler(MainFrameBaseClass::OnMouseLeftUp), NULL, this);
+    m_staticTextCancerRoiCount->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MainFrameBaseClass::UpdateUITextRoiCount), NULL, this);
     m_checkBoxCancerRoi->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(MainFrameBaseClass::OnCheckBoxCheckRoi), NULL, this);
     m_checkBoxCancerRoi->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MainFrameBaseClass::OnUpdateCheckBoxRoiCancer), NULL, this);
-    m_colourPickerNormalRoi->Connect(wxEVT_COMMAND_COLOURPICKER_CHANGED, wxColourPickerEventHandler(MainFrameBaseClass::OnColorChangeNormal), NULL, this);
-    m_colourPickerNormalRoi->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MainFrameBaseClass::OnUpdateCheckBoxRoiNormal), NULL, this);
+    m_colourPickerCancerRoi->Connect(wxEVT_COMMAND_COLOURPICKER_CHANGED, wxColourPickerEventHandler(MainFrameBaseClass::OnColorChangeCancer), NULL, this);
+    m_colourPickerCancerRoi->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MainFrameBaseClass::OnUpdateCheckBoxRoiCancer), NULL, this);
+    m_staticTextNormalRoiCount->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MainFrameBaseClass::UpdateUITextRoiCount), NULL, this);
     m_checkBoxNormalRoi->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(MainFrameBaseClass::OnCheckBoxCheckRoi), NULL, this);
     m_checkBoxNormalRoi->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MainFrameBaseClass::OnUpdateCheckBoxRoiNormal), NULL, this);
+    m_colourPickerNormalRoi->Connect(wxEVT_COMMAND_COLOURPICKER_CHANGED, wxColourPickerEventHandler(MainFrameBaseClass::OnColorChangeNormal), NULL, this);
+    m_colourPickerNormalRoi->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MainFrameBaseClass::OnUpdateCheckBoxRoiNormal), NULL, this);
+    m_staticTextSlideValue->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MainFrameBaseClass::UpdateUISliderText), NULL, this);
     m_sliderFilterWidth->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MainFrameBaseClass::OnUpdateImageFunction), NULL, this);
     m_sliderFilterWidth->Connect(wxEVT_SCROLL_THUMBRELEASE, wxScrollEventHandler(MainFrameBaseClass::OnSliderChangeFilterWidth), NULL, this);
-    m_scrollWinHis->Connect(wxEVT_MOTION, wxMouseEventHandler(MainFrameBaseClass::updateHistorgamAndDrawFilter), NULL, this);
+    m_scrollWinHis->Connect(wxEVT_MOTION, wxMouseEventHandler(MainFrameBaseClass::OnMouseMotionScrollWinHistorgam), NULL, this);
     m_scrollWinHis->Connect(wxEVT_LEAVE_WINDOW, wxMouseEventHandler(MainFrameBaseClass::OnMouseLeaveScrollWinHis), NULL, this);
+    m_scrollWinHis->Connect(wxEVT_SCROLLWIN_LINEUP, wxScrollWinEventHandler(MainFrameBaseClass::OnScrollWinHisLineUp), NULL, this);
+    m_scrollWinHis->Connect(wxEVT_SCROLLWIN_LINEDOWN, wxScrollWinEventHandler(MainFrameBaseClass::OnScrollWinHisLineDown), NULL, this);
     this->Connect(m_menuItemOpenFile->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnOpenFile), NULL, this);
     this->Connect(m_menuItemSaveAsFile->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnSaveAsFile), NULL, this);
     this->Connect(m_menuItemSaveAsFile->GetId(), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MainFrameBaseClass::OnUpdateSaveAs), NULL, this);
@@ -303,18 +317,24 @@ MainFrameBaseClass::MainFrameBaseClass(wxWindow* parent, wxWindowID id, const wx
 MainFrameBaseClass::~MainFrameBaseClass()
 {
     m_scrollWin->Disconnect(wxEVT_MOTION, wxMouseEventHandler(MainFrameBaseClass::OnMouseMotion), NULL, this);
-    m_colourPickerCancerRoi->Disconnect(wxEVT_COMMAND_COLOURPICKER_CHANGED, wxColourPickerEventHandler(MainFrameBaseClass::OnColorChangeCancer), NULL, this);
-    m_colourPickerCancerRoi->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MainFrameBaseClass::OnUpdateCheckBoxRoiCancer), NULL, this);
+    m_scrollWin->Disconnect(wxEVT_LEFT_UP, wxMouseEventHandler(MainFrameBaseClass::OnMouseLeftUp), NULL, this);
+    m_staticTextCancerRoiCount->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MainFrameBaseClass::UpdateUITextRoiCount), NULL, this);
     m_checkBoxCancerRoi->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(MainFrameBaseClass::OnCheckBoxCheckRoi), NULL, this);
     m_checkBoxCancerRoi->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MainFrameBaseClass::OnUpdateCheckBoxRoiCancer), NULL, this);
-    m_colourPickerNormalRoi->Disconnect(wxEVT_COMMAND_COLOURPICKER_CHANGED, wxColourPickerEventHandler(MainFrameBaseClass::OnColorChangeNormal), NULL, this);
-    m_colourPickerNormalRoi->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MainFrameBaseClass::OnUpdateCheckBoxRoiNormal), NULL, this);
+    m_colourPickerCancerRoi->Disconnect(wxEVT_COMMAND_COLOURPICKER_CHANGED, wxColourPickerEventHandler(MainFrameBaseClass::OnColorChangeCancer), NULL, this);
+    m_colourPickerCancerRoi->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MainFrameBaseClass::OnUpdateCheckBoxRoiCancer), NULL, this);
+    m_staticTextNormalRoiCount->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MainFrameBaseClass::UpdateUITextRoiCount), NULL, this);
     m_checkBoxNormalRoi->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(MainFrameBaseClass::OnCheckBoxCheckRoi), NULL, this);
     m_checkBoxNormalRoi->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MainFrameBaseClass::OnUpdateCheckBoxRoiNormal), NULL, this);
+    m_colourPickerNormalRoi->Disconnect(wxEVT_COMMAND_COLOURPICKER_CHANGED, wxColourPickerEventHandler(MainFrameBaseClass::OnColorChangeNormal), NULL, this);
+    m_colourPickerNormalRoi->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MainFrameBaseClass::OnUpdateCheckBoxRoiNormal), NULL, this);
+    m_staticTextSlideValue->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MainFrameBaseClass::UpdateUISliderText), NULL, this);
     m_sliderFilterWidth->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MainFrameBaseClass::OnUpdateImageFunction), NULL, this);
     m_sliderFilterWidth->Disconnect(wxEVT_SCROLL_THUMBRELEASE, wxScrollEventHandler(MainFrameBaseClass::OnSliderChangeFilterWidth), NULL, this);
-    m_scrollWinHis->Disconnect(wxEVT_MOTION, wxMouseEventHandler(MainFrameBaseClass::updateHistorgamAndDrawFilter), NULL, this);
+    m_scrollWinHis->Disconnect(wxEVT_MOTION, wxMouseEventHandler(MainFrameBaseClass::OnMouseMotionScrollWinHistorgam), NULL, this);
     m_scrollWinHis->Disconnect(wxEVT_LEAVE_WINDOW, wxMouseEventHandler(MainFrameBaseClass::OnMouseLeaveScrollWinHis), NULL, this);
+    m_scrollWinHis->Disconnect(wxEVT_SCROLLWIN_LINEUP, wxScrollWinEventHandler(MainFrameBaseClass::OnScrollWinHisLineUp), NULL, this);
+    m_scrollWinHis->Disconnect(wxEVT_SCROLLWIN_LINEDOWN, wxScrollWinEventHandler(MainFrameBaseClass::OnScrollWinHisLineDown), NULL, this);
     this->Disconnect(m_menuItemOpenFile->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnOpenFile), NULL, this);
     this->Disconnect(m_menuItemSaveAsFile->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnSaveAsFile), NULL, this);
     this->Disconnect(m_menuItemSaveAsFile->GetId(), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MainFrameBaseClass::OnUpdateSaveAs), NULL, this);

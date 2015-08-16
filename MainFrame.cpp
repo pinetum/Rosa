@@ -24,6 +24,10 @@ MainFrame::MainFrame(wxWindow* parent): MainFrameBaseClass(parent)
     m_sliderFilterWidth->SetMax(SLIDER_MAX_VALUE);
     m_rois_cancer.clear();
     m_rois_normal.clear();
+    m_n_index_ofSelCancerRoi = -1;
+    m_n_index_ofSelNormalRoi = -1;
+    m_wxpt_lastptInScrollWinHis.x = 0;
+    m_wxpt_lastptInScrollWinHis.y = 0;
     m_c_roi_cancer = cv::Scalar(34, 34, 255);
     m_c_roi_normal = cv::Scalar(255, 255, 0);
 	m_nCurrentImg       = -1;
@@ -95,6 +99,35 @@ void MainFrame::OnMenuItemUndo(wxCommandEvent& event)
 	if(m_nCurrentImg >0)
 		m_nCurrentImg -- ;
 	UpdateView();
+}
+void MainFrame::OnMouseLeftUp(wxMouseEvent& event)
+{
+    if(m_rois_cancer.size() < 1 && m_rois_normal.size() <1)
+        return;
+        
+    m_n_index_ofSelCancerRoi = -1;
+    m_n_index_ofSelNormalRoi = -1;
+    wxClientDC dc(this);
+	wxPoint pt1 = event.GetLogicalPosition(dc);
+	wxPoint pt ;
+	m_scrollWin->CalcUnscrolledPosition(pt1.x,pt1.y,&pt.x,&pt.y);
+    for(int i = 0; i< m_rois_cancer.size(); i++)
+    {
+        if(cv::pointPolygonTest(m_rois_cancer[i], cv::Point(pt.x, pt.y), true) > 0 )
+        {
+            m_n_index_ofSelCancerRoi = i;
+            break;
+        }
+    }
+    for(int i = 0; i< m_rois_normal.size() && m_n_index_ofSelCancerRoi < 0; i++)
+    {
+        if(cv::pointPolygonTest(m_rois_normal[i], cv::Point(pt.x, pt.y), true) > 0 )
+        {
+            m_n_index_ofSelNormalRoi = i;
+            break;
+        }
+    }
+    UpdateView();
 }
 void MainFrame::OnMouseMotion(wxMouseEvent& event)
 {
@@ -170,6 +203,8 @@ void MainFrame::OnMouseMotion(wxMouseEvent& event)
 }
 void MainFrame::openFile(wxString &pathName)
 {
+    m_n_index_ofSelCancerRoi = -1;
+    m_n_index_ofSelNormalRoi = -1;
 	bool bRet = false;
 	DeleteContents();
 	MyImage* pImg = new MyImage;
@@ -208,7 +243,8 @@ void MainFrame::UpdateView()
 	MyImage* pImg = getCurrentImg();
     if(pImg == NULL)
         return;
-	cv::Mat histogram = pImg->getMatHistogram();
+    
+	cv::Mat histogram;
 	cv::Mat mat_view = pImg->getMatRef().clone();
     if(mat_view.empty())
     {
@@ -216,12 +252,14 @@ void MainFrame::UpdateView()
     }
 	else
     {
-        cv::cvtColor(mat_view, mat_view, CV_GRAY2BGR);
-        if(m_checkBoxCancerRoi->GetValue())
-        {
-            drawRois(mat_view, m_rois_cancer, m_c_roi_cancer);
-        }
+        if(mat_view.type() == CV_8UC1)
+            cv::cvtColor(mat_view, mat_view, CV_GRAY2BGR);
+        drawAllRois(mat_view);
+        
         m_scrollWin->setImage(mat_view);
+        
+        //get historgam
+        histogram = getHistorgram();
         
     }
 	if(histogram.empty())
@@ -550,26 +588,19 @@ void MainFrame::loadNormalRoi(wxString filePath)
 void MainFrame::OnSliderChangeFilterWidth(wxScrollEvent& event)
 {
     m_nFilterWidth = m_sliderFilterWidth->GetValue();
-    m_staticTextSlideValue->SetLabel(wxString::Format(wxT("%d"), m_nFilterWidth));
-
 }
-void MainFrame::updateHistorgamAndDrawFilter(wxMouseEvent& event)
+void MainFrame::drawHistorgamMask()
 {
     if(m_nFilterWidth == 0)
         return;
     if(!m_scrollWinHis->m_rgbOutput.data)
         return;
-    //get mouse position
-    wxClientDC dc(this);
-	wxPoint pt1 = event.GetLogicalPosition(dc);
-	wxPoint pt ;
-	m_scrollWinHis->CalcUnscrolledPosition(pt1.x,pt1.y,&pt.x,&pt.y);
-    
+    wxPoint pt = m_wxpt_lastptInScrollWinHis;
     //get size of scrollwin
     wxSize size_scrollWinHis = m_scrollWinHis->GetClientSize();
     //get historgam image(w=512)
     cv::Mat histogram  ;
-    cv::resize(getCurrentImg()->getMatHistogram(), histogram, cv::Size(size_scrollWinHis.x, size_scrollWinHis.y));
+    cv::resize(getHistorgram(), histogram, cv::Size(size_scrollWinHis.x, size_scrollWinHis.y));
     
     
     int realWidth = m_nFilterWidth*2*histogram.cols/512;
@@ -604,12 +635,17 @@ void MainFrame::updateHistorgamAndDrawFilter(wxMouseEvent& event)
 
     m_scrollWinHis->setImage(histogram);
     
-    //處理filter
+    
+    //暫時只想做單一通道Orz
+    if(getCurrentImg()->getType() != CV_8UC1)
+        return;
+    
+    
+    //處理filter在view圖片上的遮罩
     double alpha            = 0.4;
     int middle_point        = pt.x*256/size_scrollWinHis.x;
     int n_maxuma            = middle_point + m_nFilterWidth/2;
     int n_minuma            = middle_point - m_nFilterWidth/2;
-    
     if(n_maxuma > 255)
         n_maxuma = 255;
     if(n_minuma < 0)
@@ -630,7 +666,7 @@ void MainFrame::updateHistorgamAndDrawFilter(wxMouseEvent& event)
             n_valueInPt = filterCpy.data[j * mat_drawPoint.cols + i];
             
             //check value is in the target 
-            if(n_valueInPt > n_minuma && n_valueInPt < n_maxuma)
+            if(n_valueInPt >= n_minuma && n_valueInPt <= n_maxuma)
             {
                 //draw something to the image
                 cv::circle(mat_drawPoint, cv::Point(i, j), 2, cv::Scalar(0, 0, 255), -1);
@@ -650,10 +686,7 @@ void MainFrame::updateHistorgamAndDrawFilter(wxMouseEvent& event)
                     cv::FONT_HERSHEY_SIMPLEX,
                     1,
                     cv::Scalar(255,255,255));
-    if(m_checkBoxCancerRoi->GetValue())
-    {
-        drawRois(filterCpy, m_rois_cancer, m_c_roi_cancer);
-    }
+    drawAllRois(filterCpy);
     m_scrollWin->setImage(filterCpy);
     //cv::imshow("filter result", filterCpy);
     
@@ -704,4 +737,70 @@ void MainFrame::OnColorChangeNormal(wxColourPickerEvent& event)
     wxColor c = event.GetColour();
     m_c_roi_normal = cv::Scalar(c.Blue(), c.Green(), c.Red());
     UpdateView();
+}
+void MainFrame::drawAllRois(cv::Mat img)
+{
+    if(m_checkBoxCancerRoi->GetValue())
+    {
+        drawRois(img, m_rois_cancer, m_c_roi_cancer, m_n_index_ofSelCancerRoi);
+    }
+    if(m_checkBoxNormalRoi->GetValue())
+    {
+        drawRois(img, m_rois_normal, m_c_roi_normal, m_n_index_ofSelNormalRoi);
+    }
+}
+cv::Mat MainFrame::getHistorgram()
+{
+    MyImage* pImg = getCurrentImg();
+    cv::Mat histogram;
+    if(m_n_index_ofSelCancerRoi > -1)
+    {
+        histogram = pImg->getContourHistorgam(m_rois_cancer[m_n_index_ofSelCancerRoi]);
+    }
+    else if(m_n_index_ofSelNormalRoi > -1)
+    {
+        histogram = pImg->getContourHistorgam(m_rois_normal[m_n_index_ofSelNormalRoi]);
+    }
+    else
+    {
+        histogram = pImg->getMatHistogram();
+    }
+    return histogram;
+}
+
+void MainFrame::UpdateUITextRoiCount(wxUpdateUIEvent& event)
+{    
+    m_staticTextCancerRoiCount->SetLabel(wxString::Format("%d/%d", m_n_index_ofSelCancerRoi+1, m_rois_cancer.size()));
+    m_staticTextNormalRoiCount->SetLabel(wxString::Format("%d/%d", m_n_index_ofSelNormalRoi+1, m_rois_normal.size()));
+
+}
+void MainFrame::OnScrollWinHisLineUp(wxScrollWinEvent& event)
+{
+    m_sliderFilterWidth->SetValue(m_sliderFilterWidth->GetValue()+5);
+    m_nFilterWidth = m_sliderFilterWidth->GetValue();
+    drawHistorgamMask();
+}
+void MainFrame::OnScrollWinHisLineDown(wxScrollWinEvent& event)
+{
+    m_sliderFilterWidth->SetValue(m_sliderFilterWidth->GetValue()-5);
+    m_nFilterWidth = m_sliderFilterWidth->GetValue();
+    drawHistorgamMask();
+    
+}
+void MainFrame::UpdateUISliderText(wxUpdateUIEvent& event)
+{
+        m_staticTextSlideValue->SetLabel(wxString::Format(wxT("%d"), m_nFilterWidth));
+}
+void MainFrame::OnMouseMotionScrollWinHistorgam(wxMouseEvent& event)
+{
+        
+    //get mouse position
+    wxClientDC dc(this);
+	wxPoint pt1 = event.GetLogicalPosition(dc);
+	m_scrollWinHis->CalcUnscrolledPosition( pt1.x,
+                                            pt1.y,
+                                            &m_wxpt_lastptInScrollWinHis.x,
+                                            &m_wxpt_lastptInScrollWinHis.y
+                                            );
+    drawHistorgamMask();
 }

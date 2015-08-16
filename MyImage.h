@@ -4,7 +4,7 @@
 #include <string>
 #ifndef MYIMAGE_H
 #define MYIMAGE_H
-#define COLOR_LINE_POLYGON 255, 255, 255
+
 
 class MyImage
 {
@@ -28,7 +28,10 @@ public:
 	cv::Mat getMat(){ return m_cvMat;}
 	cv::Mat& getMatRef() { return m_cvMat; }
 	cv::Mat getMatHistogram();
-	cv::Mat* getMatAddr() { return &m_cvMat; }
+	cv::Mat getContourHistorgam(std::vector<cv::Point > contour);
+    
+    
+    cv::Mat* getMatAddr() { return &m_cvMat; }
 	wxString getFormatString();
 	template <class T>
 	void getPixelValue(wxPoint pt, T& v) { v = m_cvMat.at<T>(pt.y, pt.x);}
@@ -44,7 +47,7 @@ public:
     MyImage* resize(double zoom);
 	MyImage* split(int nTargetCh);
 	
-	void drawPolygonHis(std::vector<cv::Point > polygon);
+	
     MyImage* meanShift(int *x, int* y);
 private:
 	cv::Mat m_cvMat;
