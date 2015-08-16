@@ -21,11 +21,19 @@ public:
 	void DeleteContents();
 	void addNewImageState(MyImage* plmg);
 	void UpdateView();
+    void loadCancerRoi(wxString filePath);
+    void loadNormalRoi(wxString filePath);
 	MyImage* getCurrentImg();
 	//Gnuplot g1;
 	
 	
 protected:
+    virtual void OnColorChangeCancer(wxColourPickerEvent& event);
+    virtual void OnColorChangeNormal(wxColourPickerEvent& event);
+    virtual void OnMouseLeaveScrollWinHis(wxMouseEvent& event);
+    virtual void OnUpdateCheckBoxRoiCancer(wxUpdateUIEvent& event);
+    virtual void OnUpdateCheckBoxRoiNormal(wxUpdateUIEvent& event);
+    virtual void OnCheckBoxCheckRoi(wxCommandEvent& event);
     virtual void updateHistorgamAndDrawFilter(wxMouseEvent& event);
     virtual void OnSliderChangeFilterWidth(wxScrollEvent& event);
     
@@ -57,8 +65,11 @@ protected:
 	std::deque<MyImage*> m_imgList;
 	int m_nCurrentImg;
     int m_nFilterWidth;
-	wxString m_Filename;
-    std::vector<std::vector<cv::Point > > rois_cancer;
-    std::vector<std::vector<cv::Point > > rois_normal;
+	wxString m_strFileName;
+    wxString m_strFileFolder;
+    std::vector<std::vector<cv::Point > > m_rois_cancer;
+    std::vector<std::vector<cv::Point > > m_rois_normal;
+    cv::Scalar m_c_roi_cancer;
+    cv::Scalar m_c_roi_normal;
 };
 #endif // MAINFRAME_H

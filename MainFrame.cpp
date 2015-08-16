@@ -8,8 +8,10 @@
 #include "highDMeanShift.h"
 #include "MyJSParser.h"
 #include "myUtil.h"
+#include <wx/arrstr.h> 
+#include <wx/colour.h>
 
-#define SLIDER_MAX_VALUE 255
+#define SLIDER_MAX_VALUE 70
 #define ROI_RECT_SIZE 13
 
 Gnuplot g1("lines");
@@ -20,8 +22,10 @@ MainFrame *MainFrame::m_pThis = NULL;
 MainFrame::MainFrame(wxWindow* parent): MainFrameBaseClass(parent)
 {
     m_sliderFilterWidth->SetMax(SLIDER_MAX_VALUE);
-    rois_cancer.clear();
-    rois_normal.clear();
+    m_rois_cancer.clear();
+    m_rois_normal.clear();
+    m_c_roi_cancer = cv::Scalar(34, 34, 255);
+    m_c_roi_normal = cv::Scalar(255, 255, 0);
 	m_nCurrentImg       = -1;
 	m_pThis             = this;  // for some static fun use. ex:MainFrame::showMessage()
     int statuWidth[4]   = { 250, 80, 40, 140};
@@ -177,20 +181,49 @@ void MainFrame::openFile(wxString &pathName)
 	}
 	m_imgList.push_back(pImg);
 	m_nCurrentImg=0;
-	m_Filename = pathName;
-	wxString title = pathName.AfterLast('\\');
-	SetTitle(wxString("Edit - ") << title);
-	UpdateView();
+#if defined(__WINDOWS__)
+    m_strFileName = pathName.AfterLast('\\');
+    m_strFileFolder = pathName.BeforeLast('\\').append("\\");
+#else
+    m_strFileName = pathName.AfterLast('/');
+    m_strFileFolder = pathName.BeforeLast('/').append("/");
+#endif
+    SetTitle(wxString("Edit - ") << m_strFileName);
+
+    //get roi file path and call to load
+    wxString str_cancerRoiTxtPath;
+    wxString str_normalRoiTxtPath;
+    wxString partName = m_strFileName.AfterFirst('_').BeforeFirst('.');
+    partName.Replace("_","-",true);
+    str_cancerRoiTxtPath = wxString::Format("%scancerRoi-%s.txt", m_strFileFolder, partName);
+    str_normalRoiTxtPath = wxString::Format("%snormalRoi-%s.txt", m_strFileFolder, partName);
+//    MainFrame::showMessage(str_cancerRoiTxtPath);
+//    MainFrame::showMessage(str_normalRoiTxtPath);
+      loadCancerRoi(str_cancerRoiTxtPath);
+      loadNormalRoi(str_normalRoiTxtPath);
+      UpdateView();
 }
 void MainFrame::UpdateView()
 {
 	MyImage* pImg = getCurrentImg();
-	cv::Mat mat = pImg->getMatRef().clone();
+    if(pImg == NULL)
+        return;
 	cv::Mat histogram = pImg->getMatHistogram();
-	if(mat.empty())
-		showMessage("UpdateView:Mat is empty");
+	cv::Mat mat_view = pImg->getMatRef().clone();
+    if(mat_view.empty())
+    {
+        showMessage("UpdateView:Mat is empty");
+    }
 	else
-		m_scrollWin->setImage(mat);
+    {
+        cv::cvtColor(mat_view, mat_view, CV_GRAY2BGR);
+        if(m_checkBoxCancerRoi->GetValue())
+        {
+            drawRois(mat_view, m_rois_cancer, m_c_roi_cancer);
+        }
+        m_scrollWin->setImage(mat_view);
+        
+    }
 	if(histogram.empty())
 		showMessage("UpdateView:Histogram is empty");
 	else
@@ -198,31 +231,12 @@ void MainFrame::UpdateView()
         wxSize size_window = m_scrollWinHis->GetClientSize();
         cv::resize(histogram, histogram, cv::Size(size_window.x, size_window.y));
         m_scrollWinHis->setImage(histogram);
-        
-        //draw rois
-        if(mat.type() == CV_8UC1)
-        {
-            cv::Mat cpy = mat.clone();
-            cv::cvtColor(cpy, cpy, CV_GRAY2BGR);
-            if(rois_cancer.size() > 0)
-            {
-                cv::drawContours(cpy, rois_cancer, -1, cv::Scalar(255,255,255), 2);
-                
-            }
-//            if(rois_cancer.size() > 0)
-//            {
-//                cv::drawContours(cpy, rois_cancer, -1, cv::Scalar(255,255,255));
-//                
-//            }
-            m_scrollWin->setImage(cpy);
-        }
-        
     }
 	
     
     
 	wxString strSize;
-	strSize.Printf("W%d H%d",mat.cols, mat.rows);
+	strSize.Printf("W%d H%d",mat_view.cols, mat_view.rows);
 	m_statusBar->SetStatusText(strSize, 1);
 	m_statusBar->SetStatusText(pImg->getFormatString(), 2);
 }
@@ -465,35 +479,73 @@ void MainFrame::OnMenuClickLoadOralCancerRois(wxCommandEvent& event)
 	openDialog->Destroy();
     if(!str_fileName.empty())
     {
-        rois_cancer.clear();
-        rois_normal.clear();
-        FILE* fp                = NULL;
-        char* str_filecontent   = NULL;
-        int   n_contentSizr     = 0;
-        fp = fopen(str_fileName.mb_str(), "r");
-        // Is open file success?
-        if(fp==NULL)
-        {
-            MainFrame::showMessage("open Roi json File fail.");
-            return;
-        }
-        
-        fseek(fp, 0L, SEEK_END);                                            // get the number of char in txt file.
-        n_contentSizr = ftell(fp) + 1;
-        
-        str_filecontent = new char[n_contentSizr];                          // new char array.
-        fseek(fp, 0L, SEEK_SET);
-        
-        fgets(str_filecontent, n_contentSizr, fp);                          // read content of txt to char array.
-        
-        MyJSParser parser;                              
-        parser.setJsonStr(str_filecontent);                                 // parse!
-        rois_cancer = parser.getRois();      // get Rois (二階Vector，最裡面存放cv::Point)
-            //最後交由updateView畫出
-         UpdateView();
+       
+         
     }
 }
+void MainFrame::loadCancerRoi(wxString filePath)
+{
+    m_rois_cancer.clear();
+    FILE* fp                = NULL;
+    char* str_filecontent   = NULL;
+    int   n_contentSizr     = 0;
+    fp = fopen(filePath.mb_str(), "r");
+    // Is open file success?
+    if(fp==NULL)
+    {
+        MainFrame::showMessage("open cancer Roi json File fail.\n");
+        return;
+    }
 
+    fseek(fp, 0L, SEEK_END);                                            // get the number of char in txt file.
+    n_contentSizr = ftell(fp) + 1;
+
+    str_filecontent = new char[n_contentSizr];                          // new char array.
+    fseek(fp, 0L, SEEK_SET);
+
+    fgets(str_filecontent, n_contentSizr, fp);                          // read content of txt to char array.
+
+    MyJSParser parser;                              
+    parser.setJsonStr(str_filecontent);                                 // parse!
+    m_rois_cancer = parser.getRois();                                   // get Rois (二階Vector，最裡面存放cv::Point)
+        //最後交由updateView畫出
+    MainFrame::showMessage(wxString::Format("Total number of Cancer rois:%d\n", m_rois_cancer.size()));
+    
+    //auto to check checlBox
+    m_checkBoxCancerRoi->SetValue(true);
+    UpdateView();
+}
+void MainFrame::loadNormalRoi(wxString filePath)
+{
+    m_rois_normal.clear();
+    FILE* fp                = NULL;
+    char* str_filecontent   = NULL;
+    int   n_contentSizr     = 0;
+    fp = fopen(filePath.mb_str(), "r");
+    // Is open file success?
+    if(fp==NULL)
+    {
+        MainFrame::showMessage("open normal Roi json File fail.\n");
+        return;
+    }
+
+    fseek(fp, 0L, SEEK_END);                                            // get the number of char in txt file.
+    n_contentSizr = ftell(fp) + 1;
+
+    str_filecontent = new char[n_contentSizr];                          // new char array.
+    fseek(fp, 0L, SEEK_SET);
+
+    fgets(str_filecontent, n_contentSizr, fp);                          // read content of txt to char array.
+
+    MyJSParser parser;                              
+    parser.setJsonStr(str_filecontent);                                 // parse!
+    m_rois_normal = parser.getRois();                                   // get Rois (二階Vector，最裡面存放cv::Point)
+        //最後交由updateView畫出
+    MainFrame::showMessage(wxString::Format("Total number of Cancer rois:%d\n", m_rois_cancer.size()));
+    //auto to check checlBox
+    m_checkBoxNormalRoi->SetValue(true);
+    UpdateView();
+}
 
 void MainFrame::OnSliderChangeFilterWidth(wxScrollEvent& event)
 {
@@ -504,6 +556,8 @@ void MainFrame::OnSliderChangeFilterWidth(wxScrollEvent& event)
 void MainFrame::updateHistorgamAndDrawFilter(wxMouseEvent& event)
 {
     if(m_nFilterWidth == 0)
+        return;
+    if(!m_scrollWinHis->m_rgbOutput.data)
         return;
     //get mouse position
     wxClientDC dc(this);
@@ -570,14 +624,23 @@ void MainFrame::updateHistorgamAndDrawFilter(wxMouseEvent& event)
         for(int j= 0; j<mat_drawPoint.rows; j++)
         {
             // get gray value 
-            n_valueInPt = filterCpy.at<uchar>(j,i);
+               // slow
+               //n_valueInPt = filterCpy.at<uchar>(j,i);
+            //fast
+            n_valueInPt = filterCpy.data[j * mat_drawPoint.cols + i];
+            
             //check value is in the target 
             if(n_valueInPt > n_minuma && n_valueInPt < n_maxuma)
             {
+                //draw something to the image
                 cv::circle(mat_drawPoint, cv::Point(i, j), 2, cv::Scalar(0, 0, 255), -1);
             }
         }
     }
+    
+    
+
+    
     // covert gray img to bgr img for cv::addWeighted use
     cv::cvtColor(filterCpy, filterCpy, CV_GRAY2BGR);
     cv::addWeighted(mat_drawPoint, alpha, filterCpy, 1.0 - alpha , 0.0, filterCpy); 
@@ -587,16 +650,58 @@ void MainFrame::updateHistorgamAndDrawFilter(wxMouseEvent& event)
                     cv::FONT_HERSHEY_SIMPLEX,
                     1,
                     cv::Scalar(255,255,255));
-    cv::imshow("filter result", filterCpy);
+    if(m_checkBoxCancerRoi->GetValue())
+    {
+        drawRois(filterCpy, m_rois_cancer, m_c_roi_cancer);
+    }
+    m_scrollWin->setImage(filterCpy);
+    //cv::imshow("filter result", filterCpy);
+    
 }
 
-/*
- * 
-cv::Mat image = cv::imread("IMG_2083s.png"); 
-    cv::Mat roi = image(cv::Rect(100, 100, 300, 300));
-    cv::Mat color(roi.size(), CV_8UC3, cv::Scalar(0, 125, 125)); 
-    double alpha = 0.3;
-    cv::addWeighted(color, alpha, roi, 1.0 - alpha , 0.0, roi); 
+void MainFrame::OnCheckBoxCheckRoi(wxCommandEvent& event)
+{
+    UpdateView();
+}
 
-    cv::imshow("image",image);
- * */
+void MainFrame::OnUpdateCheckBoxRoiCancer(wxUpdateUIEvent& event)
+{
+    if(m_rois_cancer.size() > 0)
+    {
+        event.Enable(true);
+    }
+    else
+    {
+        event.Enable(false);
+    }
+        
+    
+    
+}
+void MainFrame::OnUpdateCheckBoxRoiNormal(wxUpdateUIEvent& event)
+{
+    if(m_rois_normal.size() > 0)
+    {
+        event.Enable(true);
+    }
+    else
+    {
+        event.Enable(false);
+    }
+}
+void MainFrame::OnMouseLeaveScrollWinHis(wxMouseEvent& event)
+{
+    UpdateView();
+}
+void MainFrame::OnColorChangeCancer(wxColourPickerEvent& event)
+{
+    wxColor c = event.GetColour();
+    m_c_roi_cancer = cv::Scalar(c.Blue(), c.Green(), c.Red());
+    UpdateView();
+}
+void MainFrame::OnColorChangeNormal(wxColourPickerEvent& event)
+{
+    wxColor c = event.GetColour();
+    m_c_roi_normal = cv::Scalar(c.Blue(), c.Green(), c.Red());
+    UpdateView();
+}

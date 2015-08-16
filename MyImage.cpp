@@ -345,30 +345,7 @@ MyImage* 	MyImage::resize(double zoom){
 	cv::resize(pNew->m_cvMat,pNew->m_cvMat,cv::Size(0, 0), zoom, zoom);
 	return pNew;
 }
-MyImage*    MyImage::drawPolygon(std::vector<cv::Point > polygon)
-{
-    drawPolygonHis(polygon);
-    MyImage* pNew;
-    pNew = clone();
-    
-    
-    //cv::Mat matCalHis(matRef.rows, matRef.cols, CV_8UC1, cv::Scalar(0));
-    //cv::imshow("hisMat", matCalHis);
-    
-    for(int n_iPt= 0; n_iPt < polygon.size(); n_iPt++)
-    {
-        if(n_iPt == polygon.size() - 1)
-        {
-            cv::line(pNew->m_cvMat, polygon[n_iPt], polygon[0], cv::Scalar(COLOR_LINE_POLYGON));
-        }
-        else
-        {
-            cv::line(pNew->m_cvMat, polygon[n_iPt], polygon[n_iPt+1], cv::Scalar(COLOR_LINE_POLYGON));
-        }
-        
-    }
-    return pNew;
-}
+
 void MyImage::drawPolygonHis(std::vector<cv::Point > polygon)
 {
     int h = m_cvMat.rows;

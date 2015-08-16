@@ -16,6 +16,8 @@
 #include <wx/sizer.h>
 #include <wx/scrolwin.h>
 #include "MyImageWin.h"
+#include <wx/clrpicker.h>
+#include <wx/checkbox.h>
 #include <wx/statline.h>
 #include <wx/panel.h>
 #include <wx/richtext/richtextctrl.h>
@@ -43,6 +45,10 @@ public:
     };
 protected:
     MyImageWin* m_scrollWin;
+    wxColourPickerCtrl* m_colourPickerCancerRoi;
+    wxCheckBox* m_checkBoxCancerRoi;
+    wxColourPickerCtrl* m_colourPickerNormalRoi;
+    wxCheckBox* m_checkBoxNormalRoi;
     wxStaticLine* m_staticLine74;
     wxPanel* m_mainPanel;
     wxRichTextCtrl* m_richTextCtrl;
@@ -84,9 +90,15 @@ protected:
 
 protected:
     virtual void OnMouseMotion(wxMouseEvent& event) { event.Skip(); }
+    virtual void OnColorChangeCancer(wxColourPickerEvent& event) { event.Skip(); }
+    virtual void OnUpdateCheckBoxRoiCancer(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnCheckBoxCheckRoi(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnColorChangeNormal(wxColourPickerEvent& event) { event.Skip(); }
+    virtual void OnUpdateCheckBoxRoiNormal(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnUpdateImageFunction(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnSliderChangeFilterWidth(wxScrollEvent& event) { event.Skip(); }
     virtual void updateHistorgamAndDrawFilter(wxMouseEvent& event) { event.Skip(); }
+    virtual void OnMouseLeaveScrollWinHis(wxMouseEvent& event) { event.Skip(); }
     virtual void OnOpenFile(wxCommandEvent& event) { event.Skip(); }
     virtual void OnSaveAsFile(wxCommandEvent& event) { event.Skip(); }
     virtual void OnUpdateSaveAs(wxUpdateUIEvent& event) { event.Skip(); }
@@ -113,6 +125,10 @@ protected:
 
 public:
     MyImageWin* GetScrollWin() { return m_scrollWin; }
+    wxColourPickerCtrl* GetColourPickerCancerRoi() { return m_colourPickerCancerRoi; }
+    wxCheckBox* GetCheckBoxCancerRoi() { return m_checkBoxCancerRoi; }
+    wxColourPickerCtrl* GetColourPickerNormalRoi() { return m_colourPickerNormalRoi; }
+    wxCheckBox* GetCheckBoxNormalRoi() { return m_checkBoxNormalRoi; }
     wxStaticLine* GetStaticLine74() { return m_staticLine74; }
     wxRichTextCtrl* GetRichTextCtrl() { return m_richTextCtrl; }
     wxStaticText* GetStaticTextSlideValue() { return m_staticTextSlideValue; }
