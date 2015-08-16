@@ -216,7 +216,8 @@ MainFrameBaseClass::MainFrameBaseClass(wxWindow* parent, wxWindowID id, const wx
     m_menuOralCancer->Append(m_menuItemLoadRois);
     
     m_mainToolbar = this->CreateToolBar(wxTB_FLAT, wxID_ANY);
-    m_mainToolbar->SetToolBitmapSize(wxSize(16,16));
+    m_mainToolbar->SetToolBitmapSize(wxSize(32,32));
+    m_mainToolbar->SetMargins(1,1);
     
     m_mainToolbar->AddTool(wxID_OPEN, _("Tool Label"), wxXmlResource::Get()->LoadBitmap(wxT("open-file-icon")), wxNullBitmap, wxITEM_NORMAL, wxT(""), wxT(""), NULL);
     

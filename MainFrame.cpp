@@ -40,7 +40,6 @@ MainFrame::MainFrame(wxWindow* parent): MainFrameBaseClass(parent)
     //SetSize(900, 800);
 	//Center();
     
-    m_mainToolbar->SetToolBitmapSize(wxSize(24, 24));
     Maximize(true);
 }
 
