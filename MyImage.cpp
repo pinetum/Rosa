@@ -2,7 +2,7 @@
 #include "MainFrame.h"
 #include <wx/log.h> 
 #include <vector>
-
+#include "math.h"
 #define WIDTH_HISTORGAM_IMG     512
 #define HEIGHT_HISTORGAM_IMG    300
 
@@ -365,11 +365,11 @@ cv::Mat MyImage::getContourHistorgam(std::vector<cv::Point > contour)
         for(int i = 0; i < m_cvMat.cols-10; i++ )
         {
             //判斷是不是在ROI之內
-            if(cv::pointPolygonTest(contour, cv::Point(i, j), true) > 0 )
+            if(cv::pointPolygonTest(contour, cv::Point(i, j), false) > 0 )
             {
                 totalPts++;
                 
-                int v = m_cvMat.at<uchar>(j, i);
+                int v = (int)m_cvMat.at<uchar>(j, i);
                 his[v]++;
                 fprintf(fp, "%d,",v);
                 //wxString info = wxString::Format("point(%d,%d):Value:%d\n", i, j, val);
@@ -378,26 +378,51 @@ cv::Mat MyImage::getContourHistorgam(std::vector<cv::Point > contour)
         }
     }
    fclose(fp);
-    int maxuma =0;
+    int max = 0;
     for(int i = 0; i<256; i++)
     {
-        if(maxuma < his[i])
-            maxuma =  his[i];
+        if(max < his[i])
+            max = his[i];
     }
-    double scale = HEIGHT_HISTORGAM_IMG*1.0/maxuma;
-    cv::Mat mhis = cv::Mat::zeros(HEIGHT_HISTORGAM_IMG, WIDTH_HISTORGAM_IMG, CV_8UC3);
+    double scale = HEIGHT_HISTORGAM_IMG*1.0/max;
+    
     fp = fopen("ptHis.txt", "w");
-    fprintf(fp, "Max %d\n", maxuma);
+    fprintf(fp, "Max : %d\n", max);
     fprintf(fp, "%f\n", scale);
+    
+    //////KDE
+    
+//    fprintf(fp, "KKKKDE\n");
+//    int kedResult[256];
+//    int kde_h = 2;
+//    double normal_c=20000;
+//    for(int i = 0; i < 256; i++)
+//    {
+//        double v = 0;
+//        for(int n =0; n < 256; n++)
+//        {
+//            
+//            double x =(i-n)*1.0/kde_h;
+//            //fprintf(fp, "x = %f\n", a);
+//            v+=exp(-0.5*pow(x, 2));
+//        }
+//        
+//        v = v/kde_h/256*normal_c;
+//        fprintf(fp, "f = %f\n", v);
+//        kedResult[i]=(int)floor(v);
+//    }
+//    ///KDE end
+    
+    
+    cv::Mat mhis = cv::Mat::zeros(HEIGHT_HISTORGAM_IMG, WIDTH_HISTORGAM_IMG, CV_8UC3);
     for(int i = 1; i<256; i++)
     {
-        fprintf(fp, "%d, %d\n", i*2, (int)floor(his[i]*1.0*scale));
-        cv::line(   mhis, 
-                    cv::Point((i-1)*2,  (int)floor(his[i-1]*1.0*scale)), 
-                    cv::Point(i*2,      (int)floor(his[i]*1.0*scale)), 
-                    cv::Scalar(255, 255, 255),
-                    2
-                );
+        fprintf(fp, "%d, %d, %d\n", i*2, (int)floor(his[i]*1.0*scale), his[i]);
+        cv::line(mhis,
+                cv::Point((i-1)*2, mhis.rows - his[i-1]*scale),
+                cv::Point(i*2, mhis.rows - his[i]*scale),
+                cv::Scalar(255,255,255),
+                2);
     }
     fclose(fp);
     return mhis;

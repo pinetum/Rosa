@@ -273,10 +273,12 @@ void MainFrame::UpdateView()
 	
     
     
-	wxString strSize;
-	strSize.Printf("W%d H%d",mat_view.cols, mat_view.rows);
-	m_statusBar->SetStatusText(strSize, 1);
+    // update..texts
+	m_statusBar->SetStatusText(wxString::Format("W%d H%d",mat_view.cols, mat_view.rows), 1);
 	m_statusBar->SetStatusText(pImg->getFormatString(), 2);
+    m_staticTextCancerRoiCount->SetLabel(wxString::Format("%d/%d", m_n_index_ofSelCancerRoi+1, m_rois_cancer.size()));
+    m_staticTextNormalRoiCount->SetLabel(wxString::Format("%d/%d", m_n_index_ofSelNormalRoi+1, m_rois_normal.size()));
+    
 }
 void MainFrame::DeleteContents(){
 	int sz = m_imgList.size();
@@ -591,6 +593,7 @@ void MainFrame::OnSliderChangeFilterWidth(wxScrollEvent& event)
 }
 void MainFrame::drawHistorgamMask()
 {
+     m_staticTextSlideValue->SetLabel(wxString::Format(wxT("%d"), m_nFilterWidth));
     if(m_nFilterWidth == 0)
         return;
     if(!m_scrollWinHis->m_rgbOutput.data)
@@ -689,7 +692,7 @@ void MainFrame::drawHistorgamMask()
     drawAllRois(filterCpy);
     m_scrollWin->setImage(filterCpy);
     //cv::imshow("filter result", filterCpy);
-    
+   
 }
 
 void MainFrame::OnCheckBoxCheckRoi(wxCommandEvent& event)
@@ -770,18 +773,20 @@ cv::Mat MainFrame::getHistorgram()
 
 void MainFrame::UpdateUITextRoiCount(wxUpdateUIEvent& event)
 {    
-    m_staticTextCancerRoiCount->SetLabel(wxString::Format("%d/%d", m_n_index_ofSelCancerRoi+1, m_rois_cancer.size()));
-    m_staticTextNormalRoiCount->SetLabel(wxString::Format("%d/%d", m_n_index_ofSelNormalRoi+1, m_rois_normal.size()));
-
+    
 }
 void MainFrame::OnScrollWinHisLineUp(wxScrollWinEvent& event)
 {
+    if(m_sliderFilterWidth->GetValue() > m_sliderFilterWidth->GetMax())
+        return;
     m_sliderFilterWidth->SetValue(m_sliderFilterWidth->GetValue()+5);
     m_nFilterWidth = m_sliderFilterWidth->GetValue();
     drawHistorgamMask();
 }
 void MainFrame::OnScrollWinHisLineDown(wxScrollWinEvent& event)
 {
+    if(m_sliderFilterWidth->GetValue()<1)
+        return;
     m_sliderFilterWidth->SetValue(m_sliderFilterWidth->GetValue()-5);
     m_nFilterWidth = m_sliderFilterWidth->GetValue();
     drawHistorgamMask();
@@ -789,7 +794,7 @@ void MainFrame::OnScrollWinHisLineDown(wxScrollWinEvent& event)
 }
 void MainFrame::UpdateUISliderText(wxUpdateUIEvent& event)
 {
-        m_staticTextSlideValue->SetLabel(wxString::Format(wxT("%d"), m_nFilterWidth));
+        
 }
 void MainFrame::OnMouseMotionScrollWinHistorgam(wxMouseEvent& event)
 {
