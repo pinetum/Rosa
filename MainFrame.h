@@ -4,6 +4,7 @@
 #include "MyImageWin.h"
 #include "MyImage.h"
 //#include "gnuplot_i.hpp"
+#include "myUtil.h"
 #include "wxcrafter.h"
 
 #include <deque>

@@ -3,8 +3,11 @@
 #include <wx/log.h> 
 #include <vector>
 #include "math.h"
-#define WIDTH_HISTORGAM_IMG     512
-#define HEIGHT_HISTORGAM_IMG    300
+
+
+#define HISTORGAM_IMG_WIDTH     512
+#define HISTORGAM_IMG_HEIGHT    300
+#define HISTORGAM_LINE_THICKNESS 1
 
 MyImage::MyImage()
 {
@@ -34,7 +37,7 @@ MyImage::~MyImage()
 
 cv::Mat 	MyImage::getMatHistogram(){
 
-	cv::Mat cvMat_HisRet(HEIGHT_HISTORGAM_IMG, WIDTH_HISTORGAM_IMG, CV_8UC3, cv::Scalar( 0,0,0) );
+	cv::Mat cvMat_HisRet(HISTORGAM_IMG_HEIGHT, HISTORGAM_IMG_WIDTH, CV_8UC3, cv::Scalar( 0,0,0) );
 	int 			histSize 	= 256;// Establish the number of bins
 	float 			range[] 	= { 0, 255 } ;// Set the ranges ( for B,G,R) )
 	const float* 	histRange 	= { range };
@@ -350,16 +353,26 @@ MyImage* 	MyImage::resize(double zoom){
 
 cv::Mat MyImage::getContourHistorgam(std::vector<cv::Point > contour)
 {
-    int h = m_cvMat.rows;
-    int w = m_cvMat.cols;
-    int totalPts = 0;
-    int his[256] ;
-    for(int i = 0; i<256; i++)
+    int bandWidh = 20;
+    int a2 = bandWidh;
+    cv::Mat his = cv::Mat::zeros(1, 256, CV_32FC1);
+    cv::Mat points = cv::Mat(1, 1, CV_32FC1);
+    cv::Mat matGussian = cv::Mat::zeros(1, bandWidh, CV_32FC1);
+    //calculate gussian
+    for(int i = 0; i< matGussian.cols; i++)
     {
-        his[i]=0;
+        matGussian.at<float>(0,i) = bandWidh/2*-1+i;
     }
-    FILE* fp = fopen("pts.txt","w");
-    //MainFrame::showMessage(wxString::Format("Mat Size:%d*%d", h, w));
+    cv::pow(matGussian, 2, matGussian);
+    matGussian = matGussian/2/a2;
+    cv::exp(-1*matGussian, matGussian);
+    matGussian = matGussian/sqrt(2*M_PI*a2);
+    FILE* fp_g = fopen("gussian.txt","w");
+    for(int i = 0; i< matGussian.cols; i++)
+    {
+        fprintf(fp_g, "%f\n", matGussian.at<float>(0,i));
+    }
+    fclose(fp_g);
     for(int j = 0; j < m_cvMat.rows-10; j++ )
     {   
         for(int i = 0; i < m_cvMat.cols-10; i++ )
@@ -367,64 +380,54 @@ cv::Mat MyImage::getContourHistorgam(std::vector<cv::Point > contour)
             //判斷是不是在ROI之內
             if(cv::pointPolygonTest(contour, cv::Point(i, j), false) > 0 )
             {
-                totalPts++;
-                
                 int v = (int)m_cvMat.at<uchar>(j, i);
-                his[v]++;
-                fprintf(fp, "%d,",v);
-                //wxString info = wxString::Format("point(%d,%d):Value:%d\n", i, j, val);
-                //MainFrame::showMessage(info);
+                his.at<float>(0, v)+=1;
             }
         }
     }
-   fclose(fp);
-    int max = 0;
+
+
+    cv::Mat ked_Result = MyUtil::calculateKde(his);
+        
+    // draw historgam..
+    cv::Mat mhis = cv::Mat::zeros(HISTORGAM_IMG_HEIGHT, HISTORGAM_IMG_WIDTH, CV_8UC3);
+    cv::Mat his_bin = his.clone();
+    cv::normalize(his_bin, his_bin, 0, mhis.rows-20, cv::NORM_MINMAX, -1, cv::Mat() );
+    cv::normalize(ked_Result, his, 0, mhis.rows-20, cv::NORM_MINMAX, -1, cv::Mat() );
+    
+    
+    FILE* fpHis = fopen("his.txt", "w");
+    FILE* fpKde = fopen("kde.txt", "w");
     for(int i = 0; i<256; i++)
     {
-        if(max < his[i])
-            max = his[i];
-    }
-    double scale = HEIGHT_HISTORGAM_IMG*1.0/max;
-    
-    fp = fopen("ptHis.txt", "w");
-    fprintf(fp, "Max : %d\n", max);
-    fprintf(fp, "%f\n", scale);
-    
-    //////KDE
-    
-//    fprintf(fp, "KKKKDE\n");
-//    int kedResult[256];
-//    int kde_h = 2;
-//    double normal_c=20000;
-//    for(int i = 0; i < 256; i++)
-//    {
-//        double v = 0;
-//        for(int n =0; n < 256; n++)
-//        {
-//            
-//            double x =(i-n)*1.0/kde_h;
-//            //fprintf(fp, "x = %f\n", a);
-//            v+=exp(-0.5*pow(x, 2));
-//        }
-//        
-//        v = v/kde_h/256*normal_c;
-//        fprintf(fp, "f = %f\n", v);
-//        kedResult[i]=(int)floor(v);
-//    }
-//    ///KDE end
-    
-    
-    cv::Mat mhis = cv::Mat::zeros(HEIGHT_HISTORGAM_IMG, WIDTH_HISTORGAM_IMG, CV_8UC3);
-    for(int i = 1; i<256; i++)
-    {
-        fprintf(fp, "%d, %d, %d\n", i*2, (int)floor(his[i]*1.0*scale), his[i]);
+        //bins
+        int bin_x = i*mhis.cols/256;
+        int bin_y = mhis.rows - (int)floor(his_bin.at<float>(0, i));
+        fprintf(fpHis, "%d\n", (int)floor(his_bin.at<float>(0, i) ));
+        fprintf(fpKde, "%d\n", (int)floor(his.at<float>(0,i)));
+        cv::line(   mhis,
+                    cv::Point(bin_x, bin_y),
+                    cv::Point(bin_x, mhis.rows),
+                    cv::Scalar(10,128,10),
+                    mhis.cols/256);
+        
+        // Kde
+        if(i==0)
+            continue;
+        int x1 = (i-1)*mhis.cols/256;
+        int x2 = i*mhis.cols/256;
+        int y1 = mhis.rows - (int)floor(his.at<float>(0, i-1));
+        int y2 = mhis.rows - (int)floor(his.at<float>(0, i));
         cv::line(mhis,
-                cv::Point((i-1)*2, mhis.rows - his[i-1]*scale),
-                cv::Point(i*2, mhis.rows - his[i]*scale),
+                cv::Point(x1, y1),
+                cv::Point(x2, y2),
                 cv::Scalar(255,255,255),
-                2);
+                HISTORGAM_LINE_THICKNESS,
+                CV_AA);
+        
     }
-    fclose(fp);
+    fclose(fpHis);
+    fclose(fpKde);
     return mhis;
 }
 MyImage* MyImage::meanShift(int *x, int* y){
@@ -436,10 +439,6 @@ MyImage* MyImage::meanShift(int *x, int* y){
 	MyImage* pNew;
 	pNew = clone();
     cv::Mat mDataMat = pNew->m_cvMat;
-    
-    
-    
-    
     
 	return pNew;
 }

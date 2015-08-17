@@ -7,9 +7,11 @@
 #include "gnuplot_i.hpp"
 #include "highDMeanShift.h"
 #include "MyJSParser.h"
-#include "myUtil.h"
 #include <wx/arrstr.h> 
 #include <wx/colour.h>
+
+
+
 
 #define SLIDER_MAX_VALUE 128
 #define ROI_RECT_SIZE 13
@@ -663,7 +665,7 @@ void MainFrame::drawHistorgamMask()
     }
     
     //draw transperent area
-    drawTransparentRect(histogram, cv::Rect(n_rect_x, n_rect_y, n_rect_w, n_rect_h), cv::Scalar(0,0,255), 0.3);
+    MyUtil::drawTransparentRect(histogram, cv::Rect(n_rect_x, n_rect_y, n_rect_w, n_rect_h), cv::Scalar(0,0,255), 0.3);
     //draw rect
     //cv::rectangle(histogram, cv::Rect(n_rect_x, n_rect_y, n_rect_w, n_rect_h), cv::Scalar(0,0,255));
 
@@ -776,11 +778,11 @@ void MainFrame::drawAllRois(cv::Mat img)
 {
     if(m_checkBoxCancerRoi->GetValue())
     {
-        drawRois(img, m_rois_cancer, m_c_roi_cancer, m_n_index_ofSelCancerRoi);
+        MyUtil::drawRois(img, m_rois_cancer, m_c_roi_cancer, m_n_index_ofSelCancerRoi);
     }
     if(m_checkBoxNormalRoi->GetValue())
     {
-        drawRois(img, m_rois_normal, m_c_roi_normal, m_n_index_ofSelNormalRoi);
+        MyUtil::drawRois(img, m_rois_normal, m_c_roi_normal, m_n_index_ofSelNormalRoi);
     }
 }
 cv::Mat MainFrame::getHistorgram()
