@@ -35,8 +35,10 @@ class MyUtil
         
     }
 
-    static cv::Mat calculateKde(cv::Mat stdHis, int bandWith = 20, int a2 = 20)
+    static cv::Mat calculateKde(cv::Mat stdHis, int Kze = 25, double normalizeConst = 1.0)
     {
+        double sigma_sqare      = Kze;
+        int bandWith            = Kze;
         cv::Mat ked_Result = cv::Mat::zeros(stdHis.rows, stdHis.cols, CV_32FC1);
         //step1 calculate Gussian curve
         cv::Mat matGussian = cv::Mat::zeros(1, bandWith, CV_32FC1);
@@ -45,9 +47,9 @@ class MyUtil
             matGussian.at<float>(0,i) = bandWith/2*-1+i;
         }
         cv::pow(matGussian, 2, matGussian);
-        matGussian = matGussian/2/a2;
+        matGussian = matGussian/2/sigma_sqare;
         cv::exp(-1*matGussian, matGussian);
-        matGussian = matGussian/sqrt(2*CV_PI*a2);
+        matGussian = normalizeConst*matGussian/sqrt(2*CV_PI*sigma_sqare);
         //step2 transform historgam to KDE
         for(int i = 0; i < stdHis.cols; i++)
         {

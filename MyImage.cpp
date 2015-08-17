@@ -78,12 +78,43 @@ cv::Mat 	MyImage::getMatHistogram(){
 			{
                     cv::Mat hist;
                     cv::calcHist( &m_cvMat, 1, 0, cv::Mat(), hist, 1, &histSize, &histRange, uniform, accumulate );
-                    cv::normalize(hist, hist, 0, cvMat_HisRet.rows, cv::NORM_MINMAX, -1, cv::Mat() );
-                    for( int i = 1; i < histSize; i++ )
+                    
+                    hist.convertTo(hist, CV_32F);
+                    cv::transpose(hist, hist);
+                    cv::Mat kde = MyUtil::calculateKde(hist);
+                    
+//                    double min, max;
+//                    cv::minMaxLoc(hist, &min, &max);
+//                    double scale = (cvMat_HisRet.rows -20)/max;
+//                    hist = hist * scale;
+//                    kde = kde * scale;
+                    cv::normalize(hist, hist, 0, cvMat_HisRet.rows -20, cv::NORM_MINMAX, -1, cv::Mat() );
+                    cv::normalize(kde, kde, 0, cvMat_HisRet.rows -20, cv::NORM_MINMAX, -1, cv::Mat() );
+                    for( int i = 0; i < histSize; i++ )
                     {
-                        cv::line( cvMat_HisRet, cv::Point( bin_w*(i-1), hist_h - cvRound(hist.at<float>(i-1)) ) ,
-                                    cv::Point( bin_w*(i), hist_h - cvRound(hist.at<float>(i)) ),
-                                    cv::Scalar( 255, 255, 255), 2, 8, 0  );
+                        //bins
+                        int bin_x = i*cvMat_HisRet.cols/256;
+                        int bin_y = cvMat_HisRet.rows - (int)floor(hist.at<float>(0, i));
+                        cv::line(   cvMat_HisRet,
+                                    cv::Point(bin_x, bin_y),
+                                    cv::Point(bin_x, cvMat_HisRet.rows),
+                                    cv::Scalar(10,128,10),
+                                    cvMat_HisRet.cols/256);
+                        
+                        // Kde
+                        if(i==0)
+                            continue;
+                        int x1 = (i-1)*cvMat_HisRet.cols/256;
+                        int x2 = i*cvMat_HisRet.cols/256;
+                        int y1 = cvMat_HisRet.rows - (int)floor(kde.at<float>(0, i-1));
+                        int y2 = cvMat_HisRet.rows - (int)floor(kde.at<float>(0, i));
+                        //MainFrame::showMessage(wxString::Format("%d\n",(int)floor(hist.at<float>(0, i))));
+                        cv::line(cvMat_HisRet,
+                                cv::Point(x1, y1),
+                                cv::Point(x2, y2),
+                                cv::Scalar(255,255,255),
+                                HISTORGAM_LINE_THICKNESS,
+                                CV_AA);
                     }
                     break;
 			}
@@ -392,8 +423,16 @@ cv::Mat MyImage::getContourHistorgam(std::vector<cv::Point > contour)
     // draw historgam..
     cv::Mat mhis = cv::Mat::zeros(HISTORGAM_IMG_HEIGHT, HISTORGAM_IMG_WIDTH, CV_8UC3);
     cv::Mat his_bin = his.clone();
+    
+    
+//    double min, max;
+//    cv::minMaxLoc(his_bin, &min, &max);
+//    double scale = (mhis.rows -20)/max;
+//    his_bin = his_bin * scale;
+//    ked_Result = ked_Result * scale;
+    
     cv::normalize(his_bin, his_bin, 0, mhis.rows-20, cv::NORM_MINMAX, -1, cv::Mat() );
-    cv::normalize(ked_Result, his, 0, mhis.rows-20, cv::NORM_MINMAX, -1, cv::Mat() );
+    cv::normalize(ked_Result, ked_Result, 0, mhis.rows-20, cv::NORM_MINMAX, -1, cv::Mat() );
     
     
     FILE* fpHis = fopen("his.txt", "w");
@@ -404,7 +443,7 @@ cv::Mat MyImage::getContourHistorgam(std::vector<cv::Point > contour)
         int bin_x = i*mhis.cols/256;
         int bin_y = mhis.rows - (int)floor(his_bin.at<float>(0, i));
         fprintf(fpHis, "%d\n", (int)floor(his_bin.at<float>(0, i) ));
-        fprintf(fpKde, "%d\n", (int)floor(his.at<float>(0,i)));
+        fprintf(fpKde, "%d\n", (int)floor(ked_Result.at<float>(0,i)));
         cv::line(   mhis,
                     cv::Point(bin_x, bin_y),
                     cv::Point(bin_x, mhis.rows),
@@ -416,8 +455,8 @@ cv::Mat MyImage::getContourHistorgam(std::vector<cv::Point > contour)
             continue;
         int x1 = (i-1)*mhis.cols/256;
         int x2 = i*mhis.cols/256;
-        int y1 = mhis.rows - (int)floor(his.at<float>(0, i-1));
-        int y2 = mhis.rows - (int)floor(his.at<float>(0, i));
+        int y1 = mhis.rows - (int)floor(ked_Result.at<float>(0, i-1));
+        int y2 = mhis.rows - (int)floor(ked_Result.at<float>(0, i));
         cv::line(mhis,
                 cv::Point(x1, y1),
                 cv::Point(x2, y2),
