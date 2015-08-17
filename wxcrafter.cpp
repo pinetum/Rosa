@@ -272,7 +272,7 @@ MainFrameBaseClass::MainFrameBaseClass(wxWindow* parent, wxWindowID id, const wx
     m_colourPickerNormalRoi->Connect(wxEVT_COMMAND_COLOURPICKER_CHANGED, wxColourPickerEventHandler(MainFrameBaseClass::OnColorChangeNormal), NULL, this);
     m_colourPickerNormalRoi->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MainFrameBaseClass::OnUpdateCheckBoxRoiNormal), NULL, this);
     m_staticTextSlideValue->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MainFrameBaseClass::UpdateUISliderText), NULL, this);
-    m_sliderFilterWidth->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MainFrameBaseClass::OnUpdateImageFunction), NULL, this);
+    m_sliderFilterWidth->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MainFrameBaseClass::OnUpdateUISliderFilterWidth), NULL, this);
     m_sliderFilterWidth->Connect(wxEVT_SCROLL_THUMBRELEASE, wxScrollEventHandler(MainFrameBaseClass::OnSliderChangeFilterWidth), NULL, this);
     m_scrollWinHis->Connect(wxEVT_MOTION, wxMouseEventHandler(MainFrameBaseClass::OnMouseMotionScrollWinHistorgam), NULL, this);
     m_scrollWinHis->Connect(wxEVT_LEAVE_WINDOW, wxMouseEventHandler(MainFrameBaseClass::OnMouseLeaveScrollWinHis), NULL, this);
@@ -330,7 +330,7 @@ MainFrameBaseClass::~MainFrameBaseClass()
     m_colourPickerNormalRoi->Disconnect(wxEVT_COMMAND_COLOURPICKER_CHANGED, wxColourPickerEventHandler(MainFrameBaseClass::OnColorChangeNormal), NULL, this);
     m_colourPickerNormalRoi->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MainFrameBaseClass::OnUpdateCheckBoxRoiNormal), NULL, this);
     m_staticTextSlideValue->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MainFrameBaseClass::UpdateUISliderText), NULL, this);
-    m_sliderFilterWidth->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MainFrameBaseClass::OnUpdateImageFunction), NULL, this);
+    m_sliderFilterWidth->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MainFrameBaseClass::OnUpdateUISliderFilterWidth), NULL, this);
     m_sliderFilterWidth->Disconnect(wxEVT_SCROLL_THUMBRELEASE, wxScrollEventHandler(MainFrameBaseClass::OnSliderChangeFilterWidth), NULL, this);
     m_scrollWinHis->Disconnect(wxEVT_MOTION, wxMouseEventHandler(MainFrameBaseClass::OnMouseMotionScrollWinHistorgam), NULL, this);
     m_scrollWinHis->Disconnect(wxEVT_LEAVE_WINDOW, wxMouseEventHandler(MainFrameBaseClass::OnMouseLeaveScrollWinHis), NULL, this);

@@ -100,7 +100,7 @@ protected:
     virtual void OnUpdateCheckBoxRoiNormal(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnColorChangeNormal(wxColourPickerEvent& event) { event.Skip(); }
     virtual void UpdateUISliderText(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnUpdateImageFunction(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnUpdateUISliderFilterWidth(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnSliderChangeFilterWidth(wxScrollEvent& event) { event.Skip(); }
     virtual void OnMouseMotionScrollWinHistorgam(wxMouseEvent& event) { event.Skip(); }
     virtual void OnMouseLeaveScrollWinHis(wxMouseEvent& event) { event.Skip(); }
@@ -116,6 +116,7 @@ protected:
     virtual void OnMenuItemRedo(wxCommandEvent& event) { event.Skip(); }
     virtual void OnUpdateItemRedo(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnItemDestroyWindowClose(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnUpdateImageFunction(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnImageFindFace(wxCommandEvent& event) { event.Skip(); }
     virtual void OnImageFindMouth(wxCommandEvent& event) { event.Skip(); }
     virtual void OnImageFindCircles(wxCommandEvent& event) { event.Skip(); }

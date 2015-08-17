@@ -1343,7 +1343,7 @@
 																	"m_eventName":	"wxEVT_UPDATE_UI",
 																	"m_eventClass":	"wxUpdateUIEvent",
 																	"m_eventHandler":	"wxUpdateUIEventHandler",
-																	"m_functionNameAndSignature":	"OnUpdateImageFunction(wxUpdateUIEvent& event)",
+																	"m_functionNameAndSignature":	"OnUpdateUISliderFilterWidth(wxUpdateUIEvent& event)",
 																	"m_description":	"Process a wxEVT_UPDATE_UI event",
 																	"m_noBody":	false
 																}, {

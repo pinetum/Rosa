@@ -30,6 +30,7 @@ public:
 	
 	
 protected:
+    virtual void OnUpdateUISliderFilterWidth(wxUpdateUIEvent& event);
     virtual void OnMouseMotionScrollWinHistorgam(wxMouseEvent& event);
     virtual void UpdateUISliderText(wxUpdateUIEvent& event);
     virtual void OnScrollWinHisLineDown(wxScrollWinEvent& event);

@@ -308,7 +308,7 @@ void MainFrame::UpdateView()
 	m_statusBar->SetStatusText(pImg->getFormatString(), 2);
     m_staticTextCancerRoiCount->SetLabel(wxString::Format("%d/%d", m_n_index_ofSelCancerRoi+1, m_rois_cancer.size()));
     m_staticTextNormalRoiCount->SetLabel(wxString::Format("%d/%d", m_n_index_ofSelNormalRoi+1, m_rois_normal.size()));
-    
+    m_staticTextSlideValue->SetLabel(wxString::Format(wxT("%d"), m_nFilterWidth));
 }
 void MainFrame::DeleteContents(){
 	int sz = m_imgList.size();
@@ -620,6 +620,7 @@ void MainFrame::loadNormalRoi(wxString filePath)
 void MainFrame::OnSliderChangeFilterWidth(wxScrollEvent& event)
 {
     m_nFilterWidth = m_sliderFilterWidth->GetValue();
+    UpdateView();
 }
 void MainFrame::drawHistorgamMask()
 {
@@ -838,4 +839,10 @@ void MainFrame::OnMouseMotionScrollWinHistorgam(wxMouseEvent& event)
                                             &m_wxpt_lastptInScrollWinHis.y
                                             );
     drawHistorgamMask();
+}
+void MainFrame::OnUpdateUISliderFilterWidth(wxUpdateUIEvent& event)
+{
+    
+    event.Enable(true);
+    
 }
