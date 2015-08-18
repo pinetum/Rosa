@@ -4,7 +4,6 @@
 #include <vector>
 #include "math.h"
 
-
 #define HISTORGAM_IMG_WIDTH     512
 #define HISTORGAM_IMG_HEIGHT    300
 #define HISTORGAM_LINE_THICKNESS 1
@@ -398,12 +397,12 @@ cv::Mat MyImage::getContourHistorgam(std::vector<cv::Point > contour)
     matGussian = matGussian/2/a2;
     cv::exp(-1*matGussian, matGussian);
     matGussian = matGussian/sqrt(2*M_PI*a2);
-    FILE* fp_g = fopen("gussian.txt","w");
-    for(int i = 0; i< matGussian.cols; i++)
-    {
-        fprintf(fp_g, "%f\n", matGussian.at<float>(0,i));
-    }
-    fclose(fp_g);
+//    FILE* fp_g = fopen("gussian.txt","w");
+//    for(int i = 0; i< matGussian.cols; i++)
+//    {
+//        fprintf(fp_g, "%f\n", matGussian.at<float>(0,i));
+//    }
+//    fclose(fp_g);
     for(int j = 0; j < m_cvMat.rows-10; j++ )
     {   
         for(int i = 0; i < m_cvMat.cols-10; i++ )
@@ -435,15 +434,15 @@ cv::Mat MyImage::getContourHistorgam(std::vector<cv::Point > contour)
     cv::normalize(ked_Result, ked_Result, 0, mhis.rows-20, cv::NORM_MINMAX, -1, cv::Mat() );
     
     
-    FILE* fpHis = fopen("his.txt", "w");
-    FILE* fpKde = fopen("kde.txt", "w");
+//    FILE* fpHis = fopen("his.txt", "w");
+//    FILE* fpKde = fopen("kde.txt", "w");
     for(int i = 0; i<256; i++)
     {
         //bins
         int bin_x = i*mhis.cols/256;
         int bin_y = mhis.rows - (int)floor(his_bin.at<float>(0, i));
-        fprintf(fpHis, "%d\n", (int)floor(his_bin.at<float>(0, i) ));
-        fprintf(fpKde, "%d\n", (int)floor(ked_Result.at<float>(0,i)));
+        //fprintf(fpHis, "%d\n", (int)floor(his_bin.at<float>(0, i) ));
+        //fprintf(fpKde, "%d\n", (int)floor(ked_Result.at<float>(0,i)));
         cv::line(   mhis,
                     cv::Point(bin_x, bin_y),
                     cv::Point(bin_x, mhis.rows),
@@ -465,8 +464,14 @@ cv::Mat MyImage::getContourHistorgam(std::vector<cv::Point > contour)
                 CV_AA);
         
     }
-    fclose(fpHis);
-    fclose(fpKde);
+    //fclose(fpHis);
+    //fclose(fpKde);
+    
+    
+    
+    
+    
+    
     return mhis;
 }
 MyImage* MyImage::meanShift(int *x, int* y){

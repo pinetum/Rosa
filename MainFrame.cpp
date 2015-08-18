@@ -4,19 +4,15 @@
 #include <wx/dcclient.h>
 #include <wx/dnd.h>
 #include "CDlgGetValue.h"
-#include "gnuplot_i.hpp"
 #include "highDMeanShift.h"
 #include "MyJSParser.h"
 #include <wx/arrstr.h> 
 #include <wx/colour.h>
-
-
-
+#include "gnuplot_i.hpp"
 
 #define SLIDER_MAX_VALUE 128
 #define ROI_RECT_SIZE 13
 
-Gnuplot g1("lines");
 MainFrame *MainFrame::m_pThis = NULL;
 
 
@@ -488,12 +484,12 @@ void MainFrame::OnMenuItemSplit(wxCommandEvent& event)
 }
 void MainFrame::OnGnuplotSample(wxCommandEvent& event)
 {
-	//g1 = Gnuplot("lines");
-	g1.reset_all();
-	g1.set_title("gnuPlotSample");
-	g1.plot_slope(1.0,0.0,"y=x");
-	g1.plot_equation("sin(12*x)*exp(-x)").plot_equation("exp(-x)");
-	g1.showonscreen();
+	//Gnuplot g1("lines");
+//	g1.reset_all();
+//	g1.set_title("gnuPlotSample");
+//	g1.plot_slope(1.0,0.0,"y=x");
+//	g1.plot_equation("sin(12*x)*exp(-x)").plot_equation("exp(-x)");
+//	g1.showonscreen();
 }
 void MainFrame::OnMeanShiftBase(wxCommandEvent& event)
 {

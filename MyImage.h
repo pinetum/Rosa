@@ -46,7 +46,7 @@ public:
 	MyImage* resize(cv::Size size);
     MyImage* resize(double zoom);
 	MyImage* split(int nTargetCh);
-	
+
 	
     MyImage* meanShift(int *x, int* y);
 private:

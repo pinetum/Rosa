@@ -1,5 +1,5 @@
 #include "MyJSParser.h"
-#include "MainFrame.h"
+//#include "MainFrame.h"
 
 
 
@@ -22,7 +22,7 @@ void MyJSParser::setJsonStr(char *jsonStr)
     m_doc.Parse(jsonStr);
     if(m_doc.HasParseError())
     {
-        wxString result = "error Code:"+ wxString::Format("%d", m_doc.GetParseError());;
+        //wxString result = "error Code:"+ wxString::Format("%d", m_doc.GetParseError());;
 //        switch(m_doc.GetParseError())
 //        {
 //            case rapidjson::ParseErrorCode.kParseErrorDocumentEmpty:
@@ -44,7 +44,7 @@ void MyJSParser::setJsonStr(char *jsonStr)
 //                result = "Missing a comma or ']' after an array element.".
 //                break;
 //        }
-        MainFrame::showMessage(result);
+        //MainFrame::showMessage(result);
     }
 }
 void MyJSParser::releaseMem()
@@ -74,17 +74,11 @@ std::vector<std::vector<cv::Point > > MyJSParser::getRois()
                 }
                  m_vv_Rois.push_back(v_pts);
             }
-            else
-            {
-                MainFrame::showMessage("JSparser fail. 2-nd array is not array.");
-            }
+
         }
         
     }
-    else
-    {
-        MainFrame::showMessage("JSparser fail. 1-st array is not array.");
-    }
+
     return m_vv_Rois;
     
 }

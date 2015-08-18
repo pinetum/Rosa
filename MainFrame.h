@@ -3,11 +3,10 @@
 
 #include "MyImageWin.h"
 #include "MyImage.h"
-//#include "gnuplot_i.hpp"
 #include "myUtil.h"
 #include "wxcrafter.h"
-
 #include <deque>
+//#include "gnuplot_i.hpp"
 
 class MainFrame : public MainFrameBaseClass
 {
@@ -27,7 +26,7 @@ public:
     cv::Mat getHistorgram();
     void drawAllRois(cv::Mat img);
 	MyImage* getCurrentImg();
-	//Gnuplot g1;
+    //Gnuplot* g1;
 	
 	
 protected:
