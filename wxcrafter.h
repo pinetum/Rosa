@@ -25,10 +25,11 @@
 #include <wx/slider.h>
 #include <wx/menu.h>
 #include <wx/toolbar.h>
+#include <wx/tglbtn.h>
+#include <wx/button.h>
 #include <wx/statusbr.h>
 #include <wx/dialog.h>
 #include <wx/textctrl.h>
-#include <wx/button.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
 #include <wx/persist/toplevel.h>
@@ -91,6 +92,7 @@ protected:
     wxMenu* m_menu176;
     wxMenuItem* m_menuItemRaiseArmDetect;
     wxToolBar* m_mainToolbar;
+    wxBitmapToggleButton* m_bmpToggleBtnMarkNormalRoi;
     wxStatusBar* m_statusBar;
 
 protected:
@@ -135,6 +137,7 @@ protected:
     virtual void OnMenuClickLoadOralCancerRois(wxCommandEvent& event) { event.Skip(); }
     virtual void OnMenuItemClkRunAllOralCancer(wxCommandEvent& event) { event.Skip(); }
     virtual void OnMenuItemClkRaisArmDetect(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnTogBtnMarkNormalRoi(wxCommandEvent& event) { event.Skip(); }
 
 public:
     MyImageWin* GetScrollWin() { return m_scrollWin; }
@@ -151,6 +154,7 @@ public:
     MyImageWin* GetScrollWinHis() { return m_scrollWinHis; }
     wxPanel* GetMainPanel() { return m_mainPanel; }
     wxMenuBar* GetMenuBar() { return m_menuBar; }
+    wxBitmapToggleButton* GetBmpToggleBtnMarkNormalRoi() { return m_bmpToggleBtnMarkNormalRoi; }
     wxToolBar* GetMainToolbar() { return m_mainToolbar; }
     wxStatusBar* GetStatusBar() { return m_statusBar; }
     MainFrameBaseClass(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Rosa"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(800,600), long style = wxCAPTION|wxRESIZE_BORDER|wxMAXIMIZE_BOX|wxMINIMIZE_BOX|wxSYSTEM_MENU|wxCLOSE_BOX);

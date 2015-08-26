@@ -124,15 +124,61 @@ void MainFrame::OnMenuItemUndo(wxCommandEvent& event)
 }
 void MainFrame::OnMouseLeftUp(wxMouseEvent& event)
 {
+    //get mouse position
+    wxClientDC dc(this);
+	wxPoint pt1 = event.GetLogicalPosition(dc);
+	wxPoint pt ;
+	m_scrollWin->CalcUnscrolledPosition(pt1.x,pt1.y,&pt.x,&pt.y);
+    
+    if(m_bmpToggleBtnMarkNormalRoi->GetValue())
+    {
+        std::vector<cv::Point > roi;
+        if(m_rois_normal.size() > 0)
+        {
+            roi = m_rois_normal[0];
+            m_rois_normal.pop_back();
+        }
+        cv::Point cvPt(pt.x, pt.y);
+        roi.push_back(cvPt);
+        m_rois_normal.push_back(roi); 
+        char content[500];
+        
+        
+        
+        FILE* fp = fopen(m_str_normalRoiTxtPath.mb_str().data(), "w");
+        
+        fprintf(fp,"[");
+        for(int i = 0; i<m_rois_normal.size(); i++)
+        {
+            fprintf(fp,"[");
+            for(int j= 0; j < m_rois_normal[i].size(); j++)
+            {
+                fprintf(fp,"{\"x\":%d,\"y\":%d}", m_rois_normal[i][j].x, m_rois_normal[i][j].y);
+                if(j != m_rois_normal[i].size()-1)
+                    fprintf(fp,",");
+            }
+            if(i != m_rois_normal.size()-1)
+                fprintf(fp,",");
+            fprintf(fp,"]");
+        }
+        fprintf(fp,"]");
+        fclose(fp);
+        UpdateView();
+        return;
+    }
+    
+    
+    
+    
+    
+    
+    
     if(m_rois_cancer.size() < 1 && m_rois_normal.size() <1)
         return;
         
     m_n_index_ofSelCancerRoi = -1;
     m_n_index_ofSelNormalRoi = -1;
-    wxClientDC dc(this);
-	wxPoint pt1 = event.GetLogicalPosition(dc);
-	wxPoint pt ;
-	m_scrollWin->CalcUnscrolledPosition(pt1.x,pt1.y,&pt.x,&pt.y);
+    
     for(int i = 0; i< m_rois_cancer.size(); i++)
     {
         if(cv::pointPolygonTest(m_rois_cancer[i], cv::Point(pt.x, pt.y), true) > 0 )
@@ -256,16 +302,14 @@ void MainFrame::openFile(wxString &pathName)
     SetTitle(wxString("Edit - ") << m_strFileName);
 
     //get roi file path and call to load
-    wxString str_cancerRoiTxtPath;
-    wxString str_normalRoiTxtPath;
     wxString partName = m_strFileName.AfterFirst('_').BeforeFirst('.');
     partName.Replace("_","-",true);
-    str_cancerRoiTxtPath = wxString::Format("%scancerRoi-%s.txt", m_strFileFolder, partName);
-    str_normalRoiTxtPath = wxString::Format("%snormalRoi-%s.txt", m_strFileFolder, partName);
-//    MainFrame::showMessage(str_cancerRoiTxtPath);
-//    MainFrame::showMessage(str_normalRoiTxtPath);
-      loadCancerRoi(str_cancerRoiTxtPath);
-      //loadNormalRoi(str_normalRoiTxtPath);
+    m_str_cancerRoiTxtPath = wxString::Format("%scancerRoi-%s.txt", m_strFileFolder, partName);
+    m_str_normalRoiTxtPath = wxString::Format("%snormalRoi-%s.txt", m_strFileFolder, partName);
+//    MainFrame::showMessage(m_str_cancerRoiTxtPath);
+//    MainFrame::showMessage(m_str_normalRoiTxtPath);
+      loadCancerRoi(m_str_cancerRoiTxtPath);
+      loadNormalRoi(m_str_normalRoiTxtPath);
       
       //split image...
     if(pathName.AfterLast('/').StartsWith("460"))
@@ -993,4 +1037,7 @@ void MainFrame::openMultiOralCancerDataByDir(wxString path)
     
     
     
+}
+void MainFrame::OnTogBtnMarkNormalRoi(wxCommandEvent& event)
+{
 }

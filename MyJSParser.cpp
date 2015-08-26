@@ -52,6 +52,11 @@ void MyJSParser::releaseMem()
     
     m_vv_Rois.clear();
 }
+
+
+
+
+
 std::vector<std::vector<cv::Point > > MyJSParser::getRois()
 {
     releaseMem();
@@ -83,3 +88,5 @@ std::vector<std::vector<cv::Point > > MyJSParser::getRois()
     return m_vv_Rois;
     
 }
+
+

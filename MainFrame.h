@@ -31,6 +31,7 @@ public:
 	
 	
 protected:
+    virtual void OnTogBtnMarkNormalRoi(wxCommandEvent& event);
     virtual void OnMenuItemClkRunAllOralCancer(wxCommandEvent& event);
     virtual void OnMenuItemClkRaisArmDetect(wxCommandEvent& event);
     virtual void OnUpdateUISliderFilterWidth(wxUpdateUIEvent& event);
@@ -79,6 +80,8 @@ protected:
     int m_nFilterWidth;
 	wxString m_strFileName;
     wxString m_strFileFolder;
+    wxString m_str_cancerRoiTxtPath;
+    wxString m_str_normalRoiTxtPath;
     std::vector<std::vector<cv::Point > > m_rois_cancer;
     std::vector<std::vector<cv::Point > > m_rois_normal;
     cv::Scalar m_c_roi_cancer;

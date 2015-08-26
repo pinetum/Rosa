@@ -63,7 +63,7 @@ MainFrameBaseClass::MainFrameBaseClass(wxWindow* parent, wxWindowID id, const wx
     boxSizer160->Add(m_staticTextCancerRoiCount, 0, wxALL, 5);
     
     m_checkBoxCancerRoi = new wxCheckBox(this, wxID_ANY, _("Cancer Roi"), wxDefaultPosition, wxSize(-1,-1), 0);
-    m_checkBoxCancerRoi->SetValue(false);
+    m_checkBoxCancerRoi->SetValue(true);
     
     boxSizer160->Add(m_checkBoxCancerRoi, 0, wxALL, 5);
     
@@ -80,7 +80,7 @@ MainFrameBaseClass::MainFrameBaseClass(wxWindow* parent, wxWindowID id, const wx
     boxSizer162->Add(m_staticTextNormalRoiCount, 0, wxALL, 5);
     
     m_checkBoxNormalRoi = new wxCheckBox(this, wxID_ANY, _("Normal Roi"), wxDefaultPosition, wxSize(-1,-1), 0);
-    m_checkBoxNormalRoi->SetValue(false);
+    m_checkBoxNormalRoi->SetValue(true);
     
     boxSizer162->Add(m_checkBoxNormalRoi, 0, wxALL, 5);
     
@@ -240,6 +240,8 @@ MainFrameBaseClass::MainFrameBaseClass(wxWindow* parent, wxWindowID id, const wx
     
     m_mainToolbar->AddTool(wxID_ANY, _("Rotaion"), wxXmlResource::Get()->LoadBitmap(wxT("Rotation-icon")), wxNullBitmap, wxITEM_NORMAL, wxT(""), wxT(""), NULL);
     
+    m_mainToolbar->AddSeparator();
+    
     m_mainToolbar->AddTool(wxID_ANY, _("Tool Label"), wxXmlResource::Get()->LoadBitmap(wxT("creeper")), wxNullBitmap, wxITEM_NORMAL, wxT(""), wxT(""), NULL);
     
     m_mainToolbar->AddTool(wxID_ANY, _("Tool Label"), wxXmlResource::Get()->LoadBitmap(wxT("enderman")), wxNullBitmap, wxITEM_NORMAL, wxT(""), wxT(""), NULL);
@@ -247,6 +249,12 @@ MainFrameBaseClass::MainFrameBaseClass(wxWindow* parent, wxWindowID id, const wx
     m_mainToolbar->AddTool(wxID_ANY, _("Tool Label"), wxXmlResource::Get()->LoadBitmap(wxT("Ghast")), wxNullBitmap, wxITEM_NORMAL, wxT(""), wxT(""), NULL);
     
     m_mainToolbar->AddTool(wxID_ANY, _("Tool Label"), wxXmlResource::Get()->LoadBitmap(wxT("tnt")), wxNullBitmap, wxITEM_NORMAL, wxT(""), wxT(""), NULL);
+    
+    m_mainToolbar->AddSeparator();
+    
+    m_bmpToggleBtnMarkNormalRoi = new wxBitmapToggleButton(m_mainToolbar, wxID_ANY, wxXmlResource::Get()->LoadBitmap(wxT("polygon")), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_bmpToggleBtnMarkNormalRoi->SetValue(true);
+    m_mainToolbar->AddControl(m_bmpToggleBtnMarkNormalRoi);
     m_mainToolbar->Realize();
     
     m_statusBar = new wxStatusBar(this, wxID_ANY, wxSTB_DEFAULT_STYLE);
@@ -323,6 +331,7 @@ MainFrameBaseClass::MainFrameBaseClass(wxWindow* parent, wxWindowID id, const wx
     this->Connect(m_menuItemLoadRois->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnMenuClickLoadOralCancerRois), NULL, this);
     this->Connect(m_menuItemRunAllOralCncer->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnMenuItemClkRunAllOralCancer), NULL, this);
     this->Connect(m_menuItemRaiseArmDetect->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnMenuItemClkRaisArmDetect), NULL, this);
+    m_bmpToggleBtnMarkNormalRoi->Connect(wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, wxCommandEventHandler(MainFrameBaseClass::OnTogBtnMarkNormalRoi), NULL, this);
     
 }
 
@@ -383,6 +392,7 @@ MainFrameBaseClass::~MainFrameBaseClass()
     this->Disconnect(m_menuItemLoadRois->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnMenuClickLoadOralCancerRois), NULL, this);
     this->Disconnect(m_menuItemRunAllOralCncer->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnMenuItemClkRunAllOralCancer), NULL, this);
     this->Disconnect(m_menuItemRaiseArmDetect->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnMenuItemClkRaisArmDetect), NULL, this);
+    m_bmpToggleBtnMarkNormalRoi->Disconnect(wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, wxCommandEventHandler(MainFrameBaseClass::OnTogBtnMarkNormalRoi), NULL, this);
     
 }
 

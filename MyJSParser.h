@@ -17,8 +17,8 @@ public:
     
     MyJSParser();
     ~MyJSParser();
-    void                                    setJsonStr(char *jsonStr);
-    void                                    setJsonFile(FILE* jsonFp);
+    void    setJsonStr(char *jsonStr);
+    void    setJsonFile(FILE* jsonFp);
     std::vector<std::vector<cv::Point > >     getRois();
 private:
     //
