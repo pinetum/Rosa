@@ -87,6 +87,9 @@ protected:
     wxMenuItem* m_menuItemMSBase;
     wxMenu* m_menuOralCancer;
     wxMenuItem* m_menuItemLoadRois;
+    wxMenuItem* m_menuItemRunAllOralCncer;
+    wxMenu* m_menu176;
+    wxMenuItem* m_menuItemRaiseArmDetect;
     wxToolBar* m_mainToolbar;
     wxStatusBar* m_statusBar;
 
@@ -130,6 +133,8 @@ protected:
     virtual void OnGnuplotSample(wxCommandEvent& event) { event.Skip(); }
     virtual void OnMeanShiftBase(wxCommandEvent& event) { event.Skip(); }
     virtual void OnMenuClickLoadOralCancerRois(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnMenuItemClkRunAllOralCancer(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnMenuItemClkRaisArmDetect(wxCommandEvent& event) { event.Skip(); }
 
 public:
     MyImageWin* GetScrollWin() { return m_scrollWin; }

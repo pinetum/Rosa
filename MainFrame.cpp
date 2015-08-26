@@ -1,7 +1,9 @@
 #include "MainFrame.h"
 #include <wx/aboutdlg.h>
+#include <wx/dirdlg.h>
 #include <wx/filedlg.h>
 #include <wx/dcclient.h>
+#include <wx/dir.h>
 #include <wx/dnd.h>
 #include "CDlgGetValue.h"
 #include "highDMeanShift.h"
@@ -263,7 +265,21 @@ void MainFrame::openFile(wxString &pathName)
 //    MainFrame::showMessage(str_cancerRoiTxtPath);
 //    MainFrame::showMessage(str_normalRoiTxtPath);
       loadCancerRoi(str_cancerRoiTxtPath);
-      loadNormalRoi(str_normalRoiTxtPath);
+      //loadNormalRoi(str_normalRoiTxtPath);
+      
+      //split image...
+    if(pathName.AfterLast('/').StartsWith("460"))
+    {
+        
+        addNewImageState(pImg->split(1));
+        
+    }
+    else if(pathName.AfterLast('/').StartsWith("375"))
+    {
+        addNewImageState(pImg->split(0));
+    }
+      
+      
       UpdateView();
 }
 void MainFrame::UpdateView()
@@ -709,7 +725,7 @@ void MainFrame::drawHistorgamMask()
     
 
     
-    // covert gray img to bgr img for cv::addWeighted use
+    // cvt gray img to bgr img for cv::addWeighted use
     cv::cvtColor(filterCpy, filterCpy, CV_GRAY2BGR);
     cv::addWeighted(mat_drawPoint, alpha, filterCpy, 1.0 - alpha , 0.0, filterCpy); 
     cv::putText(    filterCpy, 
@@ -842,5 +858,139 @@ void MainFrame::OnUpdateUISliderFilterWidth(wxUpdateUIEvent& event)
 {
     
     event.Enable(true);
+    
+}
+void MainFrame::OnMenuItemClkRaisArmDetect(wxCommandEvent& event)
+{
+    cv::VideoCapture cam;
+    cv::Mat camMat;
+    cv::Mat lastFrame;
+    cv::Mat nowFrame;
+    cam.open(0);
+    cam.set(CV_CAP_PROP_FRAME_WIDTH, 640);
+    cam.set(CV_CAP_PROP_FRAME_HEIGHT, 480);
+    //cam.set()
+    
+    int update_counter = 0;
+    const int n_framesToUpdate = 2;
+    while(cam.isOpened())
+    {
+        update_counter++;
+        cam.grab();
+        cam.retrieve(camMat);
+        
+        if(update_counter != n_framesToUpdate)
+        {
+            continue;
+        }
+        update_counter = 0;
+        cv::cvtColor(camMat, camMat, CV_BGR2GRAY);
+        nowFrame = camMat.clone();
+        if(lastFrame.data)
+        {
+            camMat = camMat - lastFrame;
+        }
+        lastFrame = nowFrame;
+        MyImage img(camMat);
+        MyImage* result = img.Threshold(40,false);
+        
+        cv::imshow("ps", result->getMatRef());
+        delete result;
+        if(cvWaitKey(20) == 27)//esc pressed.
+        {
+            cam.release();
+            return;
+        }
+    }
+
+    MainFrame::showMessage("camera open fail.");
+    
+    
+    
+    
+    
+}
+void MainFrame::OnMenuItemClkRunAllOralCancer(wxCommandEvent& event)
+{
+    wxDirDialog dlg(this, "Choose input directory", "",wxDD_DEFAULT_STYLE | wxDD_DIR_MUST_EXIST);
+    if(dlg.ShowModal() == wxID_OK){
+		wxString DirPath = dlg.GetPath();
+        openMultiOralCancerDataByDir(DirPath);
+	}
+    dlg.Destroy();
+}
+void MainFrame::openMultiOralCancerDataByDir(wxString path)
+{
+    wxDir dir_oralDir(path);
+    wxArrayString aryStr_SubDirs;
+    if(!dir_oralDir.HasSubDirs())
+    {
+        showMessage("no files discovered..\n");
+        return;
+    }
+    
+    //scan all record dir
+    wxString    str_subDir="";
+    bool        b_cont = dir_oralDir.GetFirst(&str_subDir, "", wxDIR_DIRS);
+    while(b_cont)
+    {
+        //str_subDir = path.append("/").append(str_subDir);
+        aryStr_SubDirs.Add(wxString::Format("%s/%s", path, str_subDir));
+        str_subDir = "";
+        b_cont = dir_oralDir.GetNext(&str_subDir);
+        
+    }
+    FILE* fp = fopen("oralCancer.csv", "w");
+    for(int i = 0; i< aryStr_SubDirs.size(); i++)
+    {
+        wxDir dir_recordDir(aryStr_SubDirs[i]);
+        //scan all files
+        wxString    str_fileName="";
+        //just get fileName
+        bool        b_cont = dir_recordDir.GetFirst(&str_fileName, "", wxDIR_FILES);
+        while(b_cont)
+        {
+            if(str_fileName.StartsWith("cancer"))
+            {
+                wxString str_fileName_375 = wxString::Format("375nm%s", str_fileName.AfterFirst('i'));
+                str_fileName_375.Replace("-", "_", true);
+                str_fileName_375.Replace("txt", "bmp", true);
+                wxString str_fileName_460 = wxString::Format("460nm%s", str_fileName.AfterFirst('i'));
+                str_fileName_460.Replace("-", "_", true);
+                str_fileName_460.Replace("txt", "bmp", true);
+                
+                
+                //append path
+//                str_fileName = wxString::Format("%s/%s", aryStr_SubDirs[i], str_fileName);
+//                MainFrame::showMessage(str_fileName_375+"\n");
+//                MainFrame::showMessage(str_fileName_460+"\n");
+//                
+                int mode_375 = -1, mode_460 = -1;
+                wxString path375 = wxString::Format("%s/%s", aryStr_SubDirs[i], str_fileName_375);
+                this->openFile(path375);
+                
+                if(m_rois_cancer.size() <= 0)
+                    continue;
+                getCurrentImg()->getContourHistorgam(m_rois_cancer[0]);
+                mode_375 = getCurrentImg()->getOralCancerMode();
+                wxString path460 = wxString::Format("%s/%s", aryStr_SubDirs[i], str_fileName_460);
+                this->openFile(path460);
+                if(m_rois_cancer.size()<= 0)
+                    continue;
+                getCurrentImg()->getContourHistorgam(m_rois_cancer[0]);
+                mode_460 = getCurrentImg()->getOralCancerMode();
+                MainFrame::showMessage(wxString::Format("---%d,%d----\n", mode_460, mode_375));
+                if(mode_460 > 0 && mode_375 > 0)
+                {
+                    fprintf(fp, "%d,%d,%s\n", mode_460, mode_375, path460.mb_str().data());
+                }
+            }
+            b_cont = dir_recordDir.GetNext(&str_fileName);
+        }
+    }
+    fclose(fp);
+    
+    
+    
     
 }

@@ -215,6 +215,15 @@ MainFrameBaseClass::MainFrameBaseClass(wxWindow* parent, wxWindowID id, const wx
     m_menuItemLoadRois = new wxMenuItem(m_menuOralCancer, wxID_ANY, _("Load Rois From jsFile(*.txt)"), wxT(""), wxITEM_NORMAL);
     m_menuOralCancer->Append(m_menuItemLoadRois);
     
+    m_menuItemRunAllOralCncer = new wxMenuItem(m_menuOralCancer, wxID_ANY, _("Run All"), wxT(""), wxITEM_NORMAL);
+    m_menuOralCancer->Append(m_menuItemRunAllOralCncer);
+    
+    m_menu176 = new wxMenu();
+    m_menuBar->Append(m_menu176, _("PlayGround"));
+    
+    m_menuItemRaiseArmDetect = new wxMenuItem(m_menu176, wxID_ANY, _("raise arm Detect"), wxT(""), wxITEM_NORMAL);
+    m_menu176->Append(m_menuItemRaiseArmDetect);
+    
     m_mainToolbar = this->CreateToolBar(wxTB_FLAT, wxID_ANY);
     m_mainToolbar->SetToolBitmapSize(wxSize(32,32));
     m_mainToolbar->SetMargins(1,1);
@@ -312,6 +321,8 @@ MainFrameBaseClass::MainFrameBaseClass(wxWindow* parent, wxWindowID id, const wx
     this->Connect(m_menuPlot1->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnGnuplotSample), NULL, this);
     this->Connect(m_menuItemMSBase->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnMeanShiftBase), NULL, this);
     this->Connect(m_menuItemLoadRois->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnMenuClickLoadOralCancerRois), NULL, this);
+    this->Connect(m_menuItemRunAllOralCncer->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnMenuItemClkRunAllOralCancer), NULL, this);
+    this->Connect(m_menuItemRaiseArmDetect->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnMenuItemClkRaisArmDetect), NULL, this);
     
 }
 
@@ -370,6 +381,8 @@ MainFrameBaseClass::~MainFrameBaseClass()
     this->Disconnect(m_menuPlot1->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnGnuplotSample), NULL, this);
     this->Disconnect(m_menuItemMSBase->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnMeanShiftBase), NULL, this);
     this->Disconnect(m_menuItemLoadRois->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnMenuClickLoadOralCancerRois), NULL, this);
+    this->Disconnect(m_menuItemRunAllOralCncer->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnMenuItemClkRunAllOralCancer), NULL, this);
+    this->Disconnect(m_menuItemRaiseArmDetect->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnMenuItemClkRaisArmDetect), NULL, this);
     
 }
 

@@ -25,11 +25,14 @@ public:
     void loadNormalRoi(wxString filePath);
     cv::Mat getHistorgram();
     void drawAllRois(cv::Mat img);
+    void openMultiOralCancerDataByDir(wxString path);
 	MyImage* getCurrentImg();
     //Gnuplot* g1;
 	
 	
 protected:
+    virtual void OnMenuItemClkRunAllOralCancer(wxCommandEvent& event);
+    virtual void OnMenuItemClkRaisArmDetect(wxCommandEvent& event);
     virtual void OnUpdateUISliderFilterWidth(wxUpdateUIEvent& event);
     virtual void OnMouseMotionScrollWinHistorgam(wxMouseEvent& event);
     virtual void UpdateUISliderText(wxUpdateUIEvent& event);

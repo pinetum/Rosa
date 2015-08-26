@@ -1,10 +1,9 @@
+#ifndef MYIMAGE_H
+#define MYIMAGE_H
 #include <opencv2/opencv.hpp>
 #include <wx/string.h>
 #include <wx/gdicmn.h>
 #include <string>
-#ifndef MYIMAGE_H
-#define MYIMAGE_H
-
 
 class MyImage
 {
@@ -13,7 +12,7 @@ public:
 	MyImage(cv::Mat mat);
 	MyImage(int w, int h, int stride, int type, uchar *pixeldata);
 	~MyImage();
-	
+	int m_oralCancerKdeMode;
 	MyImage* clone();
 	bool readImage(wxString &pathName);
 	bool saveBmpImage(std::string filename);
@@ -46,9 +45,10 @@ public:
 	MyImage* resize(cv::Size size);
     MyImage* resize(double zoom);
 	MyImage* split(int nTargetCh);
-
+ 
 	
     MyImage* meanShift(int *x, int* y);
+    int getOralCancerMode();
 private:
 	cv::Mat m_cvMat;
 };

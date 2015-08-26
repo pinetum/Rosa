@@ -10,11 +10,12 @@
 
 MyImage::MyImage()
 {
-	
+	m_oralCancerKdeMode = -1;
 }
 MyImage::MyImage(cv::Mat mat)
 {
 	mat.copyTo(m_cvMat);
+    m_oralCancerKdeMode = -1;
 	
 }
 MyImage::MyImage(int w, int h, int stride, int type, uchar *pixeldata)
@@ -283,79 +284,79 @@ MyImage* 	MyImage::medianBlur(int k_size){
 
 
 MyImage* 	MyImage::faceDetection(){
-	//http://docs.opencv.org/doc/tutorials/objdetect/cascade_classifier/cascade_classifier.html
-	
-	wxString face_cascade_name = "obj_det_xml//haarcascade_frontalface_alt.xml";
-	wxString mouth_cascade_name = "obj_det_xml//haarcascade_mcs_mouth.xml";
-	cv::CascadeClassifier face_cascade;
-	cv::CascadeClassifier mouth_cascade;
-	MyImage* pNew;
-	pNew = clone();
-	cv::Mat src_gray;
-	int type = getType();
-	if(type==CV_8UC1)
-		src_gray = m_cvMat.clone();
-	else if(type==CV_8UC3){
-		src_gray = BGR2Gray()->m_cvMat;
-	}
-	else{
-		wxLogMessage("not Support");
-		return pNew;
-	}
-	
-	if( !face_cascade.load( face_cascade_name.ToStdString() ) ){ wxLogMessage("--(!)Error loading\n"); return pNew; };
-	if( !mouth_cascade.load( mouth_cascade_name.ToStdString() ) ){ wxLogMessage("--(!)Error loading\n"); return pNew; };
+    //http://docs.opencv.org/doc/tutorials/objdetect/cascade_classifier/cascade_classifier.html
 
-	
-	//轉灰階完成
-	std::vector<cv::Rect> faces;
-	cv::equalizeHist( src_gray, src_gray );
-	face_cascade.detectMultiScale( src_gray, faces, 1.1, 1, 0, cv::Size(30, 30) );
-	
-	
-	for (size_t i = 0 ;i < faces.size(); i++) {
-		cv::rectangle(
-			pNew->m_cvMat,
-			cv::Point(faces[i].x,faces[i].y),
-			cv::Point(faces[i].x + faces[i].width, faces[i].y + faces[i].height),
-			CV_RGB(255, 0, 0),
-			1);
-		//只看臉的下半部
-		faces[i].y = faces[i].y + faces[i].height/2;
-		faces[i].height = faces[i].height /2;
-		cv::rectangle(
-			pNew->m_cvMat,
-			cv::Point(faces[i].x,faces[i].y),
-			cv::Point(faces[i].x + faces[i].width, faces[i].y + faces[i].height),
-			CV_RGB(0, 0, 255),
-			1);
-		cv::Mat faceROI = pNew->m_cvMat( faces[i] );
-		//cv::imshow("a" + i ,faceROI);
-		std::vector<cv::Rect> mouth;
-		//-- In each face, detect mouth
-		mouth_cascade.detectMultiScale( faceROI, mouth, 1.1, 2, 0 , cv::Size(faces[i].width/4, faces[i].height/5),cv::Size(faces[i].width/2, faces[i].height/3) );
-		//---text-----MainFrame::showMessage(wxString::Format(_("Find face ------------\n") , mouth.size()));
-		for( size_t j = 0; j < mouth.size(); j++ ){
-			cv::Mat mouthROI = faceROI( mouth[j] );
-			
-			//cv::imshow("mouth" + j ,mouthROI);
-			//---text-----MainFrame::showMessage(wxString::Format(_(" mouth  %d - size : w %d h %d\n") , j, mouth[j].width, mouth[j].height ));
-			cv::rectangle(
-			faceROI,
-			cv::Point(mouth[j].x, mouth[j].y),
-			cv::Point(mouth[j].x + mouth[j].width, mouth[j].y + mouth[j].height),
-			CV_RGB(0, 255, 0),
-			1);
-		
-			cv::putText(mouthROI,
-						std::string(wxString::Format(_("%d"),j)),
-						cv::Point(0, mouthROI.rows-5),
-						cv::FONT_HERSHEY_SIMPLEX,
-						0.3,
-						cv::Scalar ( 255, 255,  255),
-						1,
-						8,
-						false);
+    wxString face_cascade_name = "obj_det_xml//haarcascade_frontalface_alt.xml";
+    wxString mouth_cascade_name = "obj_det_xml//haarcascade_mcs_mouth.xml";
+    cv::CascadeClassifier face_cascade;
+    cv::CascadeClassifier mouth_cascade;
+    MyImage* pNew;
+    pNew = clone();
+    cv::Mat src_gray;
+    int type = getType();
+    if(type==CV_8UC1)
+        src_gray = m_cvMat.clone();
+    else if(type==CV_8UC3){
+        src_gray = BGR2Gray()->m_cvMat;
+    }
+    else{
+        wxLogMessage("not Support");
+        return pNew;
+    }
+
+    if( !face_cascade.load( face_cascade_name.ToStdString() ) ){ wxLogMessage("--(!)Error loading\n"); return pNew; };
+    if( !mouth_cascade.load( mouth_cascade_name.ToStdString() ) ){ wxLogMessage("--(!)Error loading\n"); return pNew; };
+
+
+    //轉灰階完成
+    std::vector<cv::Rect> faces;
+    cv::equalizeHist( src_gray, src_gray );
+    face_cascade.detectMultiScale( src_gray, faces, 1.1, 1, 0, cv::Size(30, 30) );
+
+
+    for (size_t i = 0 ;i < faces.size(); i++) {
+        cv::rectangle(
+            pNew->m_cvMat,
+            cv::Point(faces[i].x,faces[i].y),
+            cv::Point(faces[i].x + faces[i].width, faces[i].y + faces[i].height),
+            CV_RGB(255, 0, 0),
+            1);
+        //只看臉的下半部
+        faces[i].y = faces[i].y + faces[i].height/2;
+        faces[i].height = faces[i].height /2;
+        cv::rectangle(
+            pNew->m_cvMat,
+            cv::Point(faces[i].x,faces[i].y),
+            cv::Point(faces[i].x + faces[i].width, faces[i].y + faces[i].height),
+            CV_RGB(0, 0, 255),
+            1);
+        cv::Mat faceROI = pNew->m_cvMat( faces[i] );
+        //cv::imshow("a" + i ,faceROI);
+        std::vector<cv::Rect> mouth;
+        //-- In each face, detect mouth
+        mouth_cascade.detectMultiScale( faceROI, mouth, 1.1, 2, 0 , cv::Size(faces[i].width/4, faces[i].height/5),cv::Size(faces[i].width/2, faces[i].height/3) );
+        //---text-----MainFrame::showMessage(wxString::Format(_("Find face ------------\n") , mouth.size()));
+        for( size_t j = 0; j < mouth.size(); j++ ){
+            cv::Mat mouthROI = faceROI( mouth[j] );
+            
+            //cv::imshow("mouth" + j ,mouthROI);
+            //---text-----MainFrame::showMessage(wxString::Format(_(" mouth  %d - size : w %d h %d\n") , j, mouth[j].width, mouth[j].height ));
+            cv::rectangle(
+            faceROI,
+            cv::Point(mouth[j].x, mouth[j].y),
+            cv::Point(mouth[j].x + mouth[j].width, mouth[j].y + mouth[j].height),
+            CV_RGB(0, 255, 0),
+            1);
+
+            cv::putText(mouthROI,
+                        std::string(wxString::Format(_("%d"),j)),
+                        cv::Point(0, mouthROI.rows-5),
+                        cv::FONT_HERSHEY_SIMPLEX,
+                        0.3,
+                        cv::Scalar ( 255, 255,  255),
+                        1,
+                        8,
+                        false);
 		}
 		
 	}
@@ -385,7 +386,7 @@ cv::Mat MyImage::getContourHistorgam(std::vector<cv::Point > contour)
 {
     int bandWidh = 20;
     int a2 = bandWidh;
-    cv::Mat his = cv::Mat::zeros(1, 256, CV_32FC1);
+    cv::Mat his_bin = cv::Mat::zeros(1, 256, CV_32FC1);
     cv::Mat points = cv::Mat(1, 1, CV_32FC1);
     cv::Mat matGussian = cv::Mat::zeros(1, bandWidh, CV_32FC1);
     //calculate gussian
@@ -411,52 +412,53 @@ cv::Mat MyImage::getContourHistorgam(std::vector<cv::Point > contour)
             if(cv::pointPolygonTest(contour, cv::Point(i, j), false) > 0 )
             {
                 int v = (int)m_cvMat.at<uchar>(j, i);
-                his.at<float>(0, v)+=1;
+                his_bin.at<float>(0, v)+=1;
             }
         }
     }
 
 
-    cv::Mat ked_Result = MyUtil::calculateKde(his);
-        
-    // draw historgam..
-    cv::Mat mhis = cv::Mat::zeros(HISTORGAM_IMG_HEIGHT, HISTORGAM_IMG_WIDTH, CV_8UC3);
-    cv::Mat his_bin = his.clone();
+    cv::Mat ked_Result = MyUtil::calculateKde(his_bin);
+    m_oralCancerKdeMode = (int)MyUtil::getKdeMode(ked_Result);
     
+    cv::Mat retHis = cv::Mat::zeros(HISTORGAM_IMG_HEIGHT, HISTORGAM_IMG_WIDTH, CV_8UC3);
+   
     
 //    double min, max;
 //    cv::minMaxLoc(his_bin, &min, &max);
-//    double scale = (mhis.rows -20)/max;
+//    double scale = (retHis.rows -20)/max;
 //    his_bin = his_bin * scale;
 //    ked_Result = ked_Result * scale;
-    
-    cv::normalize(his_bin, his_bin, 0, mhis.rows-20, cv::NORM_MINMAX, -1, cv::Mat() );
-    cv::normalize(ked_Result, ked_Result, 0, mhis.rows-20, cv::NORM_MINMAX, -1, cv::Mat() );
-    
-    
+    //
+    cv::normalize(his_bin, his_bin, 0, retHis.rows-20, cv::NORM_MINMAX, -1, cv::Mat() );
+    cv::normalize(ked_Result, ked_Result, 0, retHis.rows-20, cv::NORM_MINMAX, -1, cv::Mat() );
+
 //    FILE* fpHis = fopen("his.txt", "w");
 //    FILE* fpKde = fopen("kde.txt", "w");
+
+
+    // drawing kde and historgam bin
     for(int i = 0; i<256; i++)
     {
         //bins
-        int bin_x = i*mhis.cols/256;
-        int bin_y = mhis.rows - (int)floor(his_bin.at<float>(0, i));
+        int bin_x = i*retHis.cols/256;
+        int bin_y = retHis.rows - (int)floor(his_bin.at<float>(0, i));
         //fprintf(fpHis, "%d\n", (int)floor(his_bin.at<float>(0, i) ));
         //fprintf(fpKde, "%d\n", (int)floor(ked_Result.at<float>(0,i)));
-        cv::line(   mhis,
+        cv::line(   retHis,
                     cv::Point(bin_x, bin_y),
-                    cv::Point(bin_x, mhis.rows),
+                    cv::Point(bin_x, retHis.rows),
                     cv::Scalar(10,128,10),
-                    mhis.cols/256);
+                    retHis.cols/256);
         
         // Kde
         if(i==0)
             continue;
-        int x1 = (i-1)*mhis.cols/256;
-        int x2 = i*mhis.cols/256;
-        int y1 = mhis.rows - (int)floor(ked_Result.at<float>(0, i-1));
-        int y2 = mhis.rows - (int)floor(ked_Result.at<float>(0, i));
-        cv::line(mhis,
+        int x1 = (i-1)*retHis.cols/256;
+        int x2 = i*retHis.cols/256;
+        int y1 = retHis.rows - (int)floor(ked_Result.at<float>(0, i-1));
+        int y2 = retHis.rows - (int)floor(ked_Result.at<float>(0, i));
+        cv::line(retHis,
                 cv::Point(x1, y1),
                 cv::Point(x2, y2),
                 cv::Scalar(255,255,255),
@@ -466,13 +468,11 @@ cv::Mat MyImage::getContourHistorgam(std::vector<cv::Point > contour)
     }
     //fclose(fpHis);
     //fclose(fpKde);
-    
-    
-    
-    
-    
-    
-    return mhis;
+    return retHis;
+}
+int MyImage::getOralCancerMode()
+{
+    return m_oralCancerKdeMode;
 }
 MyImage* MyImage::meanShift(int *x, int* y){
     double dBandwidth_k = 10;

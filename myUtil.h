@@ -1,5 +1,7 @@
+
 #ifndef MYUTIL_H
 #define MYUTIL_H
+#include "MainFrame.h"
 
 class MyUtil
 {
@@ -35,13 +37,15 @@ class MyUtil
         
     }
 
-    static cv::Mat calculateKde(cv::Mat stdHis, int Kze = 25, double normalizeConst = 1.0)
+    static cv::Mat calculateKde(cv::Mat stdHis, int Kze = 30, double normalizeConst = 1.0)
     {
+        // local variable
         double sigma_sqare      = Kze;
         int bandWith            = Kze;
-        cv::Mat ked_Result = cv::Mat::zeros(stdHis.rows, stdHis.cols, CV_32FC1);
+        cv::Mat ked_Result      = cv::Mat::zeros(stdHis.rows, stdHis.cols, CV_32FC1);
+        cv::Mat matGussian      = cv::Mat::zeros(1, bandWith, CV_32FC1);
+        
         //step1 calculate Gussian curve
-        cv::Mat matGussian = cv::Mat::zeros(1, bandWith, CV_32FC1);
         for(int i = 0; i< matGussian.cols; i++)
         {
             matGussian.at<float>(0,i) = bandWith/2*-1+i;
@@ -50,8 +54,9 @@ class MyUtil
         matGussian = matGussian/2/sigma_sqare;
         cv::exp(-1*matGussian, matGussian);
         matGussian = normalizeConst*matGussian/sqrt(2*CV_PI*sigma_sqare);
+        
         //step2 transform historgam to KDE
-        for(int i = 0; i < stdHis.cols; i++)
+        for(int i = 0; i <= stdHis.cols; i++)
         {
             cv::Mat kde_data_roi;
             cv::Mat gussian_data_roi;
@@ -59,16 +64,18 @@ class MyUtil
             int kde_roi_org = 0;
             int gus_roi_org = 0;
             // determin Roi boundary issue
-            if(i <= bandWith)
+            if(i < bandWith)
             {
+                continue;
                roi_width = i;
                kde_roi_org = 0;
-               gus_roi_org = bandWith/2 - i/2;
+               gus_roi_org = (bandWith - i)*0.5;
             }
             else if(stdHis.cols-i+1 <= bandWith)
             {
+                continue;
                 roi_width = stdHis.cols - i +1;
-                kde_roi_org = i-2;
+                kde_roi_org = stdHis.cols-i;
                 gus_roi_org = bandWith/2 - (stdHis.cols-i+1)/2;
             }
             else
@@ -82,13 +89,35 @@ class MyUtil
             kde_data_roi        = cv::Mat(ked_Result, cv::Rect(kde_roi_org, 0, roi_width, 1));
             gussian_data_roi    = cv::Mat(matGussian, cv::Rect(gus_roi_org, 0, roi_width, 1));
             kde_data_roi        = kde_data_roi + gussian_data_roi * stdHis.at<float>(0,i);
-            
-        
         }
         
         return ked_Result;
     }
 
-
+    static float getKdeMode(cv::Mat data){
+        float   ret             = -1;
+        float   slope           = 1;
+        bool    b_slope_pos     = false;
+        for(int i = 0; i < data.cols; i++)
+        {
+            if(i==0)
+                continue;
+            slope = data.at<float>(0, i) - data.at<float>(0, i-1);
+            if(slope > 1)
+                b_slope_pos = true;
+            if(slope < -1 && b_slope_pos)
+            {
+                ret = i;
+                break;
+            }
+        }
+        
+        
+        
+        return ret;
+        
+        
+        
+    }
 };
 #endif

@@ -72,7 +72,8 @@ std::vector<std::vector<cv::Point > > MyJSParser::getRois()
                     cv::Point pt(n_ptX, n_ptY);
                     v_pts.push_back(pt);
                 }
-                 m_vv_Rois.push_back(v_pts);
+                if(v_pts.size() > 2)
+                    m_vv_Rois.push_back(v_pts);
             }
 
         }
