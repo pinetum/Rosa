@@ -21,6 +21,7 @@ public:
 	void DeleteContents();
 	void addNewImageState(MyImage* plmg);
 	void UpdateView();
+    void writeRois();
     void loadCancerRoi(wxString filePath);
     void loadNormalRoi(wxString filePath);
     cv::Mat getHistorgram();
@@ -31,6 +32,7 @@ public:
 	
 	
 protected:
+    virtual void OnMouseRightUp(wxMouseEvent& event);
     virtual void OnTogBtnMarkNormalRoi(wxCommandEvent& event);
     virtual void OnMenuItemClkRunAllOralCancer(wxCommandEvent& event);
     virtual void OnMenuItemClkRaisArmDetect(wxCommandEvent& event);

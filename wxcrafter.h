@@ -98,6 +98,7 @@ protected:
 protected:
     virtual void OnMouseMotion(wxMouseEvent& event) { event.Skip(); }
     virtual void OnMouseLeftUp(wxMouseEvent& event) { event.Skip(); }
+    virtual void OnMouseRightUp(wxMouseEvent& event) { event.Skip(); }
     virtual void UpdateUITextRoiCount(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnCheckBoxCheckRoi(wxCommandEvent& event) { event.Skip(); }
     virtual void OnUpdateCheckBoxRoiCancer(wxUpdateUIEvent& event) { event.Skip(); }

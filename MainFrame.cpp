@@ -122,6 +122,37 @@ void MainFrame::OnMenuItemUndo(wxCommandEvent& event)
 		m_nCurrentImg -- ;
 	UpdateView();
 }
+void MainFrame::OnMouseRightUp(wxMouseEvent& event)
+{
+    if(m_rois_normal.size() > 0)
+    {
+        if(m_rois_normal.back().size() > 0)
+            m_rois_normal.back().pop_back();
+    }
+    UpdateView();
+    writeRois();
+}
+void MainFrame::writeRois()
+{
+    FILE* fp = fopen(m_str_normalRoiTxtPath.mb_str().data(), "w");
+        
+    fprintf(fp,"[");
+    for(int i = 0; i<m_rois_normal.size(); i++)
+    {
+        fprintf(fp,"[");
+        for(int j= 0; j < m_rois_normal[i].size(); j++)
+        {
+            fprintf(fp,"{\"x\":%d,\"y\":%d}", m_rois_normal[i][j].x, m_rois_normal[i][j].y);
+            if(j != m_rois_normal[i].size()-1)
+                fprintf(fp,",");
+        }
+        if(i != m_rois_normal.size()-1)
+            fprintf(fp,",");
+        fprintf(fp,"]");
+    }
+    fprintf(fp,"]");
+    fclose(fp);
+}
 void MainFrame::OnMouseLeftUp(wxMouseEvent& event)
 {
     //get mouse position
@@ -141,28 +172,8 @@ void MainFrame::OnMouseLeftUp(wxMouseEvent& event)
         cv::Point cvPt(pt.x, pt.y);
         roi.push_back(cvPt);
         m_rois_normal.push_back(roi); 
-        char content[500];
+        writeRois();
         
-        
-        
-        FILE* fp = fopen(m_str_normalRoiTxtPath.mb_str().data(), "w");
-        
-        fprintf(fp,"[");
-        for(int i = 0; i<m_rois_normal.size(); i++)
-        {
-            fprintf(fp,"[");
-            for(int j= 0; j < m_rois_normal[i].size(); j++)
-            {
-                fprintf(fp,"{\"x\":%d,\"y\":%d}", m_rois_normal[i][j].x, m_rois_normal[i][j].y);
-                if(j != m_rois_normal[i].size()-1)
-                    fprintf(fp,",");
-            }
-            if(i != m_rois_normal.size()-1)
-                fprintf(fp,",");
-            fprintf(fp,"]");
-        }
-        fprintf(fp,"]");
-        fclose(fp);
         UpdateView();
         return;
     }
@@ -984,7 +995,8 @@ void MainFrame::openMultiOralCancerDataByDir(wxString path)
         b_cont = dir_oralDir.GetNext(&str_subDir);
         
     }
-    FILE* fp = fopen("oralCancer.csv", "w");
+    FILE* fp_cancer = fopen("cancer.csv", "w");
+    FILE* fp_normal = fopen("normal.csv", "w");
     for(int i = 0; i< aryStr_SubDirs.size(); i++)
     {
         wxDir dir_recordDir(aryStr_SubDirs[i]);
@@ -994,14 +1006,11 @@ void MainFrame::openMultiOralCancerDataByDir(wxString path)
         bool        b_cont = dir_recordDir.GetFirst(&str_fileName, "", wxDIR_FILES);
         while(b_cont)
         {
-            if(str_fileName.StartsWith("cancer"))
+            if(str_fileName.StartsWith("460nm"))
             {
-                wxString str_fileName_375 = wxString::Format("375nm%s", str_fileName.AfterFirst('i'));
-                str_fileName_375.Replace("-", "_", true);
-                str_fileName_375.Replace("txt", "bmp", true);
-                wxString str_fileName_460 = wxString::Format("460nm%s", str_fileName.AfterFirst('i'));
-                str_fileName_460.Replace("-", "_", true);
-                str_fileName_460.Replace("txt", "bmp", true);
+                wxString str_fileName_375 = str_fileName;
+                str_fileName_375.Replace("460nm", "375nm", true);
+                wxString str_fileName_460 = str_fileName;
                 
                 
                 //append path
@@ -1009,30 +1018,64 @@ void MainFrame::openMultiOralCancerDataByDir(wxString path)
 //                MainFrame::showMessage(str_fileName_375+"\n");
 //                MainFrame::showMessage(str_fileName_460+"\n");
 //                
-                int mode_375 = -1, mode_460 = -1;
+                int mode_375_c = -1, mode_460_c = -1;
+                int mode_375_n = -1, mode_460_n = -1;
                 wxString path375 = wxString::Format("%s/%s", aryStr_SubDirs[i], str_fileName_375);
-                this->openFile(path375);
-                
-                if(m_rois_cancer.size() <= 0)
-                    continue;
-                getCurrentImg()->getContourHistorgam(m_rois_cancer[0]);
-                mode_375 = getCurrentImg()->getOralCancerMode();
                 wxString path460 = wxString::Format("%s/%s", aryStr_SubDirs[i], str_fileName_460);
-                this->openFile(path460);
-                if(m_rois_cancer.size()<= 0)
-                    continue;
-                getCurrentImg()->getContourHistorgam(m_rois_cancer[0]);
-                mode_460 = getCurrentImg()->getOralCancerMode();
-                MainFrame::showMessage(wxString::Format("---%d,%d----\n", mode_460, mode_375));
-                if(mode_460 > 0 && mode_375 > 0)
+                
+                //375nm
+                this->openFile(path375);
+                    // cancer roi's mode
+                if(m_rois_cancer.size() > 0)
                 {
-                    fprintf(fp, "%d,%d,%s\n", mode_460, mode_375, path460.mb_str().data());
+                    getCurrentImg()->getContourHistorgam(m_rois_cancer[0]);
+                    mode_375_c = getCurrentImg()->getOralCancerMode();
+                
                 }
+                    //normak roi's mode
+                if(m_rois_normal.size() > 0)
+                {
+                    getCurrentImg()->getContourHistorgam(m_rois_normal[0]);
+                    mode_375_n = getCurrentImg()->getOralCancerMode();
+                
+                }
+                
+                //460nm
+                this->openFile(path460);
+                    //cancer roi's mode
+                if(m_rois_cancer.size() > 0)
+                {
+                    getCurrentImg()->getContourHistorgam(m_rois_cancer[0]);
+                    mode_460_c = getCurrentImg()->getOralCancerMode();
+                
+                }
+                    //normal roi's mode
+                if(m_rois_normal.size() > 0)
+                {
+                    getCurrentImg()->getContourHistorgam(m_rois_normal[0]);
+                    mode_460_n = getCurrentImg()->getOralCancerMode();
+                
+                }
+                
+                
+                
+                if(mode_460_c > 0 && mode_375_c > 0)
+                {
+                    fprintf(fp_cancer, "%d,%d,%s\n", mode_460_c, mode_375_c, path460.mb_str().data());
+                    
+                }
+                if(mode_460_n > 0 && mode_375_n > 0)
+                {
+                    fprintf(fp_normal, "%d,%d,%s\n", mode_460_n, mode_375_n, path460.mb_str().data());
+                    
+                }
+                
             }
             b_cont = dir_recordDir.GetNext(&str_fileName);
         }
     }
-    fclose(fp);
+    fclose(fp_cancer);
+    fclose(fp_normal);
     
     
     
@@ -1041,3 +1084,4 @@ void MainFrame::openMultiOralCancerDataByDir(wxString path)
 void MainFrame::OnTogBtnMarkNormalRoi(wxCommandEvent& event)
 {
 }
+

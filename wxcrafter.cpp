@@ -278,6 +278,7 @@ MainFrameBaseClass::MainFrameBaseClass(wxWindow* parent, wxWindowID id, const wx
     // Connect events
     m_scrollWin->Connect(wxEVT_MOTION, wxMouseEventHandler(MainFrameBaseClass::OnMouseMotion), NULL, this);
     m_scrollWin->Connect(wxEVT_LEFT_UP, wxMouseEventHandler(MainFrameBaseClass::OnMouseLeftUp), NULL, this);
+    m_scrollWin->Connect(wxEVT_RIGHT_UP, wxMouseEventHandler(MainFrameBaseClass::OnMouseRightUp), NULL, this);
     m_staticTextCancerRoiCount->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MainFrameBaseClass::UpdateUITextRoiCount), NULL, this);
     m_checkBoxCancerRoi->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(MainFrameBaseClass::OnCheckBoxCheckRoi), NULL, this);
     m_checkBoxCancerRoi->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MainFrameBaseClass::OnUpdateCheckBoxRoiCancer), NULL, this);
@@ -339,6 +340,7 @@ MainFrameBaseClass::~MainFrameBaseClass()
 {
     m_scrollWin->Disconnect(wxEVT_MOTION, wxMouseEventHandler(MainFrameBaseClass::OnMouseMotion), NULL, this);
     m_scrollWin->Disconnect(wxEVT_LEFT_UP, wxMouseEventHandler(MainFrameBaseClass::OnMouseLeftUp), NULL, this);
+    m_scrollWin->Disconnect(wxEVT_RIGHT_UP, wxMouseEventHandler(MainFrameBaseClass::OnMouseRightUp), NULL, this);
     m_staticTextCancerRoiCount->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MainFrameBaseClass::UpdateUITextRoiCount), NULL, this);
     m_checkBoxCancerRoi->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(MainFrameBaseClass::OnCheckBoxCheckRoi), NULL, this);
     m_checkBoxCancerRoi->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MainFrameBaseClass::OnUpdateCheckBoxRoiCancer), NULL, this);

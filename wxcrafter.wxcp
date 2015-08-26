@@ -295,6 +295,13 @@
 													"m_functionNameAndSignature":	"OnMouseLeftUp(wxMouseEvent& event)",
 													"m_description":	"Process a wxEVT_LEFT_UP event.",
 													"m_noBody":	false
+												}, {
+													"m_eventName":	"wxEVT_RIGHT_UP",
+													"m_eventClass":	"wxMouseEvent",
+													"m_eventHandler":	"wxMouseEventHandler",
+													"m_functionNameAndSignature":	"OnMouseRightUp(wxMouseEvent& event)",
+													"m_description":	"Process a wxEVT_RIGHT_UP event",
+													"m_noBody":	false
 												}],
 											"m_children":	[]
 										}]
