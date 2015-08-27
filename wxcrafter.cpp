@@ -253,7 +253,7 @@ MainFrameBaseClass::MainFrameBaseClass(wxWindow* parent, wxWindowID id, const wx
     m_mainToolbar->AddSeparator();
     
     m_bmpToggleBtnMarkNormalRoi = new wxBitmapToggleButton(m_mainToolbar, wxID_ANY, wxXmlResource::Get()->LoadBitmap(wxT("polygon")), wxDefaultPosition, wxSize(-1,-1), 0);
-    m_bmpToggleBtnMarkNormalRoi->SetValue(true);
+    m_bmpToggleBtnMarkNormalRoi->SetValue(false);
     m_mainToolbar->AddControl(m_bmpToggleBtnMarkNormalRoi);
     m_mainToolbar->Realize();
     

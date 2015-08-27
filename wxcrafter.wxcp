@@ -3580,7 +3580,7 @@
 								}, {
 									"type":	"bool",
 									"m_label":	"Checked",
-									"m_value":	true
+									"m_value":	false
 								}],
 							"m_events":	[{
 									"m_eventName":	"wxEVT_COMMAND_TOGGLEBUTTON_CLICKED",
