@@ -114,9 +114,6 @@ class MyUtil
                 break;
             }
         }
-        
-        
-        
         return ret;
         
         

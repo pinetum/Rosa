@@ -148,6 +148,7 @@ bool 		MyImage::readImage(wxString &pathName){
 	}
 	else
 	{
+            wxLogMessage(pathName);
 			wxLogMessage("read Image Error!");
 	}
 	

@@ -338,9 +338,7 @@ void MainFrame::openFile(wxString &pathName)
 #else
     if(pathName.AfterLast('/').StartsWith("460"))
     {
-        
         addNewImageState(pImg->split(1));
-        
     }
     else if(pathName.AfterLast('/').StartsWith("375"))
     {
@@ -1002,8 +1000,11 @@ void MainFrame::openMultiOralCancerDataByDir(wxString path)
     bool        b_cont = dir_oralDir.GetFirst(&str_subDir, "", wxDIR_DIRS);
     while(b_cont)
     {
-        //str_subDir = path.append("/").append(str_subDir);
+#if defined(__WINDOWS__)
+        aryStr_SubDirs.Add(wxString::Format("%s\\%s", path, str_subDir));
+#else
         aryStr_SubDirs.Add(wxString::Format("%s/%s", path, str_subDir));
+#endif
         str_subDir = "";
         b_cont = dir_oralDir.GetNext(&str_subDir);
         
@@ -1035,22 +1036,34 @@ void MainFrame::openMultiOralCancerDataByDir(wxString path)
 //                
                 int mode_375_c = -1, mode_460_c = -1;
                 int mode_375_n = -1, mode_460_n = -1;
+#if defined(__WINDOWS__)
                 wxString path375 = wxString::Format("%s\\%s", aryStr_SubDirs[i], str_fileName_375);
                 wxString path460 = wxString::Format("%s\\%s", aryStr_SubDirs[i], str_fileName_460);
-                
+#else
+                wxString path375 = wxString::Format("%s/%s", aryStr_SubDirs[i], str_fileName_375);
+                wxString path460 = wxString::Format("%s/%s", aryStr_SubDirs[i], str_fileName_460);
+#endif                
                 //375nm
                 this->openFile(path375);
                     // cancer roi's mode
                 if(m_rois_cancer.size() > 0)
                 {
+#if defined(__WINDOWS__)
                     cv::imwrite(path375.AfterLast('\\').append("_c.jpg").mb_str().data(),getCurrentImg()->getContourHistorgam(m_rois_cancer[0]));
+#else
+                    cv::imwrite(path375.AfterLast('/').append("_c.jpg").mb_str().data(),getCurrentImg()->getContourHistorgam(m_rois_cancer[0]));
+#endif
                     mode_375_c = getCurrentImg()->getOralCancerMode();
                 
                 }
                     //normak roi's mode
                 if(m_rois_normal.size() > 0)
                 {
+#if defined(__WINDOWS__)
                     cv::imwrite(path375.AfterLast('\\').append("_n.jpg").mb_str().data(),getCurrentImg()->getContourHistorgam(m_rois_normal[0]));
+#else
+                    cv::imwrite(path375.AfterLast('/').append("_n.jpg").mb_str().data(),getCurrentImg()->getContourHistorgam(m_rois_normal[0]));
+#endif
                     mode_375_n = getCurrentImg()->getOralCancerMode();
                 
                 }
@@ -1060,14 +1073,22 @@ void MainFrame::openMultiOralCancerDataByDir(wxString path)
                     //cancer roi's mode
                 if(m_rois_cancer.size() > 0)
                 {
+#if defined(__WINDOWS__)
                     cv::imwrite(path460.AfterLast('\\').append("_c.jpg").mb_str().data(),getCurrentImg()->getContourHistorgam(m_rois_cancer[0]));
+#else
+                    cv::imwrite(path460.AfterLast('/').append("_c.jpg").mb_str().data(),getCurrentImg()->getContourHistorgam(m_rois_cancer[0]));
+#endif
                     mode_460_c = getCurrentImg()->getOralCancerMode();
                 
                 }
                     //normal roi's mode
                 if(m_rois_normal.size() > 0)
                 {
+#if defined(__WINDOWS__)
                     cv::imwrite(path460.AfterLast('\\').append("_n.jpg").mb_str().data(),getCurrentImg()->getContourHistorgam(m_rois_normal[0]));
+#else
+                    cv::imwrite(path460.AfterLast('/').append("_n.jpg").mb_str().data(),getCurrentImg()->getContourHistorgam(m_rois_normal[0]));
+#endif
                     mode_460_n = getCurrentImg()->getOralCancerMode();
                 
                 }
