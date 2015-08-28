@@ -27,11 +27,18 @@ public:
     cv::Mat getHistorgram();
     void drawAllRois(cv::Mat img);
     void openMultiOralCancerDataByDir(wxString path);
+    void startTimer();
+    void stopTimer(wxString TimerName = "None");
+    cv::Mat getScreenShot();
 	MyImage* getCurrentImg();
+    wxString m_str_TimerName ;
+    time_t m_time_start;
+    time_t m_time_end;
     //Gnuplot* g1;
 	
 	
 protected:
+    virtual void OnMenuItemScreenShot(wxCommandEvent& event);
     virtual void OnMouseRightUp(wxMouseEvent& event);
     virtual void OnTogBtnMarkNormalRoi(wxCommandEvent& event);
     virtual void OnMenuItemClkRunAllOralCancer(wxCommandEvent& event);
@@ -91,5 +98,6 @@ protected:
     int m_n_index_ofSelCancerRoi;
     int m_n_index_ofSelNormalRoi;
     wxPoint m_wxpt_lastptInScrollWinHis;
+    
 };
 #endif // MAINFRAME_H

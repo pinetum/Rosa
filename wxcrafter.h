@@ -41,8 +41,9 @@ class MainFrameBaseClass : public wxFrame
 {
 public:
     enum {
-        wxID_RESIZE_FIT_WINDOW = 1001,
-        wxID_SAVE_AS = 1002,
+        wxID_ORALCANCER_RUN_ALL = 1001,
+        wxID_RESIZE_FIT_WINDOW = 1002,
+        wxID_SAVE_AS = 1003,
     };
 protected:
     MyImageWin* m_scrollWin;
@@ -91,6 +92,7 @@ protected:
     wxMenuItem* m_menuItemRunAllOralCncer;
     wxMenu* m_menu176;
     wxMenuItem* m_menuItemRaiseArmDetect;
+    wxMenuItem* m_menuItemScrennshot;
     wxToolBar* m_mainToolbar;
     wxBitmapToggleButton* m_bmpToggleBtnMarkNormalRoi;
     wxStatusBar* m_statusBar;
@@ -138,6 +140,7 @@ protected:
     virtual void OnMenuClickLoadOralCancerRois(wxCommandEvent& event) { event.Skip(); }
     virtual void OnMenuItemClkRunAllOralCancer(wxCommandEvent& event) { event.Skip(); }
     virtual void OnMenuItemClkRaisArmDetect(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnMenuItemScreenShot(wxCommandEvent& event) { event.Skip(); }
     virtual void OnTogBtnMarkNormalRoi(wxCommandEvent& event) { event.Skip(); }
 
 public:

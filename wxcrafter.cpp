@@ -22,16 +22,6 @@ MainFrameBaseClass::MainFrameBaseClass(wxWindow* parent, wxWindowID id, const wx
         wxC9ED9InitBitmapResources();
         bBitmapLoaded = true;
     }
-    // Set icon(s) to the application/dialog
-    wxIconBundle app_icons;
-    {
-        wxBitmap iconBmp = wxXmlResource::Get()->LoadBitmap(wxT("chest"));
-        wxIcon icn;
-        icn.CopyFromBitmap(iconBmp);
-        app_icons.AddIcon( icn );
-    }
-    SetIcons( app_icons );
-
     
     wxBoxSizer* boxSizer1 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer1);
@@ -131,10 +121,10 @@ MainFrameBaseClass::MainFrameBaseClass(wxWindow* parent, wxWindowID id, const wx
     m_nenuFile = new wxMenu();
     m_menuBar->Append(m_nenuFile, _("File"));
     
-    m_menuItemOpenFile = new wxMenuItem(m_nenuFile, wxID_OPEN, _("OpenFile"), wxT(""), wxITEM_NORMAL);
+    m_menuItemOpenFile = new wxMenuItem(m_nenuFile, wxID_OPEN, _("OpenFile\tCtrl+O"), wxT(""), wxITEM_NORMAL);
     m_nenuFile->Append(m_menuItemOpenFile);
     
-    m_menuItemSaveAsFile = new wxMenuItem(m_nenuFile, wxID_SAVE_AS, _("Save as.."), wxT(""), wxITEM_NORMAL);
+    m_menuItemSaveAsFile = new wxMenuItem(m_nenuFile, wxID_SAVE_AS, _("Save as..\tCtrl+S"), wxT(""), wxITEM_NORMAL);
     m_nenuFile->Append(m_menuItemSaveAsFile);
     
     m_menuItemExit = new wxMenuItem(m_nenuFile, wxID_EXIT, _("Exit\tAlt-X"), _("Quit"), wxITEM_NORMAL);
@@ -215,7 +205,7 @@ MainFrameBaseClass::MainFrameBaseClass(wxWindow* parent, wxWindowID id, const wx
     m_menuItemLoadRois = new wxMenuItem(m_menuOralCancer, wxID_ANY, _("Load Rois From jsFile(*.txt)"), wxT(""), wxITEM_NORMAL);
     m_menuOralCancer->Append(m_menuItemLoadRois);
     
-    m_menuItemRunAllOralCncer = new wxMenuItem(m_menuOralCancer, wxID_ANY, _("Run All"), wxT(""), wxITEM_NORMAL);
+    m_menuItemRunAllOralCncer = new wxMenuItem(m_menuOralCancer, wxID_ORALCANCER_RUN_ALL, _("Run All"), wxT(""), wxITEM_NORMAL);
     m_menuOralCancer->Append(m_menuItemRunAllOralCncer);
     
     m_menu176 = new wxMenu();
@@ -223,6 +213,9 @@ MainFrameBaseClass::MainFrameBaseClass(wxWindow* parent, wxWindowID id, const wx
     
     m_menuItemRaiseArmDetect = new wxMenuItem(m_menu176, wxID_ANY, _("raise arm Detect"), wxT(""), wxITEM_NORMAL);
     m_menu176->Append(m_menuItemRaiseArmDetect);
+    
+    m_menuItemScrennshot = new wxMenuItem(m_menu176, wxID_ANY, _("GetScreenShot\tCtrl+T"), wxT(""), wxITEM_NORMAL);
+    m_menu176->Append(m_menuItemScrennshot);
     
     m_mainToolbar = this->CreateToolBar(wxTB_FLAT, wxID_ANY);
     m_mainToolbar->SetToolBitmapSize(wxSize(32,32));
@@ -246,9 +239,7 @@ MainFrameBaseClass::MainFrameBaseClass(wxWindow* parent, wxWindowID id, const wx
     
     m_mainToolbar->AddTool(wxID_ANY, _("Tool Label"), wxXmlResource::Get()->LoadBitmap(wxT("enderman")), wxNullBitmap, wxITEM_NORMAL, wxT(""), wxT(""), NULL);
     
-    m_mainToolbar->AddTool(wxID_ANY, _("Tool Label"), wxXmlResource::Get()->LoadBitmap(wxT("Ghast")), wxNullBitmap, wxITEM_NORMAL, wxT(""), wxT(""), NULL);
-    
-    m_mainToolbar->AddTool(wxID_ANY, _("Tool Label"), wxXmlResource::Get()->LoadBitmap(wxT("tnt")), wxNullBitmap, wxITEM_NORMAL, wxT(""), wxT(""), NULL);
+    m_mainToolbar->AddTool(wxID_ANY, _("Tool Label"), wxXmlResource::Get()->LoadBitmap(wxT("wizard-icon")), wxNullBitmap, wxITEM_NORMAL, wxT(""), wxT(""), NULL);
     
     m_mainToolbar->AddSeparator();
     
@@ -332,6 +323,7 @@ MainFrameBaseClass::MainFrameBaseClass(wxWindow* parent, wxWindowID id, const wx
     this->Connect(m_menuItemLoadRois->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnMenuClickLoadOralCancerRois), NULL, this);
     this->Connect(m_menuItemRunAllOralCncer->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnMenuItemClkRunAllOralCancer), NULL, this);
     this->Connect(m_menuItemRaiseArmDetect->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnMenuItemClkRaisArmDetect), NULL, this);
+    this->Connect(m_menuItemScrennshot->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnMenuItemScreenShot), NULL, this);
     m_bmpToggleBtnMarkNormalRoi->Connect(wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, wxCommandEventHandler(MainFrameBaseClass::OnTogBtnMarkNormalRoi), NULL, this);
     
 }
@@ -394,6 +386,7 @@ MainFrameBaseClass::~MainFrameBaseClass()
     this->Disconnect(m_menuItemLoadRois->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnMenuClickLoadOralCancerRois), NULL, this);
     this->Disconnect(m_menuItemRunAllOralCncer->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnMenuItemClkRunAllOralCancer), NULL, this);
     this->Disconnect(m_menuItemRaiseArmDetect->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnMenuItemClkRaisArmDetect), NULL, this);
+    this->Disconnect(m_menuItemScrennshot->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnMenuItemScreenShot), NULL, this);
     m_bmpToggleBtnMarkNormalRoi->Disconnect(wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, wxCommandEventHandler(MainFrameBaseClass::OnTogBtnMarkNormalRoi), NULL, this);
     
 }

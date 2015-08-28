@@ -142,8 +142,8 @@ bool 		MyImage::readImage(wxString &pathName){
 #endif
         
         
-		wxString str = wxString::Format(_("readImage: %s channel %d ,w %d h %d ,step %d \n"), title, nChannel, m_cvMat.cols, m_cvMat.rows, m_cvMat.step[0]);
-		MainFrame::showMessage(str);
+		
+		MainFrame::showMessage(wxString::Format(_("readImage: %s channel %d ,w %d h %d ,step %d"), title, nChannel, m_cvMat.cols, m_cvMat.rows, m_cvMat.step[0]));
 		
 	}
 	else
@@ -235,7 +235,7 @@ MyImage* 	MyImage::Threshold(int thV,bool inverse){
 	}
 		
 	
-	MainFrame::showMessage(wxString::Format(_("Threshold: value = %.3f \n") , thsValue));
+	MainFrame::showMessage(wxString::Format(_("Threshold: value = %.3f ") , thsValue));
 	return pNew;
 }
 MyImage* 	MyImage::HoughCircles(){
@@ -279,7 +279,7 @@ MyImage* 	MyImage::medianBlur(int k_size){
 	MyImage* pNew;
 	pNew = clone();
 	cv::medianBlur(pNew->m_cvMat,pNew->m_cvMat,k_size);
-	MainFrame::showMessage(wxString::Format(_("MedianBlur: k_size = %d \n") , k_size));
+	MainFrame::showMessage(wxString::Format(_("MedianBlur: k_size = %d ") , k_size));
 	
 	return pNew;
 	
@@ -342,12 +342,12 @@ MyImage* 	MyImage::faceDetection(){
         std::vector<cv::Rect> mouth;
         //-- In each face, detect mouth
         mouth_cascade.detectMultiScale( faceROI, mouth, 1.1, 2, 0 , cv::Size(faces[i].width/4, faces[i].height/5),cv::Size(faces[i].width/2, faces[i].height/3) );
-        //---text-----MainFrame::showMessage(wxString::Format(_("Find face ------------\n") , mouth.size()));
+        //---text-----MainFrame::showMessage(wxString::Format(_("Find face ------------") , mouth.size()));
         for( size_t j = 0; j < mouth.size(); j++ ){
             cv::Mat mouthROI = faceROI( mouth[j] );
             
             //cv::imshow("mouth" + j ,mouthROI);
-            //---text-----MainFrame::showMessage(wxString::Format(_(" mouth  %d - size : w %d h %d\n") , j, mouth[j].width, mouth[j].height ));
+            //---text-----MainFrame::showMessage(wxString::Format(_(" mouth  %d - size : w %d h %d") , j, mouth[j].width, mouth[j].height ));
             cv::rectangle(
             faceROI,
             cv::Point(mouth[j].x, mouth[j].y),

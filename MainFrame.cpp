@@ -9,7 +9,9 @@
 #include "highDMeanShift.h"
 #include "MyJSParser.h"
 #include <wx/arrstr.h> 
+#include <wx/dcscreen.h>
 #include <wx/colour.h>
+#include <wx/dcmemory.h>
 #include "gnuplot_i.hpp"
 
 #define SLIDER_MAX_VALUE 128
@@ -57,11 +59,13 @@ MainFrame::MainFrame(wxWindow* parent): MainFrameBaseClass(parent)
     m_scrollWin->Connect(wxEVT_DROP_FILES, wxDropFilesEventHandler(MainFrame::OnDropFile), NULL, this);
     m_scrollWin->DragAcceptFiles(true);
     
+    //timer use
+    m_str_TimerName = "";
     
     // in mac os x
     //SetSize(900, 800);
 	//Center();
-    
+    m_scrollWin->setImage(getScreenShot());
     Maximize(true);
 }
 
@@ -72,7 +76,7 @@ MainFrame::~MainFrame()
 	DeleteContents();
 }
 void MainFrame::showMessage(wxString msg){
-		m_pThis->m_richTextCtrl->AppendText(msg);
+		m_pThis->m_richTextCtrl->AppendText(msg<<"\n");
 		int last_pos = m_pThis->m_richTextCtrl->GetLastPosition();
 		m_pThis->m_richTextCtrl->ShowPosition(last_pos);
 }
@@ -81,7 +85,18 @@ void MainFrame::OnExit(wxCommandEvent& event)
     wxUnusedVar(event);
     Close();
 }
-
+void MainFrame::startTimer()
+{
+    m_time_start = clock();
+}
+void MainFrame::stopTimer(wxString TimerName)
+{
+    m_time_end = clock();
+   unsigned long seconds, milliseconds;
+   seconds = (m_time_end-m_time_start)/CLOCKS_PER_SEC;
+   milliseconds = ((1000*(m_time_end-m_time_start))/CLOCKS_PER_SEC) - 1000*seconds;
+   showMessage(wxString::Format(_("[Time]TimerName:%d:%d(s:ms)"), seconds, milliseconds));
+}
 void MainFrame::OnAbout(wxCommandEvent& event)
 {
     
@@ -643,7 +658,7 @@ void MainFrame::loadCancerRoi(wxString filePath)
     // Is open file success?
     if(fp==NULL)
     {
-        MainFrame::showMessage("open cancer Roi json File fail.\n");
+        MainFrame::showMessage("open cancer Roi json File fail.");
         return;
     }
 
@@ -659,7 +674,7 @@ void MainFrame::loadCancerRoi(wxString filePath)
     parser.setJsonStr(str_filecontent);                                 // parse!
     m_rois_cancer = parser.getRois();                                   // get Rois (二階Vector，最裡面存放cv::Point)
         //最後交由updateView畫出
-    MainFrame::showMessage(wxString::Format("Total number of Cancer rois:%d\n", m_rois_cancer.size()));
+    MainFrame::showMessage(wxString::Format("Total number of Cancer rois:%d", m_rois_cancer.size()));
     
     //auto to check checlBox
     m_checkBoxCancerRoi->SetValue(true);
@@ -675,7 +690,7 @@ void MainFrame::loadNormalRoi(wxString filePath)
     // Is open file success?
     if(fp==NULL)
     {
-        MainFrame::showMessage("open normal Roi json File fail.\n");
+        MainFrame::showMessage("open normal Roi json File fail.");
         return;
     }
 
@@ -691,7 +706,7 @@ void MainFrame::loadNormalRoi(wxString filePath)
     parser.setJsonStr(str_filecontent);                                 // parse!
     m_rois_normal = parser.getRois();                                   // get Rois (二階Vector，最裡面存放cv::Point)
         //最後交由updateView畫出
-    MainFrame::showMessage(wxString::Format("Total number of Cancer rois:%d\n", m_rois_cancer.size()));
+    MainFrame::showMessage(wxString::Format("Total number of Cancer rois:%d", m_rois_cancer.size()));
     //auto to check checlBox
     m_checkBoxNormalRoi->SetValue(true);
     UpdateView();
@@ -987,11 +1002,12 @@ void MainFrame::OnMenuItemClkRunAllOralCancer(wxCommandEvent& event)
 }
 void MainFrame::openMultiOralCancerDataByDir(wxString path)
 {
+    startTimer();
     wxDir dir_oralDir(path);
     wxArrayString aryStr_SubDirs;
     if(!dir_oralDir.HasSubDirs())
     {
-        showMessage("no files discovered..\n");
+        showMessage("no files discovered..");
         return;
     }
     
@@ -1031,8 +1047,8 @@ void MainFrame::openMultiOralCancerDataByDir(wxString path)
                 
                 //append path
 //                str_fileName = wxString::Format("%s/%s", aryStr_SubDirs[i], str_fileName);
-//                MainFrame::showMessage(str_fileName_375+"\n");
-//                MainFrame::showMessage(str_fileName_460+"\n");
+//                MainFrame::showMessage(str_fileName_375);
+//                MainFrame::showMessage(str_fileName_460);
 //                
                 int mode_375_c = -1, mode_460_c = -1;
                 int mode_375_n = -1, mode_460_n = -1;
@@ -1112,12 +1128,50 @@ void MainFrame::openMultiOralCancerDataByDir(wxString path)
     }
     fclose(fp_cancer);
     fclose(fp_normal);
+    stopTimer("Run all orcancer data.");
     
     
     
-    
+}
+
+void MainFrame::OnMenuItemScreenShot(wxCommandEvent& event)
+{
+    m_scrollWin->setImage(getScreenShot());
 }
 void MainFrame::OnTogBtnMarkNormalRoi(wxCommandEvent& event)
 {
-}
 
+}
+cv::Mat MainFrame::getScreenShot()
+{
+        
+    wxScreenDC dcScreen;
+
+
+    wxCoord screenWidth, screenHeight;
+    dcScreen.GetSize(&screenWidth, &screenHeight);
+
+    wxBitmap screenshot(screenWidth, screenHeight,-1);
+
+    wxMemoryDC memDC;
+    memDC.SelectObject(screenshot);
+    memDC.Blit(     0, 
+                    0, 
+                    screenWidth,
+                    screenHeight,
+                    &dcScreen,
+                    0, 
+                    0  
+            );
+
+    memDC.SelectObject(wxNullBitmap);
+    wxImage w_img = screenshot.ConvertToImage();
+    
+    w_img.ClearAlpha();
+    //showMessage(wxString::Format("%d", w_img.HasAlpha()));
+    
+    cv::Mat img(w_img.GetHeight(),w_img.GetWidth(),  CV_8UC3, w_img.GetData()); 
+    cv::cvtColor(img, img, CV_RGB2BGR);
+    //cv::Mat img = cv::Mat::zeros(10,10, CV_8UC3);
+    return img;
+}
