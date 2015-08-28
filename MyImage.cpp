@@ -135,7 +135,13 @@ bool 		MyImage::readImage(wxString &pathName){
 	if(m_cvMat.data) bRet = true;
 	if(bRet){
 		int nChannel = m_cvMat.channels();
-		wxString title = pathName.AfterLast('\\').AfterLast('/');
+#if defined(__WINDOWS__)
+        wxString title = pathName.AfterLast('\\');
+#else
+        wxString title = pathName.AfterLast('/');
+#endif
+        
+        
 		wxString str = wxString::Format(_("readImage: %s channel %d ,w %d h %d ,step %d \n"), title, nChannel, m_cvMat.cols, m_cvMat.rows, m_cvMat.step[0]);
 		MainFrame::showMessage(str);
 		

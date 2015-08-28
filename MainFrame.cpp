@@ -323,6 +323,19 @@ void MainFrame::openFile(wxString &pathName)
       loadNormalRoi(m_str_normalRoiTxtPath);
       
       //split image...
+
+#if defined(__WINDOWS__)
+   if(pathName.AfterLast('\\').StartsWith("460"))
+    {
+        
+        addNewImageState(pImg->split(1));
+        
+    }
+    else if(pathName.AfterLast('\\').StartsWith("375"))
+    {
+        addNewImageState(pImg->split(0));
+    }
+#else
     if(pathName.AfterLast('/').StartsWith("460"))
     {
         
@@ -333,7 +346,7 @@ void MainFrame::openFile(wxString &pathName)
     {
         addNewImageState(pImg->split(0));
     }
-      
+#endif  
       
       UpdateView();
 }
@@ -377,7 +390,7 @@ void MainFrame::UpdateView()
 	m_statusBar->SetStatusText(pImg->getFormatString(), 2);
     m_staticTextCancerRoiCount->SetLabel(wxString::Format("%d/%d", m_n_index_ofSelCancerRoi+1, m_rois_cancer.size()));
     m_staticTextNormalRoiCount->SetLabel(wxString::Format("%d/%d", m_n_index_ofSelNormalRoi+1, m_rois_normal.size()));
-    m_staticTextSlideValue->SetLabel(wxString::Format(wxT("%d"), m_nFilterWidth));
+    m_staticTextSlideValue->SetLabel(wxString::Format("%d", m_nFilterWidth));
 }
 void MainFrame::DeleteContents(){
 	int sz = m_imgList.size();
@@ -1006,6 +1019,8 @@ void MainFrame::openMultiOralCancerDataByDir(wxString path)
         bool        b_cont = dir_recordDir.GetFirst(&str_fileName, "", wxDIR_FILES);
         while(b_cont)
         {
+            cv::Mat mat2Save;
+            
             if(str_fileName.StartsWith("460nm"))
             {
                 wxString str_fileName_375 = str_fileName;
@@ -1020,22 +1035,22 @@ void MainFrame::openMultiOralCancerDataByDir(wxString path)
 //                
                 int mode_375_c = -1, mode_460_c = -1;
                 int mode_375_n = -1, mode_460_n = -1;
-                wxString path375 = wxString::Format("%s/%s", aryStr_SubDirs[i], str_fileName_375);
-                wxString path460 = wxString::Format("%s/%s", aryStr_SubDirs[i], str_fileName_460);
+                wxString path375 = wxString::Format("%s\\%s", aryStr_SubDirs[i], str_fileName_375);
+                wxString path460 = wxString::Format("%s\\%s", aryStr_SubDirs[i], str_fileName_460);
                 
                 //375nm
                 this->openFile(path375);
                     // cancer roi's mode
                 if(m_rois_cancer.size() > 0)
                 {
-                    getCurrentImg()->getContourHistorgam(m_rois_cancer[0]);
+                    cv::imwrite(path375.AfterLast('\\').append("_c.jpg").mb_str().data(),getCurrentImg()->getContourHistorgam(m_rois_cancer[0]));
                     mode_375_c = getCurrentImg()->getOralCancerMode();
                 
                 }
                     //normak roi's mode
                 if(m_rois_normal.size() > 0)
                 {
-                    getCurrentImg()->getContourHistorgam(m_rois_normal[0]);
+                    cv::imwrite(path375.AfterLast('\\').append("_n.jpg").mb_str().data(),getCurrentImg()->getContourHistorgam(m_rois_normal[0]));
                     mode_375_n = getCurrentImg()->getOralCancerMode();
                 
                 }
@@ -1045,14 +1060,14 @@ void MainFrame::openMultiOralCancerDataByDir(wxString path)
                     //cancer roi's mode
                 if(m_rois_cancer.size() > 0)
                 {
-                    getCurrentImg()->getContourHistorgam(m_rois_cancer[0]);
+                    cv::imwrite(path460.AfterLast('\\').append("_c.jpg").mb_str().data(),getCurrentImg()->getContourHistorgam(m_rois_cancer[0]));
                     mode_460_c = getCurrentImg()->getOralCancerMode();
                 
                 }
                     //normal roi's mode
                 if(m_rois_normal.size() > 0)
                 {
-                    getCurrentImg()->getContourHistorgam(m_rois_normal[0]);
+                    cv::imwrite(path460.AfterLast('\\').append("_n.jpg").mb_str().data(),getCurrentImg()->getContourHistorgam(m_rois_normal[0]));
                     mode_460_n = getCurrentImg()->getOralCancerMode();
                 
                 }
