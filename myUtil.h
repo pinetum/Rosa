@@ -67,14 +67,14 @@ class MyUtil
             // determin Roi boundary issue
             if(i < bandWith)
             {
-                //continue;
+                continue;
                roi_width = i+1;
                kde_roi_org = 0;
                gus_roi_org = (bandWith - i)*0.5;
             }
             else if(stdHis.cols-i+1 < bandWith)
             {
-               // continue;
+                continue;
                 roi_width = stdHis.cols - i;
                 kde_roi_org = i-(stdHis.cols-i)/2;
                 gus_roi_org = bandWith/2 - (stdHis.cols-i)/2;
@@ -90,9 +90,7 @@ class MyUtil
             kde_data_roi        = cv::Mat(ked_Result, cv::Rect(kde_roi_org, 0, roi_width, 1));
             gussian_data_roi    = cv::Mat(matGussian, cv::Rect(gus_roi_org, 0, roi_width, 1));
             kde_data_roi        = kde_data_roi + gussian_data_roi * stdHis.at<float>(0,i);
-            
-            if(i== stdHis.cols)
-                int k=0;
+
         }
         return ked_Result;
     }
