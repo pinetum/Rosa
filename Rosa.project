@@ -157,10 +157,44 @@
       </Compiler>
       <Linker Options="$(shell wx-config --libs --debug)" Required="yes">
         <LibraryPath Value="C:/opencv/build/x64/mingw/lib"/>
-        <Library Value="libopencv_core2411.dll.a"/>
-        <Library Value="libopencv_highgui2411.dll.a"/>
-        <Library Value="libopencv_imgproc2411.dll.a"/>
-        <Library Value="libopencv_objdetect2411.dll.a"/>
+        <Library Value="libopencv_adas300.dll.a"/>
+        <Library Value="libopencv_bgsegm300.dll.a"/>
+        <Library Value="libopencv_bioinspired300.dll.a"/>
+        <Library Value="libopencv_calib3d300.dll.a"/>
+        <Library Value="libopencv_ccalib300.dll.a"/>
+        <Library Value="libopencv_core300.dll.a"/>
+        <Library Value="libopencv_datasets300.dll.a"/>
+        <Library Value="libopencv_face300.dll.a"/>
+        <Library Value="libopencv_features2d300.dll.a"/>
+        <Library Value="libopencv_flann300.dll.a"/>
+        <Library Value="libopencv_hal300.a"/>
+        <Library Value="libopencv_highgui300.dll.a"/>
+        <Library Value="libopencv_imgcodecs300.dll.a"/>
+        <Library Value="libopencv_imgproc300.dll.a"/>
+        <Library Value="libopencv_latentsvm300.dll.a"/>
+        <Library Value="libopencv_line_descriptor300.dll.a"/>
+        <Library Value="libopencv_ml300.dll.a"/>
+        <Library Value="libopencv_objdetect300.dll.a"/>
+        <Library Value="libopencv_optflow300.dll.a"/>
+        <Library Value="libopencv_photo300.dll.a"/>
+        <Library Value="libopencv_reg300.dll.a"/>
+        <Library Value="libopencv_rgbd300.dll.a"/>
+        <Library Value="libopencv_saliency300.dll.a"/>
+        <Library Value="libopencv_shape300.dll.a"/>
+        <Library Value="libopencv_stereo300.dll.a"/>
+        <Library Value="libopencv_stitching300.dll.a"/>
+        <Library Value="libopencv_superres300.dll.a"/>
+        <Library Value="libopencv_surface_matching300.dll.a"/>
+        <Library Value="libopencv_text300.dll.a"/>
+        <Library Value="libopencv_tracking300.dll.a"/>
+        <Library Value="libopencv_ts300.a"/>
+        <Library Value="libopencv_video300.dll.a"/>
+        <Library Value="libopencv_videoio300.dll.a"/>
+        <Library Value="libopencv_videostab300.dll.a"/>
+        <Library Value="libopencv_xfeatures2d300.dll.a"/>
+        <Library Value="libopencv_ximgproc300.dll.a"/>
+        <Library Value="libopencv_xobjdetect300.dll.a"/>
+        <Library Value="libopencv_xphoto300.dll.a"/>
       </Linker>
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="no"/>
       <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./Debug-win64" Command="./$(ProjectName)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="no" IsGUIProgram="no" IsEnabled="yes"/>
