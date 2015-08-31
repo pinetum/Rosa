@@ -67,6 +67,7 @@ MainFrame::MainFrame(wxWindow* parent): MainFrameBaseClass(parent)
 	//Center();
     m_scrollWin->setImage(getScreenShot());
     Maximize(true);
+   
 }
 
 MainFrame::~MainFrame()
@@ -1174,4 +1175,9 @@ cv::Mat MainFrame::getScreenShot()
     cv::cvtColor(img, img, CV_RGB2BGR);
     //cv::Mat img = cv::Mat::zeros(10,10, CV_8UC3);
     return img;
+}
+void MainFrame::OnTaskBarIconLeftDown(wxTaskBarIconEvent& event)
+{
+     m_taskBarIcon->PopupMenu(m_menuPlayGround);
+     
 }

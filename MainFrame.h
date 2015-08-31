@@ -38,6 +38,7 @@ public:
 	
 	
 protected:
+    virtual void OnTaskBarIconLeftDown(wxTaskBarIconEvent& event);
     virtual void OnMenuItemScreenShot(wxCommandEvent& event);
     virtual void OnMouseRightUp(wxMouseEvent& event);
     virtual void OnTogBtnMarkNormalRoi(wxCommandEvent& event);

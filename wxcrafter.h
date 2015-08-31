@@ -28,6 +28,7 @@
 #include <wx/tglbtn.h>
 #include <wx/button.h>
 #include <wx/statusbr.h>
+#include <wx/taskbar.h>
 #include <wx/dialog.h>
 #include <wx/textctrl.h>
 #if wxVERSION_NUMBER >= 2900
@@ -90,12 +91,13 @@ protected:
     wxMenu* m_menuOralCancer;
     wxMenuItem* m_menuItemLoadRois;
     wxMenuItem* m_menuItemRunAllOralCncer;
-    wxMenu* m_menu176;
+    wxMenu* m_menuPlayGround;
     wxMenuItem* m_menuItemRaiseArmDetect;
     wxMenuItem* m_menuItemScrennshot;
     wxToolBar* m_mainToolbar;
     wxBitmapToggleButton* m_bmpToggleBtnMarkNormalRoi;
     wxStatusBar* m_statusBar;
+    wxTaskBarIcon* m_taskBarIcon;
 
 protected:
     virtual void OnMouseMotion(wxMouseEvent& event) { event.Skip(); }
@@ -142,6 +144,7 @@ protected:
     virtual void OnMenuItemClkRaisArmDetect(wxCommandEvent& event) { event.Skip(); }
     virtual void OnMenuItemScreenShot(wxCommandEvent& event) { event.Skip(); }
     virtual void OnTogBtnMarkNormalRoi(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnTaskBarIconLeftDown(wxTaskBarIconEvent& event) { event.Skip(); }
 
 public:
     MyImageWin* GetScrollWin() { return m_scrollWin; }
@@ -161,6 +164,7 @@ public:
     wxBitmapToggleButton* GetBmpToggleBtnMarkNormalRoi() { return m_bmpToggleBtnMarkNormalRoi; }
     wxToolBar* GetMainToolbar() { return m_mainToolbar; }
     wxStatusBar* GetStatusBar() { return m_statusBar; }
+    wxTaskBarIcon* GetTaskBarIcon() { return m_taskBarIcon; }
     MainFrameBaseClass(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Rosa"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(800,600), long style = wxCAPTION|wxRESIZE_BORDER|wxMAXIMIZE_BOX|wxMINIMIZE_BOX|wxSYSTEM_MENU|wxCLOSE_BOX);
     virtual ~MainFrameBaseClass();
 };

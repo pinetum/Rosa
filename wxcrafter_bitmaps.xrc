@@ -9,5 +9,6 @@
   <object class="wxBitmap" name="enderman">icons/enderman.png</object>
   <object class="wxBitmap" name="open-file-icon">icons/open-file-icon.png</object>
   <object class="wxBitmap" name="polygon">icons/polygon.png</object>
+  <object class="wxBitmap" name="tnt">icons/tnt.png</object>
   <object class="wxBitmap" name="wizard-icon">icons/wizard-icon.png</object>
 </resource>
