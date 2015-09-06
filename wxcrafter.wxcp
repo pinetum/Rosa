@@ -3585,14 +3585,7 @@
 									"m_label":	"Checked",
 									"m_value":	false
 								}],
-							"m_events":	[{
-									"m_eventName":	"wxEVT_COMMAND_TOGGLEBUTTON_CLICKED",
-									"m_eventClass":	"wxCommandEvent",
-									"m_eventHandler":	"wxCommandEventHandler",
-									"m_functionNameAndSignature":	"OnTogBtnMarkNormalRoi(wxCommandEvent& event)",
-									"m_description":	"Handles a toggle button click event.",
-									"m_noBody":	false
-								}],
+							"m_events":	[],
 							"m_children":	[]
 						}]
 				}, {
@@ -3717,11 +3710,11 @@
 						}, {
 							"type":	"string",
 							"m_label":	"Class Name:",
-							"m_value":	""
+							"m_value":	"MyTaskBarIcon"
 						}, {
 							"type":	"string",
 							"m_label":	"Include File:",
-							"m_value":	""
+							"m_value":	"MyTaskBarIcon.h"
 						}, {
 							"type":	"string",
 							"m_label":	"Style:",
@@ -3740,14 +3733,7 @@
 							"m_label":	"Bitmap File:",
 							"m_path":	"icons/tnt.png"
 						}],
-					"m_events":	[{
-							"m_eventName":	"wxEVT_TASKBAR_LEFT_DOWN",
-							"m_eventClass":	"wxTaskBarIconEvent",
-							"m_eventHandler":	"wxTaskBarIconEventHandler",
-							"m_functionNameAndSignature":	"OnTaskBarIconLeftDown(wxTaskBarIconEvent& event)",
-							"m_description":	"Process a wxEVT_TASKBAR_LEFT_DOWN event",
-							"m_noBody":	false
-						}],
+					"m_events":	[],
 					"m_children":	[]
 				}]
 		}, {

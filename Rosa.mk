@@ -13,7 +13,7 @@ CurrentFileName        :=
 CurrentFilePath        :=
 CurrentFileFullPath    :=
 User                   :=QT Lin
-Date                   :=31/08/2015
+Date                   :=04/09/2015
 CodeLitePath           :="/Users/Pinetum/Library/Application Support/codelite"
 LinkerName             :=/usr/bin/g++
 SharedObjectLinkerName :=/usr/bin/g++ -dynamiclib -fPIC
@@ -60,7 +60,8 @@ AS       := /usr/bin/as
 ## User defined environment variables
 ##
 CodeLiteDir:=/Users/Pinetum/Downloads/codelite.app/Contents/SharedSupport/
-Objects0=$(IntermediateDirectory)/main.cpp$(ObjectSuffix) $(IntermediateDirectory)/MainFrame.cpp$(ObjectSuffix) $(IntermediateDirectory)/wxcrafter.cpp$(ObjectSuffix) $(IntermediateDirectory)/wxcrafter_bitmaps.cpp$(ObjectSuffix) $(IntermediateDirectory)/CDlgGetValue.cpp$(ObjectSuffix) $(IntermediateDirectory)/highDMeanShift.cpp$(ObjectSuffix) $(IntermediateDirectory)/MyImage.cpp$(ObjectSuffix) $(IntermediateDirectory)/MyImageWin.cpp$(ObjectSuffix) $(IntermediateDirectory)/MyJSParser.cpp$(ObjectSuffix) 
+Objects0=$(IntermediateDirectory)/main.cpp$(ObjectSuffix) $(IntermediateDirectory)/MainFrame.cpp$(ObjectSuffix) $(IntermediateDirectory)/wxcrafter.cpp$(ObjectSuffix) $(IntermediateDirectory)/wxcrafter_bitmaps.cpp$(ObjectSuffix) $(IntermediateDirectory)/CDlgGetValue.cpp$(ObjectSuffix) $(IntermediateDirectory)/MyImage.cpp$(ObjectSuffix) $(IntermediateDirectory)/MyImageWin.cpp$(ObjectSuffix) $(IntermediateDirectory)/MyJSParser.cpp$(ObjectSuffix) $(IntermediateDirectory)/fams.cpp$(ObjectSuffix) $(IntermediateDirectory)/MyTaskBarIcon.cpp$(ObjectSuffix) \
+	
 
 
 
@@ -131,14 +132,6 @@ $(IntermediateDirectory)/CDlgGetValue.cpp$(DependSuffix): CDlgGetValue.cpp
 $(IntermediateDirectory)/CDlgGetValue.cpp$(PreprocessSuffix): CDlgGetValue.cpp
 	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/CDlgGetValue.cpp$(PreprocessSuffix) "CDlgGetValue.cpp"
 
-$(IntermediateDirectory)/highDMeanShift.cpp$(ObjectSuffix): highDMeanShift.cpp $(IntermediateDirectory)/highDMeanShift.cpp$(DependSuffix)
-	$(CXX) $(IncludePCH) $(SourceSwitch) "/Users/Pinetum/coding/Rosa/highDMeanShift.cpp" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/highDMeanShift.cpp$(ObjectSuffix) $(IncludePath)
-$(IntermediateDirectory)/highDMeanShift.cpp$(DependSuffix): highDMeanShift.cpp
-	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) -MG -MP -MT$(IntermediateDirectory)/highDMeanShift.cpp$(ObjectSuffix) -MF$(IntermediateDirectory)/highDMeanShift.cpp$(DependSuffix) -MM "highDMeanShift.cpp"
-
-$(IntermediateDirectory)/highDMeanShift.cpp$(PreprocessSuffix): highDMeanShift.cpp
-	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/highDMeanShift.cpp$(PreprocessSuffix) "highDMeanShift.cpp"
-
 $(IntermediateDirectory)/MyImage.cpp$(ObjectSuffix): MyImage.cpp $(IntermediateDirectory)/MyImage.cpp$(DependSuffix)
 	$(CXX) $(IncludePCH) $(SourceSwitch) "/Users/Pinetum/coding/Rosa/MyImage.cpp" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/MyImage.cpp$(ObjectSuffix) $(IncludePath)
 $(IntermediateDirectory)/MyImage.cpp$(DependSuffix): MyImage.cpp
@@ -162,6 +155,22 @@ $(IntermediateDirectory)/MyJSParser.cpp$(DependSuffix): MyJSParser.cpp
 
 $(IntermediateDirectory)/MyJSParser.cpp$(PreprocessSuffix): MyJSParser.cpp
 	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/MyJSParser.cpp$(PreprocessSuffix) "MyJSParser.cpp"
+
+$(IntermediateDirectory)/fams.cpp$(ObjectSuffix): fams.cpp $(IntermediateDirectory)/fams.cpp$(DependSuffix)
+	$(CXX) $(IncludePCH) $(SourceSwitch) "/Users/Pinetum/coding/Rosa/fams.cpp" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/fams.cpp$(ObjectSuffix) $(IncludePath)
+$(IntermediateDirectory)/fams.cpp$(DependSuffix): fams.cpp
+	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) -MG -MP -MT$(IntermediateDirectory)/fams.cpp$(ObjectSuffix) -MF$(IntermediateDirectory)/fams.cpp$(DependSuffix) -MM "fams.cpp"
+
+$(IntermediateDirectory)/fams.cpp$(PreprocessSuffix): fams.cpp
+	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/fams.cpp$(PreprocessSuffix) "fams.cpp"
+
+$(IntermediateDirectory)/MyTaskBarIcon.cpp$(ObjectSuffix): MyTaskBarIcon.cpp $(IntermediateDirectory)/MyTaskBarIcon.cpp$(DependSuffix)
+	$(CXX) $(IncludePCH) $(SourceSwitch) "/Users/Pinetum/coding/Rosa/MyTaskBarIcon.cpp" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/MyTaskBarIcon.cpp$(ObjectSuffix) $(IncludePath)
+$(IntermediateDirectory)/MyTaskBarIcon.cpp$(DependSuffix): MyTaskBarIcon.cpp
+	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) -MG -MP -MT$(IntermediateDirectory)/MyTaskBarIcon.cpp$(ObjectSuffix) -MF$(IntermediateDirectory)/MyTaskBarIcon.cpp$(DependSuffix) -MM "MyTaskBarIcon.cpp"
+
+$(IntermediateDirectory)/MyTaskBarIcon.cpp$(PreprocessSuffix): MyTaskBarIcon.cpp
+	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/MyTaskBarIcon.cpp$(PreprocessSuffix) "MyTaskBarIcon.cpp"
 
 
 -include $(IntermediateDirectory)/*$(DependSuffix)

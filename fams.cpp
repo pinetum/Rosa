@@ -17,7 +17,7 @@
 #include <memory.h>
 #include <time.h>
 #include "fams.h"
-
+#include "MainFrame.h"
 
 FAMS::FAMS(int no_lsh)
 {
@@ -100,10 +100,10 @@ int FAMS::LoadPoints(char* filename)
 
    if (!fd)
    {
-      bgLog("Error opening %s\n", filename);
+     // bgLog("Error opening %s\n", filename);
       return 1;
    }
-   fscanf(fd, "%d %d", &n_, &d_);
+   fscanf(fd, "%d %d", &n_, &d_);//取得 點的數量  dimensions
    if ((n_<1) || (d_<1))
    {
       bgLog("Error reading %s\n", filename);
@@ -957,7 +957,7 @@ int FAMS::PruneModes(int hprune, int npmin)
 
       pmodes = modes_+cm*d_;
 
-      //bgLog("cm=%d, nm=%d, kk=%d, %d %d\n",cm, maxm, hmodes_[cm], pmodes[0], pmodes[d_-1]);
+      bgLog("cm=%d, nm=%d, kk=%d, %d %d\n",cm, maxm, hmodes_[cm], pmodes[0], pmodes[d_-1]);
 
       // compute closest mode
       cminDist = d_*1e7;
@@ -1043,7 +1043,7 @@ int FAMS::PruneModes(int hprune, int npmin)
       cm = istemp[maxm-i-1]; // index
       mcount2[i] = mcount[cm];
       memcpy(cmodes2+i*d_, cmodes+cm*d_, d_*sizeof(float));
-      //bgLog("1: %g %g %d\n",cmodes2[i*d_+0],cmodes2[i*d_+d_-1], mcount2[i]);
+      bgLog("1: %g %g %d\n",cmodes2[i*d_+0],cmodes2[i*d_+d_-1], mcount2[i]);
    }
 
    delete [] cmodes;
@@ -1129,7 +1129,7 @@ int FAMS::PruneModes(int hprune, int npmin)
       {
          *(cpm++) = (unsigned short) (cmodes2[cm*d_+cd]/mcount2[cm]);
       }
-      //bgLog("2: %d %d\n",prunedmodes_[i*d_+0],prunedmodes_[i*d_+d_-1]);
+      bgLog("2: %d %d\n",prunedmodes_[i*d_+0],prunedmodes_[i*d_+d_-1]);
    }
 
 
@@ -1318,9 +1318,9 @@ double FAMS::DoFindKLIteration(int K,int L, float* scores)
    }
    
    //Compute Scores
-   timer_start();
+   //timer_start();
    ComputeScores(HT, hs, cuts, scores);
-   double run_time=timer_elapsed(0);
+   double run_time=0;//timer_elapsed(0);
 
    // clean
    delete [] cuts;
@@ -1419,116 +1419,116 @@ int FAMS::RunFAMS(int K, int L, int k, double percent, int jump, float width, ch
    return 0;
 }
 
-void usage()
-{
-   bgLog("usage: K L k file_name input_dir [ [-j jump | -p percent] | -h width \n   -f epsilon Kmin Kjump]"); 
-}
+//void usage()
+//{
+//   bgLog("usage: K L k file_name input_dir [ [-j jump | -p percent] | -h width \n   -f epsilon Kmin Kjump]"); 
+//}
 
-
-int main(int argc,char** argv)
-{
-   if(argc < 6)
-   {
-      usage();
-      exit(1);
-   }
-   int no_lsh, find_kl;
-   int K, L, k_neigh;
-   char *data_file_name, *input_path;
-   char fdata_file_name[200];
-   K = atoi(argv[1]);
-   L = atoi(argv[2]);
-   //判斷是否使用LSH
-   no_lsh = (K<=0) || (L <= 0);
-   find_kl = 0;
-
-   float epsilon;
-   int Kmin, Kjump, Kmax;
-   int Lmax;
-
-   float width = -1;
-   //取得使用者的Ｋ
-   k_neigh = atoi(argv[3]);
-   data_file_name = argv[4];
-   input_path = argv[5];
-   sprintf(fdata_file_name,"%s%s.txt",input_path,data_file_name);
-   int jump=1;
-   double percent=0.0;
-   int i;
-   if (argc > 6)
-   {
-      for (i=6; i<argc; i++)
-      {
-         if (argv[i][0] != '-')
-         {
-            bgLog("Error in param %s\n", argv[i]);
-            usage();
-            exit(1);
-         }
-         switch(argv[i][1])
-         {
-         case 'j': 
-            i++;
-            jump = atoi(argv[i]);
-            if (jump<1) jump=1;
-            break;
-         case 'p':
-            i++;
-            percent = atof(argv[i]);
-            if ((percent<0) || (percent>1)) percent = 0;
-            break;
-         case 'h':
-            i++;
-            width = (float) atof(argv[i]);
-            break;
-         case 'f':
-            i++;
-            epsilon = (float) atof(argv[i++]);
-            Kmin = atoi(argv[i++]);
-            Kjump = atoi(argv[i]);
-            Lmax = L; Kmax = K;
-            find_kl=1;
-            break;
-         default:
-            bgLog("Error in param %s\n", argv[i]);
-            usage();
-            exit(1);
-            break;
-         }
-      }
-   }
-
-
-   // load points
-   FAMS cfams(no_lsh);
-   if (cfams.LoadPoints(fdata_file_name))
-      return 1;
-
-   // find K L (if necessary)
-   if (find_kl)
-   {
-      cfams.FindKL(Kmin, Kmax, Kjump, Lmax, k_neigh, width, epsilon, K, L);
-      bgLog("Found K = %d L = %d (write them down)\n", K, L);
-      int ch=' ';
-      do{
-         bgLog("Do you want to run FAMS with this (K=%d,L=%d) pair? (y/n)",K,L);
-         ch = getchar();
-         if ((ch == 'n') || (ch == 'N'))
-            return 0;
-      } while((ch != 'y') && (ch != 'Y'));
-   }
-   sprintf(fdata_file_name, "%spilot_%d_%s.txt", input_path, k_neigh, data_file_name);
-   cfams.RunFAMS(K, L, k_neigh, percent, jump, width, fdata_file_name);
-
-   // save the data
-   sprintf(fdata_file_name,"%sout_%s.txt",input_path,data_file_name);
-   cfams.SaveModes(fdata_file_name);
-
-   // save pruned modes modes
-   sprintf(fdata_file_name,"%smodes_%s.txt",input_path, data_file_name);
-   cfams.SavePrunedModes(fdata_file_name);
-
-
-   return 0;
-}
-
+//
+//int mainForFAMS(int argc,char** argv)
+//{
+//   if(argc < 6)
+//   {
+//      usage();
+//      exit(1);
+//   }
+//   int no_lsh, find_kl;
+//   int K, L, k_neigh;
+//   char *data_file_name, *input_path;
+//   char fdata_file_name[200];
+//   K = atoi(argv[1]);
+//   L = atoi(argv[2]);
+//   //判斷是否使用LSH
+//   no_lsh = (K<=0) || (L <= 0);
+//   find_kl = 0;
+//
+//   float epsilon;
+//   int Kmin, Kjump, Kmax;
+//   int Lmax;
+//
+//   float width = -1;
+//   //取得使用者的Ｋ
+//   k_neigh = atoi(argv[3]);
+//   data_file_name = argv[4];
+//   input_path = argv[5];
+//   sprintf(fdata_file_name,"%s%s.txt",input_path,data_file_name);
+//   int jump=1;
+//   double percent=0.0;
+//   int i;
+//   if (argc > 6)
+//   {
+//      for (i=6; i<argc; i++)
+//      {
+//         if (argv[i][0] != '-')
+//         {
+//            bgLog("Error in param %s\n", argv[i]);
+//            usage();
+//            exit(1);
+//         }
+//         switch(argv[i][1])
+//         {
+//         case 'j': 
+//            i++;
+//            jump = atoi(argv[i]);
+//            if (jump<1) jump=1;
+//            break;
+//         case 'p':
+//            i++;
+//            percent = atof(argv[i]);
+//            if ((percent<0) || (percent>1)) percent = 0;
+//            break;
+//         case 'h':
+//            i++;
+//            width = (float) atof(argv[i]);
+//            break;
+//         case 'f':
+//            i++;
+//            epsilon = (float) atof(argv[i++]);
+//            Kmin = atoi(argv[i++]);
+//            Kjump = atoi(argv[i]);
+//            Lmax = L; Kmax = K;
+//            find_kl=1;
+//            break;
+//         default:
+//            bgLog("Error in param %s\n", argv[i]);
+//            usage();
+//            exit(1);
+//            break;
+//         }
+//      }
+//   }
+//
+//
+//   // load points
+//   FAMS cfams(no_lsh);
+//   if (cfams.LoadPoints(fdata_file_name))
+//      return 1;
+//
+//   // find K L (if necessary)
+//   if (find_kl)
+//   {
+//      cfams.FindKL(Kmin, Kmax, Kjump, Lmax, k_neigh, width, epsilon, K, L);
+//      bgLog("Found K = %d L = %d (write them down)\n", K, L);
+//      int ch=' ';
+//      do{
+//         bgLog("Do you want to run FAMS with this (K=%d,L=%d) pair? (y/n)",K,L);
+//         ch = getchar();
+//         if ((ch == 'n') || (ch == 'N'))
+//            return 0;
+//      } while((ch != 'y') && (ch != 'Y'));
+//   }
+//   sprintf(fdata_file_name, "%spilot_%d_%s.txt", input_path, k_neigh, data_file_name);
+//   cfams.RunFAMS(K, L, k_neigh, percent, jump, width, fdata_file_name);
+//
+//   // save the data
+//   sprintf(fdata_file_name,"%sout_%s.txt",input_path,data_file_name);
+//   cfams.SaveModes(fdata_file_name);
+//
+//   // save pruned modes modes
+//   sprintf(fdata_file_name,"%smodes_%s.txt",input_path, data_file_name);
+//   cfams.SavePrunedModes(fdata_file_name);
+//
+//
+//   return 0;
+//}
+//

@@ -16,7 +16,7 @@ MyImageWin::~MyImageWin()
 
 wxSize MyImageWin::setImage(cv::Mat mat){
 	wxImage wxIm;
-	m_rgbOutput;
+	//m_rgbOutput;
 	int type = mat.type();
 	int channel = mat.channels();
 	bool ret = false;
@@ -40,7 +40,6 @@ wxSize MyImageWin::setImage(cv::Mat mat){
 		m_pBitmap = new wxBitmap( wxIm );
 		int w = wxIm.GetWidth();
 		int h = wxIm.GetHeight();
-		SetVirtualSize( w, h );
 		Refresh();
 	}else wxLogMessage(wxT("wxIm.Create failed"));
 	

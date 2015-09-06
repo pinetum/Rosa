@@ -25,21 +25,23 @@
     <File Name="wxcrafter.cpp"/>
     <File Name="wxcrafter_bitmaps.cpp"/>
     <File Name="CDlgGetValue.cpp"/>
-    <File Name="highDMeanShift.cpp"/>
     <File Name="MyImage.cpp"/>
     <File Name="MyImageWin.cpp"/>
     <File Name="MyJSParser.cpp"/>
+    <File Name="fams.cpp"/>
+    <File Name="MyTaskBarIcon.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <File Name="MainFrame.h"/>
     <File Name="wxcrafter.h"/>
     <File Name="CDlgGetValue.h"/>
     <File Name="gnuplot_i.hpp"/>
-    <File Name="highDMeanShift.h"/>
     <File Name="MyImage.h"/>
     <File Name="MyImageWin.h"/>
     <File Name="MyJSParser.h"/>
     <File Name="myUtil.h"/>
+    <File Name="MyTaskBarIcon.h"/>
+    <File Name="fams.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="resources">
     <File Name="wxcrafter.wxcp"/>

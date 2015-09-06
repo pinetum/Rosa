@@ -1,8 +1,9 @@
 
 #ifndef MYUTIL_H
 #define MYUTIL_H
-#include "MainFrame.h"
+
 #include <stdio.h>
+
 class MyUtil
 {
  public:

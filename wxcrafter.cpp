@@ -252,7 +252,7 @@ MainFrameBaseClass::MainFrameBaseClass(wxWindow* parent, wxWindowID id, const wx
     m_statusBar->SetFieldsCount(1);
     this->SetStatusBar(m_statusBar);
     
-    m_taskBarIcon = new wxTaskBarIcon(wxTBI_DEFAULT_TYPE);
+    m_taskBarIcon = new MyTaskBarIcon(wxTBI_DEFAULT_TYPE);
     {
         wxIcon icn;
         icn.CopyFromBitmap(wxXmlResource::Get()->LoadBitmap(wxT("tnt")));
@@ -331,8 +331,6 @@ MainFrameBaseClass::MainFrameBaseClass(wxWindow* parent, wxWindowID id, const wx
     this->Connect(m_menuItemRunAllOralCncer->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnMenuItemClkRunAllOralCancer), NULL, this);
     this->Connect(m_menuItemRaiseArmDetect->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnMenuItemClkRaisArmDetect), NULL, this);
     this->Connect(m_menuItemScrennshot->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnMenuItemScreenShot), NULL, this);
-    m_bmpToggleBtnMarkNormalRoi->Connect(wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, wxCommandEventHandler(MainFrameBaseClass::OnTogBtnMarkNormalRoi), NULL, this);
-    m_taskBarIcon->Connect(wxEVT_TASKBAR_LEFT_DOWN, wxTaskBarIconEventHandler(MainFrameBaseClass::OnTaskBarIconLeftDown), NULL, this);
     
 }
 
@@ -395,8 +393,6 @@ MainFrameBaseClass::~MainFrameBaseClass()
     this->Disconnect(m_menuItemRunAllOralCncer->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnMenuItemClkRunAllOralCancer), NULL, this);
     this->Disconnect(m_menuItemRaiseArmDetect->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnMenuItemClkRaisArmDetect), NULL, this);
     this->Disconnect(m_menuItemScrennshot->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnMenuItemScreenShot), NULL, this);
-    m_bmpToggleBtnMarkNormalRoi->Disconnect(wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, wxCommandEventHandler(MainFrameBaseClass::OnTogBtnMarkNormalRoi), NULL, this);
-    m_taskBarIcon->Disconnect(wxEVT_TASKBAR_LEFT_DOWN, wxTaskBarIconEventHandler(MainFrameBaseClass::OnTaskBarIconLeftDown), NULL, this);
     
 wxDELETE(m_taskBarIcon);
 

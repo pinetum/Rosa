@@ -6,7 +6,6 @@
 #include <wx/dir.h>
 #include <wx/dnd.h>
 #include "CDlgGetValue.h"
-#include "highDMeanShift.h"
 #include "MyJSParser.h"
 #include <wx/arrstr.h> 
 #include <wx/dcscreen.h>
@@ -65,9 +64,8 @@ MainFrame::MainFrame(wxWindow* parent): MainFrameBaseClass(parent)
     // in mac os x
     //SetSize(900, 800);
 	//Center();
-    m_scrollWin->setImage(getScreenShot());
     Maximize(true);
-   
+    m_taskBarIcon->setPopUpMenu(m_menuPlayGround);
 }
 
 MainFrame::~MainFrame()
@@ -96,7 +94,7 @@ void MainFrame::stopTimer(wxString TimerName)
    unsigned long seconds, milliseconds;
    seconds = (m_time_end-m_time_start)/CLOCKS_PER_SEC;
    milliseconds = ((1000*(m_time_end-m_time_start))/CLOCKS_PER_SEC) - 1000*seconds;
-   showMessage(wxString::Format(_("[Time]TimerName:%d:%d(s:ms)"), seconds, milliseconds));
+   showMessage(wxString::Format(_("[Time]%s:%d:%d(s:ms)"),TimerName, seconds, milliseconds));
 }
 void MainFrame::OnAbout(wxCommandEvent& event)
 {
@@ -591,8 +589,7 @@ void MainFrame::OnGnuplotSample(wxCommandEvent& event)
 }
 void MainFrame::OnMeanShiftBase(wxCommandEvent& event)
 {
-	highDMeanShift myMS(2,200);
-	myMS.base2DMS();
+	
 }
 void MainFrame::OnItemDestroyWindowClose(wxCommandEvent& event)
 {
@@ -1106,8 +1103,7 @@ void MainFrame::openMultiOralCancerDataByDir(wxString path)
 #else
                     cv::imwrite(path460.AfterLast('/').append("_n.jpg").mb_str().data(),getCurrentImg()->getContourHistorgam(m_rois_normal[0]));
 #endif
-                    mode_460_n = getCurrentImg()->getOralCancerMode();
-                
+                    mode_460_n = getCurrentImg()->getOralCancerMode()
                 }
                 
                 
@@ -1139,10 +1135,7 @@ void MainFrame::OnMenuItemScreenShot(wxCommandEvent& event)
 {
     m_scrollWin->setImage(getScreenShot());
 }
-void MainFrame::OnTogBtnMarkNormalRoi(wxCommandEvent& event)
-{
 
-}
 cv::Mat MainFrame::getScreenShot()
 {
         
@@ -1176,8 +1169,4 @@ cv::Mat MainFrame::getScreenShot()
     //cv::Mat img = cv::Mat::zeros(10,10, CV_8UC3);
     return img;
 }
-void MainFrame::OnTaskBarIconLeftDown(wxTaskBarIconEvent& event)
-{
-     m_taskBarIcon->PopupMenu(m_menuPlayGround);
-     
-}
+
