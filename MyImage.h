@@ -45,7 +45,7 @@ public:
 	MyImage* resize(cv::Size size);
     MyImage* resize(double zoom);
 	MyImage* split(int nTargetCh);
- 
+    MyImage* gaborFilter(int ksz=43, double sigma=3, double theta=12, double lambd=11, double gamma=0.2, double psi=CV_PI*0.5);
 	
     MyImage* meanShift(int *x, int* y);
     int getOralCancerMode();

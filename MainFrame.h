@@ -2,6 +2,7 @@
 #define MAINFRAME_H
 
 #include "MyImageWin.h"
+#include "CMyPlotWin.h"
 #include "MyImage.h"
 #include "myUtil.h"
 #include "wxcrafter.h"
@@ -34,10 +35,12 @@ public:
     wxString m_str_TimerName ;
     time_t m_time_start;
     time_t m_time_end;
+    CMyPlotWin* m_plot_win;
     //Gnuplot* g1;
 	
 	
 protected:
+    virtual void OnMenuItemClickGaborFilter(wxCommandEvent& event);
     virtual void OnMenuItemScreenShot(wxCommandEvent& event);
     virtual void OnMouseRightUp(wxMouseEvent& event);
     virtual void OnMenuItemClkRunAllOralCancer(wxCommandEvent& event);

@@ -184,8 +184,11 @@ MainFrameBaseClass::MainFrameBaseClass(wxWindow* parent, wxWindowID id, const wx
     m_menuItemMedianBlur = new wxMenuItem(m_menuImage, wxID_ANY, _("Smooth - Median Blur"), wxT(""), wxITEM_NORMAL);
     m_menuImage->Append(m_menuItemMedianBlur);
     
-    m_menuItemSplitChnl = new wxMenuItem(m_menuImage, wxID_ANY, _("split"), wxT(""), wxITEM_NORMAL);
+    m_menuItemSplitChnl = new wxMenuItem(m_menuImage, wxID_ANY, _("split RGB Channel"), wxT(""), wxITEM_NORMAL);
     m_menuImage->Append(m_menuItemSplitChnl);
+    
+    m_menuItemGaborFilter = new wxMenuItem(m_menuImage, wxID_GABOR_FILTER, _("Gabor Filter"), wxT(""), wxITEM_NORMAL);
+    m_menuImage->Append(m_menuItemGaborFilter);
     
     m_menu_gnuEtc = new wxMenu();
     m_menuBar->Append(m_menu_gnuEtc, _("gnuplot"));
@@ -235,9 +238,9 @@ MainFrameBaseClass::MainFrameBaseClass(wxWindow* parent, wxWindowID id, const wx
     
     m_mainToolbar->AddSeparator();
     
-    m_mainToolbar->AddTool(wxID_ANY, _("Tool Label"), wxXmlResource::Get()->LoadBitmap(wxT("creeper")), wxNullBitmap, wxITEM_NORMAL, wxT(""), wxT(""), NULL);
+    m_mainToolbar->AddTool(wxID_ANY, _("Tool Label"), wxXmlResource::Get()->LoadBitmap(wxT("enderman")), wxNullBitmap, wxITEM_NORMAL, _("Gabor Filter"), wxT(""), NULL);
     
-    m_mainToolbar->AddTool(wxID_ANY, _("Tool Label"), wxXmlResource::Get()->LoadBitmap(wxT("enderman")), wxNullBitmap, wxITEM_NORMAL, wxT(""), wxT(""), NULL);
+    m_mainToolbar->AddTool(wxID_ANY, _("Tool Label"), wxXmlResource::Get()->LoadBitmap(wxT("creeper")), wxNullBitmap, wxITEM_NORMAL, wxT(""), wxT(""), NULL);
     
     m_mainToolbar->AddTool(wxID_ANY, _("Tool Label"), wxXmlResource::Get()->LoadBitmap(wxT("wizard-icon")), wxNullBitmap, wxITEM_NORMAL, wxT(""), wxT(""), NULL);
     
@@ -325,6 +328,8 @@ MainFrameBaseClass::MainFrameBaseClass(wxWindow* parent, wxWindowID id, const wx
     this->Connect(m_menuItemMedianBlur->GetId(), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MainFrameBaseClass::OnUpdateImageFunction), NULL, this);
     this->Connect(m_menuItemSplitChnl->GetId(), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MainFrameBaseClass::OnUpdateImageFunction), NULL, this);
     this->Connect(m_menuItemSplitChnl->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnMenuItemSplit), NULL, this);
+    this->Connect(m_menuItemGaborFilter->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnMenuItemClickGaborFilter), NULL, this);
+    this->Connect(m_menuItemGaborFilter->GetId(), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MainFrameBaseClass::OnUpdateImageFunction), NULL, this);
     this->Connect(m_menuPlot1->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnGnuplotSample), NULL, this);
     this->Connect(m_menuItemMSBase->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnMeanShiftBase), NULL, this);
     this->Connect(m_menuItemLoadRois->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnMenuClickLoadOralCancerRois), NULL, this);
@@ -387,6 +392,8 @@ MainFrameBaseClass::~MainFrameBaseClass()
     this->Disconnect(m_menuItemMedianBlur->GetId(), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MainFrameBaseClass::OnUpdateImageFunction), NULL, this);
     this->Disconnect(m_menuItemSplitChnl->GetId(), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MainFrameBaseClass::OnUpdateImageFunction), NULL, this);
     this->Disconnect(m_menuItemSplitChnl->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnMenuItemSplit), NULL, this);
+    this->Disconnect(m_menuItemGaborFilter->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnMenuItemClickGaborFilter), NULL, this);
+    this->Disconnect(m_menuItemGaborFilter->GetId(), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MainFrameBaseClass::OnUpdateImageFunction), NULL, this);
     this->Disconnect(m_menuPlot1->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnGnuplotSample), NULL, this);
     this->Disconnect(m_menuItemMSBase->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnMeanShiftBase), NULL, this);
     this->Disconnect(m_menuItemLoadRois->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnMenuClickLoadOralCancerRois), NULL, this);
@@ -448,5 +455,52 @@ CDlgGetValueBase::CDlgGetValueBase(wxWindow* parent, wxWindowID id, const wxStri
 CDlgGetValueBase::~CDlgGetValueBase()
 {
     m_buttonSubmit->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CDlgGetValueBase::OnButtonSubmit), NULL, this);
+    
+}
+
+CMyPlotWinBase::CMyPlotWinBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
+    : wxDialog(parent, id, title, pos, size, style)
+{
+    if ( !bBitmapLoaded ) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxC9ED9InitBitmapResources();
+        bBitmapLoaded = true;
+    }
+    
+    wxBoxSizer* boxSizer210 = new wxBoxSizer(wxVERTICAL);
+    this->SetSizer(boxSizer210);
+    
+    #if wxUSE_WEBVIEW
+    m_webView = wxWebView::New(this, wxID_ANY, _("about:blank"), wxDefaultPosition, wxSize(-1,-1), wxWebViewBackendDefault, 0);
+    
+    boxSizer210->Add(m_webView, 1, wxALL|wxEXPAND, 5);
+    #endif // wxUSE_WEBVIEW
+    
+    SetName(wxT("CMyPlotWinBase"));
+    SetSizeHints(500,300);
+    if ( GetSizer() ) {
+         GetSizer()->Fit(this);
+    }
+    CentreOnParent(wxBOTH);
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
+    }
+#endif
+    // Connect events
+    #if wxUSE_WEBVIEW
+    
+    #endif // wxUSE_WEBVIEW
+    
+}
+
+CMyPlotWinBase::~CMyPlotWinBase()
+{
+    #if wxUSE_WEBVIEW
+    
+    #endif // wxUSE_WEBVIEW
     
 }

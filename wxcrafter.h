@@ -32,6 +32,7 @@
 #include "MyTaskBarIcon.h"
 #include <wx/dialog.h>
 #include <wx/textctrl.h>
+#include <wx/webview.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
 #include <wx/persist/toplevel.h>
@@ -43,9 +44,10 @@ class MainFrameBaseClass : public wxFrame
 {
 public:
     enum {
-        wxID_ORALCANCER_RUN_ALL = 1001,
-        wxID_RESIZE_FIT_WINDOW = 1002,
-        wxID_SAVE_AS = 1003,
+        wxID_GABOR_FILTER = 1001,
+        wxID_ORALCANCER_RUN_ALL = 1002,
+        wxID_RESIZE_FIT_WINDOW = 1003,
+        wxID_SAVE_AS = 1004,
     };
 protected:
     MyImageWin* m_scrollWin;
@@ -85,6 +87,7 @@ protected:
     wxMenuItem* m_menuImageConnectComponents;
     wxMenuItem* m_menuItemMedianBlur;
     wxMenuItem* m_menuItemSplitChnl;
+    wxMenuItem* m_menuItemGaborFilter;
     wxMenu* m_menu_gnuEtc;
     wxMenuItem* m_menuPlot1;
     wxMenu* m_menu104;
@@ -138,6 +141,7 @@ protected:
     virtual void OnImageConnectComponents(wxCommandEvent& event) { event.Skip(); }
     virtual void OnImageMedianBlur(wxCommandEvent& event) { event.Skip(); }
     virtual void OnMenuItemSplit(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnMenuItemClickGaborFilter(wxCommandEvent& event) { event.Skip(); }
     virtual void OnGnuplotSample(wxCommandEvent& event) { event.Skip(); }
     virtual void OnMeanShiftBase(wxCommandEvent& event) { event.Skip(); }
     virtual void OnMenuClickLoadOralCancerRois(wxCommandEvent& event) { event.Skip(); }
@@ -189,6 +193,25 @@ public:
     wxButton* GetButtonSubmit() { return m_buttonSubmit; }
     CDlgGetValueBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("getValue"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxDEFAULT_DIALOG_STYLE);
     virtual ~CDlgGetValueBase();
+};
+
+
+class CMyPlotWinBase : public wxDialog
+{
+protected:
+#if wxUSE_WEBVIEW
+    wxWebView* m_webView;
+#endif // wxUSE_WEBVIEW
+
+
+protected:
+    #if wxUSE_WEBVIEW
+    #endif // wxUSE_WEBVIEW
+
+public:
+    wxWebView* GetWebView() { return m_webView; }
+    CMyPlotWinBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Plot"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxDEFAULT_DIALOG_STYLE);
+    virtual ~CMyPlotWinBase();
 };
 
 #endif

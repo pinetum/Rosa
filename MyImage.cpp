@@ -437,8 +437,8 @@ cv::Mat MyImage::getContourHistorgam(std::vector<cv::Point > contour)
 //    his_bin = his_bin * scale;
 //    ked_Result = ked_Result * scale;
     //
-    cv::normalize(his_bin, his_bin, 0, retHis.rows-20, cv::NORM_MINMAX, -1, cv::Mat() );
     cv::normalize(ked_Result, ked_Result, 0, retHis.rows-20, cv::NORM_MINMAX, -1, cv::Mat() );
+    cv::normalize(his_bin, his_bin, 0, retHis.rows-20, cv::NORM_MINMAX, -1, cv::Mat() );
 
 //    FILE* fpHis = fopen("his.txt", "w");
 //    FILE* fpKde = fopen("kde.txt", "w");
@@ -483,13 +483,39 @@ int MyImage::getOralCancerMode()
 }
 MyImage* MyImage::meanShift(int *x, int* y){
     double dBandwidth_k = 10;
-    
-    
-    
-    
 	MyImage* pNew;
 	pNew = clone();
     cv::Mat mDataMat = pNew->m_cvMat;
     
 	return pNew;
+}
+/**
+ * @brief gabor filter.....
+ * @param ksize Size of the filter returned.
+ * @param sigma Standard deviation of the gaussian envelope.
+ * @param theta Orientation of the normal to the parallel stripes of a Gabor function.(角度)
+ * @param lambd Wavelength of the sinusoidal factor.
+ * @param gamma Spatial aspect ratio.
+ * @param psi Phase offset.
+ * @param ktype Type of filter coefficients. It can be CV_32F or CV_64F .
+ * @return 
+ */
+MyImage* MyImage::gaborFilter(int ksz, double sigma, double theta, double lambd, double gamma, double psi)
+{
+
+    MyImage* pNew = clone();
+    cv::Mat mDataMat = pNew->m_cvMat;
+    if(pNew->getChannel()!=1)
+    {
+        MainFrame::showMessage("[Error][Gabor Filter]image channel > 1...");
+        return NULL;
+    
+    }
+    cv::Mat src_64f;
+    mDataMat.convertTo(src_64f, CV_64F);
+    cv::Mat gaborKernel = cv::getGaborKernel(cv::Size(ksz, ksz), sigma, theta, lambd, gamma, psi);
+    cv::filter2D(src_64f, pNew->m_cvMat, CV_64F, gaborKernel);
+    cv::normalize(pNew->m_cvMat, pNew->m_cvMat, 0, 255, cv::NORM_MINMAX, -1, cv::Mat() );
+    pNew->m_cvMat.convertTo(pNew->m_cvMat, CV_8UC1);
+    return pNew;
 }

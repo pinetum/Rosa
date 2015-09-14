@@ -13,7 +13,7 @@ CurrentFileName        :=
 CurrentFilePath        :=
 CurrentFileFullPath    :=
 User                   :=QT Lin
-Date                   :=04/09/2015
+Date                   :=14/09/2015
 CodeLitePath           :="/Users/Pinetum/Library/Application Support/codelite"
 LinkerName             :=/usr/bin/g++
 SharedObjectLinkerName :=/usr/bin/g++ -dynamiclib -fPIC
@@ -61,7 +61,7 @@ AS       := /usr/bin/as
 ##
 CodeLiteDir:=/Users/Pinetum/Downloads/codelite.app/Contents/SharedSupport/
 Objects0=$(IntermediateDirectory)/main.cpp$(ObjectSuffix) $(IntermediateDirectory)/MainFrame.cpp$(ObjectSuffix) $(IntermediateDirectory)/wxcrafter.cpp$(ObjectSuffix) $(IntermediateDirectory)/wxcrafter_bitmaps.cpp$(ObjectSuffix) $(IntermediateDirectory)/CDlgGetValue.cpp$(ObjectSuffix) $(IntermediateDirectory)/MyImage.cpp$(ObjectSuffix) $(IntermediateDirectory)/MyImageWin.cpp$(ObjectSuffix) $(IntermediateDirectory)/MyJSParser.cpp$(ObjectSuffix) $(IntermediateDirectory)/fams.cpp$(ObjectSuffix) $(IntermediateDirectory)/MyTaskBarIcon.cpp$(ObjectSuffix) \
-	
+	$(IntermediateDirectory)/CMyPlotWin.cpp$(ObjectSuffix) 
 
 
 
@@ -171,6 +171,14 @@ $(IntermediateDirectory)/MyTaskBarIcon.cpp$(DependSuffix): MyTaskBarIcon.cpp
 
 $(IntermediateDirectory)/MyTaskBarIcon.cpp$(PreprocessSuffix): MyTaskBarIcon.cpp
 	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/MyTaskBarIcon.cpp$(PreprocessSuffix) "MyTaskBarIcon.cpp"
+
+$(IntermediateDirectory)/CMyPlotWin.cpp$(ObjectSuffix): CMyPlotWin.cpp $(IntermediateDirectory)/CMyPlotWin.cpp$(DependSuffix)
+	$(CXX) $(IncludePCH) $(SourceSwitch) "/Users/Pinetum/coding/Rosa/CMyPlotWin.cpp" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/CMyPlotWin.cpp$(ObjectSuffix) $(IncludePath)
+$(IntermediateDirectory)/CMyPlotWin.cpp$(DependSuffix): CMyPlotWin.cpp
+	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) -MG -MP -MT$(IntermediateDirectory)/CMyPlotWin.cpp$(ObjectSuffix) -MF$(IntermediateDirectory)/CMyPlotWin.cpp$(DependSuffix) -MM "CMyPlotWin.cpp"
+
+$(IntermediateDirectory)/CMyPlotWin.cpp$(PreprocessSuffix): CMyPlotWin.cpp
+	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/CMyPlotWin.cpp$(PreprocessSuffix) "CMyPlotWin.cpp"
 
 
 -include $(IntermediateDirectory)/*$(DependSuffix)

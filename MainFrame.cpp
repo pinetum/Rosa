@@ -6,6 +6,7 @@
 #include <wx/dir.h>
 #include <wx/dnd.h>
 #include "CDlgGetValue.h"
+
 #include "MyJSParser.h"
 #include <wx/arrstr.h> 
 #include <wx/dcscreen.h>
@@ -62,10 +63,12 @@ MainFrame::MainFrame(wxWindow* parent): MainFrameBaseClass(parent)
     m_str_TimerName = "";
     
     // in mac os x
-    //SetSize(900, 800);
-	//Center();
-    Maximize(true);
+    SetSize(800, 700);
+	Center();
+    //Maximize(true);
     m_taskBarIcon->setPopUpMenu(m_menuPlayGround);
+    m_plot_win = new CMyPlotWin(this);
+    m_plot_win->Show();
 }
 
 MainFrame::~MainFrame()
@@ -73,6 +76,7 @@ MainFrame::~MainFrame()
     // disconnect drag event
     m_scrollWin->Disconnect(wxEVT_DROP_FILES, wxDropFilesEventHandler(MainFrame::OnDropFile), NULL, this);
 	DeleteContents();
+    m_plot_win->Destroy();
 }
 void MainFrame::showMessage(wxString msg){
 		m_pThis->m_richTextCtrl->AppendText(msg<<"\n");
@@ -580,12 +584,12 @@ void MainFrame::OnMenuItemSplit(wxCommandEvent& event)
 }
 void MainFrame::OnGnuplotSample(wxCommandEvent& event)
 {
-	//Gnuplot g1("lines");
-//	g1.reset_all();
-//	g1.set_title("gnuPlotSample");
-//	g1.plot_slope(1.0,0.0,"y=x");
-//	g1.plot_equation("sin(12*x)*exp(-x)").plot_equation("exp(-x)");
-//	g1.showonscreen();
+	Gnuplot g1("lines");
+	g1.reset_all();
+	g1.set_title("gnuPlotSample");
+	g1.plot_slope(1.0,0.0,"y=x");
+	g1.plot_equation("sin(12*x)*exp(-x)").plot_equation("exp(-x)");
+	g1.showonscreen();
 }
 void MainFrame::OnMeanShiftBase(wxCommandEvent& event)
 {
@@ -1103,7 +1107,7 @@ void MainFrame::openMultiOralCancerDataByDir(wxString path)
 #else
                     cv::imwrite(path460.AfterLast('/').append("_n.jpg").mb_str().data(),getCurrentImg()->getContourHistorgam(m_rois_normal[0]));
 #endif
-                    mode_460_n = getCurrentImg()->getOralCancerMode()
+                    mode_460_n = getCurrentImg()->getOralCancerMode();
                 }
                 
                 
@@ -1170,3 +1174,14 @@ cv::Mat MainFrame::getScreenShot()
     return img;
 }
 
+void MainFrame::OnMenuItemClickGaborFilter(wxCommandEvent& event)
+{
+    MyImage* img = getCurrentImg()->clone()->gaborFilter(40);
+    if(img)
+    {
+        addNewImageState(img);
+        UpdateView();
+    }
+    
+    return;
+}

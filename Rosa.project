@@ -30,6 +30,8 @@
     <File Name="MyJSParser.cpp"/>
     <File Name="fams.cpp"/>
     <File Name="MyTaskBarIcon.cpp"/>
+    <File Name="CMyPlotWin.h"/>
+    <File Name="CMyPlotWin.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <File Name="MainFrame.h"/>
