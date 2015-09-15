@@ -98,6 +98,9 @@ protected:
     wxMenu* m_menuPlayGround;
     wxMenuItem* m_menuItemRaiseArmDetect;
     wxMenuItem* m_menuItemScrennshot;
+    wxMenu* m_menu216;
+    wxMenu* m_menu220;
+    wxMenuItem* m_menuItemMLP_l;
     wxToolBar* m_mainToolbar;
     wxBitmapToggleButton* m_bmpToggleBtnMarkNormalRoi;
     wxStatusBar* m_statusBar;
@@ -148,6 +151,7 @@ protected:
     virtual void OnMenuItemClkRunAllOralCancer(wxCommandEvent& event) { event.Skip(); }
     virtual void OnMenuItemClkRaisArmDetect(wxCommandEvent& event) { event.Skip(); }
     virtual void OnMenuItemScreenShot(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnMenuItemNN_MLP_train_Click(wxCommandEvent& event) { event.Skip(); }
 
 public:
     MyImageWin* GetScrollWin() { return m_scrollWin; }

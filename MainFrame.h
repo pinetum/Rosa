@@ -40,6 +40,7 @@ public:
 	
 	
 protected:
+    virtual void OnMenuItemNN_MLP_train_Click(wxCommandEvent& event);
     virtual void OnMenuItemClickGaborFilter(wxCommandEvent& event);
     virtual void OnMenuItemScreenShot(wxCommandEvent& event);
     virtual void OnMouseRightUp(wxMouseEvent& event);

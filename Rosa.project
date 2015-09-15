@@ -32,6 +32,7 @@
     <File Name="MyTaskBarIcon.cpp"/>
     <File Name="CMyPlotWin.h"/>
     <File Name="CMyPlotWin.cpp"/>
+    <File Name="MLP.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <File Name="MainFrame.h"/>
@@ -44,6 +45,7 @@
     <File Name="myUtil.h"/>
     <File Name="MyTaskBarIcon.h"/>
     <File Name="fams.h"/>
+    <File Name="MLP.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="resources">
     <File Name="wxcrafter.wxcp"/>

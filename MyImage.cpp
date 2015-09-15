@@ -141,10 +141,7 @@ bool 		MyImage::readImage(wxString &pathName){
         wxString title = pathName.AfterLast('/');
 #endif
         
-        
-		
-		MainFrame::showMessage(wxString::Format(_("readImage: %s channel %d ,w %d h %d ,step %d"), title, nChannel, m_cvMat.cols, m_cvMat.rows, m_cvMat.step[0]));
-		
+    
 	}
 	else
 	{
@@ -189,12 +186,12 @@ MyImage* 	MyImage::split(int nTargetCh){
 		MyImage* pNew = new MyImage();
 		std::vector<cv::Mat> mats_splited;
 		if(m_cvMat.channels() <= nTargetCh){
-			MainFrame::showMessage("Error:chanel not exist.");
+            wxLogMessage("Error:Split Channel:chanel not exist.");
 			return this;
 		}
 		cv::split(m_cvMat, mats_splited);
 		pNew->m_cvMat = mats_splited[nTargetCh];
-		MainFrame::showMessage( wxString::Format("split: chanel %d", nTargetCh));
+		MainFrame::showMessage( wxString::Format("[Split] chanel-%d", nTargetCh));
 		return pNew;
 	
 	
@@ -235,7 +232,7 @@ MyImage* 	MyImage::Threshold(int thV,bool inverse){
 	}
 		
 	
-	MainFrame::showMessage(wxString::Format(_("Threshold: value = %.3f ") , thsValue));
+	MainFrame::showMessage(wxString::Format(_("[THR]Threshold: value = %.3f ") , thsValue));
 	return pNew;
 }
 MyImage* 	MyImage::HoughCircles(){
@@ -279,7 +276,7 @@ MyImage* 	MyImage::medianBlur(int k_size){
 	MyImage* pNew;
 	pNew = clone();
 	cv::medianBlur(pNew->m_cvMat,pNew->m_cvMat,k_size);
-	MainFrame::showMessage(wxString::Format(_("MedianBlur: k_size = %d ") , k_size));
+	MainFrame::showMessage(wxString::Format(_("[MED]MedianBlur: k_size = %d ") , k_size));
 	
 	return pNew;
 	

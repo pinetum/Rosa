@@ -13,7 +13,7 @@ CurrentFileName        :=
 CurrentFilePath        :=
 CurrentFileFullPath    :=
 User                   :=QT Lin
-Date                   :=14/09/2015
+Date                   :=15/09/2015
 CodeLitePath           :="/Users/Pinetum/Library/Application Support/codelite"
 LinkerName             :=/usr/bin/g++
 SharedObjectLinkerName :=/usr/bin/g++ -dynamiclib -fPIC
@@ -61,7 +61,7 @@ AS       := /usr/bin/as
 ##
 CodeLiteDir:=/Users/Pinetum/Downloads/codelite.app/Contents/SharedSupport/
 Objects0=$(IntermediateDirectory)/main.cpp$(ObjectSuffix) $(IntermediateDirectory)/MainFrame.cpp$(ObjectSuffix) $(IntermediateDirectory)/wxcrafter.cpp$(ObjectSuffix) $(IntermediateDirectory)/wxcrafter_bitmaps.cpp$(ObjectSuffix) $(IntermediateDirectory)/CDlgGetValue.cpp$(ObjectSuffix) $(IntermediateDirectory)/MyImage.cpp$(ObjectSuffix) $(IntermediateDirectory)/MyImageWin.cpp$(ObjectSuffix) $(IntermediateDirectory)/MyJSParser.cpp$(ObjectSuffix) $(IntermediateDirectory)/fams.cpp$(ObjectSuffix) $(IntermediateDirectory)/MyTaskBarIcon.cpp$(ObjectSuffix) \
-	$(IntermediateDirectory)/CMyPlotWin.cpp$(ObjectSuffix) 
+	$(IntermediateDirectory)/CMyPlotWin.cpp$(ObjectSuffix) $(IntermediateDirectory)/MLP.cpp$(ObjectSuffix) 
 
 
 
@@ -179,6 +179,14 @@ $(IntermediateDirectory)/CMyPlotWin.cpp$(DependSuffix): CMyPlotWin.cpp
 
 $(IntermediateDirectory)/CMyPlotWin.cpp$(PreprocessSuffix): CMyPlotWin.cpp
 	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/CMyPlotWin.cpp$(PreprocessSuffix) "CMyPlotWin.cpp"
+
+$(IntermediateDirectory)/MLP.cpp$(ObjectSuffix): MLP.cpp $(IntermediateDirectory)/MLP.cpp$(DependSuffix)
+	$(CXX) $(IncludePCH) $(SourceSwitch) "/Users/Pinetum/coding/Rosa/MLP.cpp" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/MLP.cpp$(ObjectSuffix) $(IncludePath)
+$(IntermediateDirectory)/MLP.cpp$(DependSuffix): MLP.cpp
+	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) -MG -MP -MT$(IntermediateDirectory)/MLP.cpp$(ObjectSuffix) -MF$(IntermediateDirectory)/MLP.cpp$(DependSuffix) -MM "MLP.cpp"
+
+$(IntermediateDirectory)/MLP.cpp$(PreprocessSuffix): MLP.cpp
+	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/MLP.cpp$(PreprocessSuffix) "MLP.cpp"
 
 
 -include $(IntermediateDirectory)/*$(DependSuffix)

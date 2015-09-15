@@ -14,6 +14,9 @@
 #include <wx/dcmemory.h>
 #include "gnuplot_i.hpp"
 
+#include "MLP.h"
+
+
 #define SLIDER_MAX_VALUE 128
 #define ROI_RECT_SIZE 13
 
@@ -65,7 +68,7 @@ MainFrame::MainFrame(wxWindow* parent): MainFrameBaseClass(parent)
     // in mac os x
     SetSize(800, 700);
 	Center();
-    //Maximize(true);
+    Maximize(true);
     m_taskBarIcon->setPopUpMenu(m_menuPlayGround);
     m_plot_win = new CMyPlotWin(this);
     m_plot_win->Show();
@@ -98,7 +101,7 @@ void MainFrame::stopTimer(wxString TimerName)
    unsigned long seconds, milliseconds;
    seconds = (m_time_end-m_time_start)/CLOCKS_PER_SEC;
    milliseconds = ((1000*(m_time_end-m_time_start))/CLOCKS_PER_SEC) - 1000*seconds;
-   showMessage(wxString::Format(_("[Time]%s:%d:%d(s:ms)"),TimerName, seconds, milliseconds));
+   showMessage(wxString::Format(_("[Time][%s] %d:%d(s:ms)"),TimerName, seconds, milliseconds));
 }
 void MainFrame::OnAbout(wxCommandEvent& event)
 {
@@ -314,11 +317,15 @@ void MainFrame::openFile(wxString &pathName)
 	DeleteContents();
 	MyImage* pImg = new MyImage;
 	bRet = pImg->readImage(pathName);
+    
 	if(bRet == false){
 		delete pImg;
 		wxLogMessage("OnFileOpen: open file error\n");
 		return ;
 	}
+    MainFrame::showMessage(wxString::Format(_("[open]channel:%d ,w: %d h: %d ,step %d"), 
+                        pImg->getChannel(), pImg->getImgWidth(), pImg->getImgHeight(), pImg->getStep()));
+		
 	m_imgList.push_back(pImg);
 	m_nCurrentImg=0;
 #if defined(__WINDOWS__)
@@ -376,7 +383,7 @@ void MainFrame::UpdateView()
 	cv::Mat mat_view = pImg->getMatRef().clone();
     if(mat_view.empty())
     {
-        showMessage("UpdateView:Mat is empty");
+        showMessage("[UpdateView]Mat is empty");
     }
 	else
     {
@@ -391,7 +398,7 @@ void MainFrame::UpdateView()
         
     }
 	if(histogram.empty())
-		showMessage("UpdateView:Histogram is empty");
+		showMessage("[UpdateView]Histogram is empty");
 	else
     {
         wxSize size_window = m_scrollWinHis->GetClientSize();
@@ -537,7 +544,7 @@ void MainFrame::OnSaveAsFile(wxCommandEvent& event)
 		wxString pathName = saveDialog->GetPath();
 		if(!pImg->saveBmpImage(pathName.ToStdString()))
 			wxLogMessage("save File Error!");
-		showMessage("save file : " + pathName);
+		showMessage("[save File ]" + pathName);
 	}
 	
 	saveDialog->Destroy();
@@ -626,7 +633,7 @@ void MainFrame::OnMenuItemResizeFitWindow(wxCommandEvent& event)
         }
     }
 	else
-        MainFrame::showMessage("resize scale is zero...");
+        MainFrame::showMessage("[Resize] scale is zero...");
     
     
 }
@@ -660,7 +667,7 @@ void MainFrame::loadCancerRoi(wxString filePath)
     // Is open file success?
     if(fp==NULL)
     {
-        MainFrame::showMessage("open cancer Roi json File fail.");
+        MainFrame::showMessage("[Cancer ROI]open cancer Roi json File fail.");
         return;
     }
 
@@ -676,7 +683,7 @@ void MainFrame::loadCancerRoi(wxString filePath)
     parser.setJsonStr(str_filecontent);                                 // parse!
     m_rois_cancer = parser.getRois();                                   // get Rois (二階Vector，最裡面存放cv::Point)
         //最後交由updateView畫出
-    MainFrame::showMessage(wxString::Format("Total number of Cancer rois:%d", m_rois_cancer.size()));
+    MainFrame::showMessage(wxString::Format("[Cancer ROI]Total number of Cancer rois:%d", m_rois_cancer.size()));
     
     //auto to check checlBox
     m_checkBoxCancerRoi->SetValue(true);
@@ -692,7 +699,7 @@ void MainFrame::loadNormalRoi(wxString filePath)
     // Is open file success?
     if(fp==NULL)
     {
-        MainFrame::showMessage("open normal Roi json File fail.");
+        MainFrame::showMessage("[ROI]open normal Roi json File fail.");
         return;
     }
 
@@ -708,7 +715,7 @@ void MainFrame::loadNormalRoi(wxString filePath)
     parser.setJsonStr(str_filecontent);                                 // parse!
     m_rois_normal = parser.getRois();                                   // get Rois (二階Vector，最裡面存放cv::Point)
         //最後交由updateView畫出
-    MainFrame::showMessage(wxString::Format("Total number of Cancer rois:%d", m_rois_cancer.size()));
+    MainFrame::showMessage(wxString::Format("[ROI]Total number of Noraml rois:%d", m_rois_cancer.size()));
     //auto to check checlBox
     m_checkBoxNormalRoi->SetValue(true);
     UpdateView();
@@ -986,7 +993,7 @@ void MainFrame::OnMenuItemClkRaisArmDetect(wxCommandEvent& event)
         }
     }
 
-    MainFrame::showMessage("camera open fail.");
+    MainFrame::showMessage("[Camera]open fail.");
     
     
     
@@ -1009,7 +1016,7 @@ void MainFrame::openMultiOralCancerDataByDir(wxString path)
     wxArrayString aryStr_SubDirs;
     if(!dir_oralDir.HasSubDirs())
     {
-        showMessage("no files discovered..");
+        showMessage("[open Dir]no files discovered..");
         return;
     }
     
@@ -1176,12 +1183,42 @@ cv::Mat MainFrame::getScreenShot()
 
 void MainFrame::OnMenuItemClickGaborFilter(wxCommandEvent& event)
 {
+    startTimer();
     MyImage* img = getCurrentImg()->clone()->gaborFilter(40);
     if(img)
     {
         addNewImageState(img);
         UpdateView();
     }
-    
+    stopTimer("Gabor Filter");
     return;
+}
+
+void MainFrame::OnMenuItemNN_MLP_train_Click(wxCommandEvent& event)
+{
+    wxString pathName = "";
+    wxString fileType = _("All suported formats(*.*)|*.*");
+	
+    wxFileDialog* openDialog = new wxFileDialog(this,_("openFile"),wxEmptyString,wxEmptyString,fileType,wxFD_OPEN,wxDefaultPosition);
+	if(openDialog->ShowModal() == wxID_OK){
+        pathName = openDialog->GetPath();
+    }
+    openDialog->Destroy();
+    if(pathName.length() == 0)
+        MainFrame::showMessage("[MLP]File error");
+    else
+    {
+        startTimer();
+        MLP mMlp(pathName);
+        if(mMlp.train())
+        {
+            MainFrame::showMessage(wxString::Format("[MLP]%s", mMlp.getErrorMessage()));
+            mMlp.getAccuracy();
+        }
+        else
+        {
+            MainFrame::showMessage(wxString::Format("[MLP]%s", mMlp.getErrorMessage()));
+        }
+        stopTimer("[MLP]");
+    }
 }
