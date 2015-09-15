@@ -1209,16 +1209,16 @@ void MainFrame::OnMenuItemNN_MLP_train_Click(wxCommandEvent& event)
     else
     {
         startTimer();
-        MLP mMlp(pathName);
+        MLP mMlp;
+        mMlp.openSampleFile(pathName);
         if(mMlp.train())
         {
             MainFrame::showMessage(wxString::Format("[MLP]%s", mMlp.getErrorMessage()));
-            mMlp.getAccuracy();
         }
         else
         {
             MainFrame::showMessage(wxString::Format("[MLP]%s", mMlp.getErrorMessage()));
         }
-        stopTimer("[MLP]");
+        stopTimer("MLP");
     }
 }
