@@ -5,7 +5,7 @@
 #include <wx/log.h> 
 #include <vector>
 
-MLP::MLP()
+MLP::MLP(): wxThreadHelper()
 {
     str_errorMsg = "no error";
 }
@@ -13,6 +13,15 @@ MLP::MLP()
 MLP::~MLP()
 {
     
+}
+wxThread::ExitCode MLP::Entry()
+{
+    while(!GetThread()->TestDestroy())
+    {
+         wxCriticalSectionLocker lock(m_dataCS);
+         GetThread()->Sleep(5000);
+    }
+    return (wxThread::ExitCode)0;
 }
 wxString MLP::getErrorMessage()
 {
@@ -25,6 +34,10 @@ bool MLP::train()
     {
         str_errorMsg = wxString::Format("data matrix is empty....%d,%d", m_data_Train.cols, m_data_Train.rows);
         return false;
+    }
+    else
+    {
+        str_errorMsg = "trined";
     }
     
 //    cv::Mat m = cv::Mat::ones(4, 3, CV_64F);    // 3 cols, 4 rows

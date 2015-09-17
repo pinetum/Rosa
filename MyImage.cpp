@@ -11,16 +11,17 @@
 MyImage::MyImage()
 {
 	m_oralCancerKdeMode = -1;
+    title = "NULL";
 }
 MyImage::MyImage(cv::Mat mat)
 {
 	mat.copyTo(m_cvMat);
     m_oralCancerKdeMode = -1;
-	
+	title = "new Mat";
 }
 MyImage::MyImage(int w, int h, int stride, int type, uchar *pixeldata)
 {
-	
+	title = "NULL";
 	m_cvMat.create(h, w, type);
 	uchar* data = m_cvMat.data;
 	int step = m_cvMat.step[0];
@@ -127,6 +128,7 @@ cv::Mat 	MyImage::getMatHistogram(){
 MyImage* 	MyImage::clone(){
 	MyImage* pNew = new MyImage();
 	pNew->m_cvMat = m_cvMat.clone();
+    pNew->title = title;
 	return pNew;
 }
 bool 		MyImage::readImage(wxString &pathName){
@@ -173,17 +175,20 @@ wxString 	MyImage::getFormatString(){
 MyImage* 	MyImage::Gray2BGR(){
 	MyImage* pNew = new MyImage();
 	cv::cvtColor(m_cvMat , pNew->m_cvMat , CV_GRAY2BGR);
-	return pNew;
+	pNew->title="Gray2BGR";
+    return pNew;
 	
 }
 MyImage* 	MyImage::BGR2Gray(){
 	MyImage* pNew = new MyImage();
+    pNew->title="BGR2GRAY";
 	cv::cvtColor(m_cvMat , pNew->m_cvMat , CV_BGR2GRAY);
 	return pNew;
 	
 }
 MyImage* 	MyImage::split(int nTargetCh){
 		MyImage* pNew = new MyImage();
+        pNew->title= wxString::Format("Spilt to channel %d", nTargetCh);
 		std::vector<cv::Mat> mats_splited;
 		if(m_cvMat.channels() <= nTargetCh){
             wxLogMessage("Error:Split Channel:chanel not exist.");
@@ -205,7 +210,6 @@ bool 		MyImage::saveHisBmpImage(std::string filename){
 	return cv::imwrite(filename,getMatHistogram());
 }
 MyImage* 	MyImage::Threshold(int thV,bool inverse){
-	
 	MyImage* pNew = NULL;
 	int type = getType();
 	double thsValue = thV;
@@ -231,7 +235,7 @@ MyImage* 	MyImage::Threshold(int thV,bool inverse){
 			cv::threshold(pNew->m_cvMat, pNew->m_cvMat, thV, 255, CV_THRESH_BINARY);
 	}
 		
-	
+	pNew->title= wxString::Format(_("[THR]Threshold: value = %.3f ") , thsValue);
 	MainFrame::showMessage(wxString::Format(_("[THR]Threshold: value = %.3f ") , thsValue));
 	return pNew;
 }
@@ -270,14 +274,15 @@ MyImage* 	MyImage::HoughCircles(){
          cv::circle( pNew->m_cvMat, center, radius, cv::Scalar(255,0,0), 3, 8, 0 );
     }
 	wxLogMessage(wxString::Format("find circles : %d",circles.size()));
-	return pNew;
+	pNew->title = wxString::Format("HoughCircles...find circles : %d",circles.size());
+    return pNew;
 }
 MyImage* 	MyImage::medianBlur(int k_size){
 	MyImage* pNew;
 	pNew = clone();
 	cv::medianBlur(pNew->m_cvMat,pNew->m_cvMat,k_size);
 	MainFrame::showMessage(wxString::Format(_("[MED]MedianBlur: k_size = %d ") , k_size));
-	
+	pNew->title = wxString::Format("medianBlur...k=%d", k_size);
 	return pNew;
 	
 	
@@ -364,26 +369,29 @@ MyImage* 	MyImage::faceDetection(){
 		}
 		
 	}
-
+    pNew->title = "Find Face";
 	return pNew;
 	
 }
 MyImage* 	MyImage::mouthDetection(){
 	MyImage* pNew;
 	pNew = clone();
+    pNew->title = "find mouse";
 	return pNew;
 }
 MyImage* 	MyImage::resize(cv::Size size){
 	MyImage* pNew;
 	pNew = clone();
 	cv::resize(pNew->m_cvMat,pNew->m_cvMat,size);
+    pNew->title = wxString::Format("ReSize:%dx%d", size.width, size.height);
 	return pNew;
 }
 MyImage* 	MyImage::resize(double zoom){
 	MyImage* pNew;
 	pNew = clone();
 	cv::resize(pNew->m_cvMat,pNew->m_cvMat,cv::Size(0, 0), zoom, zoom);
-	return pNew;
+	pNew->title = wxString::Format("ReSize:%dx%d", pNew->getImgWidth(), pNew->getImgHeight());
+    return pNew;
 }
 
 cv::Mat MyImage::getContourHistorgam(std::vector<cv::Point > contour)
@@ -497,7 +505,7 @@ MyImage* MyImage::meanShift(int *x, int* y){
  * @param ktype Type of filter coefficients. It can be CV_32F or CV_64F .
  * @return 
  */
-MyImage* MyImage::gaborFilter(int ksz, double sigma, double theta, double lambd, double gamma, double psi)
+MyImage* MyImage::gaborFilter(bool realPart,int ksz, double sigma, double theta, double lambd, double gamma, double psi)
 {
 
     MyImage* pNew = clone();
@@ -510,9 +518,65 @@ MyImage* MyImage::gaborFilter(int ksz, double sigma, double theta, double lambd,
     }
     cv::Mat src_64f;
     mDataMat.convertTo(src_64f, CV_64F);
-    cv::Mat gaborKernel = cv::getGaborKernel(cv::Size(ksz, ksz), sigma, theta, lambd, gamma, psi);
+    cv::Mat gaborKernel = getGaborKernel(realPart, cv::Size(ksz, ksz), sigma, theta, lambd, gamma, psi);
     cv::filter2D(src_64f, pNew->m_cvMat, CV_64F, gaborKernel);
+    pNew->m_cvMat = cv::abs(pNew->m_cvMat);
+    
     cv::normalize(pNew->m_cvMat, pNew->m_cvMat, 0, 255, cv::NORM_MINMAX, -1, cv::Mat() );
     pNew->m_cvMat.convertTo(pNew->m_cvMat, CV_8UC1);
+    pNew->title = wxString::Format("Gabor:r=%d k=%d sigma=%.2f theta=%.2f lambd=%.2f gamma=%.2f", realPart, ksz, sigma, theta, lambd, gamma);
     return pNew;
+}
+
+cv::Mat MyImage::getGaborKernel(bool realPart, cv::Size ksize, double sigma, double theta,
+                            double lambd, double gamma, double psi, int ktype)
+{
+    double sigma_x = sigma;
+    double sigma_y = sigma/gamma;
+    int nstds = 3;
+    int xmin, xmax, ymin, ymax;
+    double c = cos(theta), s = sin(theta);
+
+    if( ksize.width > 0 )
+        xmax = ksize.width/2;
+    else
+        xmax = cvRound(std::max(fabs(nstds*sigma_x*c), fabs(nstds*sigma_y*s)));
+
+    if( ksize.height > 0 )
+        ymax = ksize.height/2;
+    else
+        ymax = cvRound(std::max(fabs(nstds*sigma_x*s), fabs(nstds*sigma_y*c)));
+
+    xmin = -xmax;
+    ymin = -ymax;
+
+    CV_Assert( ktype == CV_32F || ktype == CV_64F );
+
+    cv::Mat kernel(ymax - ymin + 1, xmax - xmin + 1, ktype);
+    double scale = 1;
+    double ex = -0.5/(sigma_x*sigma_x);
+    double ey = -0.5/(sigma_y*sigma_y);
+    double cscale = CV_PI*2/lambd;
+
+    for( int y = ymin; y <= ymax; y++ )
+        for( int x = xmin; x <= xmax; x++ )
+        {
+            double xr = x*c + y*s;
+            double yr = -x*s + y*c;
+            double v  = 0;
+            if(realPart)
+            {
+                v = scale*std::exp(ex*xr*xr + ey*yr*yr)*cos(cscale*xr + psi);
+            }
+            else
+            {
+                v = scale*std::exp(ex*xr*xr + ey*yr*yr)*sin(cscale*xr + psi);
+            }
+            if( ktype == CV_32F )
+                kernel.at<float>(ymax - y, xmax - x) = (float)v;
+            else
+                kernel.at<double>(ymax - y, xmax - x) = v;
+        }
+
+    return kernel;
 }

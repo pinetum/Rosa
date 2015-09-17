@@ -38,7 +38,7 @@ MainFrameBaseClass::MainFrameBaseClass(wxWindow* parent, wxWindowID id, const wx
     m_scrollWin->SetBackgroundColour(wxColour(wxT("rgb(205,205,205)")));
     m_scrollWin->SetScrollRate(5, 5);
     
-    boxSizer150->Add(m_scrollWin, 1, wxALL|wxEXPAND, 1);
+    boxSizer150->Add(m_scrollWin, 1, wxALL|wxEXPAND, 5);
     
     wxBoxSizer* boxSizer152 = new wxBoxSizer(wxVERTICAL);
     
@@ -92,7 +92,12 @@ MainFrameBaseClass::MainFrameBaseClass(wxWindow* parent, wxWindowID id, const wx
     m_richTextCtrl = new wxRichTextCtrl(m_mainPanel, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), wxTE_MULTILINE|wxTE_PROCESS_TAB|wxTE_PROCESS_ENTER|wxWANTS_CHARS);
     m_richTextCtrl->SetBackgroundColour(wxColour(wxT("rgb(204,204,204)")));
     
-    boxSizer11->Add(m_richTextCtrl, 4, wxALL|wxEXPAND, 5);
+    boxSizer11->Add(m_richTextCtrl, 3, wxALL|wxEXPAND, 5);
+    
+    m_richTextCtrlTitleList = new wxRichTextCtrl(m_mainPanel, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), wxTE_MULTILINE|wxTE_PROCESS_TAB|wxTE_PROCESS_ENTER|wxWANTS_CHARS);
+    m_richTextCtrlTitleList->SetBackgroundColour(wxColour(wxT("rgb(204,204,204)")));
+    
+    boxSizer11->Add(m_richTextCtrlTitleList, 4, wxALL|wxEXPAND, 5);
     
     wxBoxSizer* boxSizer78 = new wxBoxSizer(wxHORIZONTAL);
     
@@ -147,6 +152,9 @@ MainFrameBaseClass::MainFrameBaseClass(wxWindow* parent, wxWindowID id, const wx
     
     m_menuItemDestroyAllWindow = new wxMenuItem(m_menuEdit, wxID_ANY, _("close windows"), wxT(""), wxITEM_NORMAL);
     m_menuEdit->Append(m_menuItemDestroyAllWindow);
+    
+    m_menuItemSpecificImshow = new wxMenuItem(m_menuEdit, wxID_CHECK_SPEC_SHOW, _("Specific show"), wxT(""), wxITEM_CHECK);
+    m_menuEdit->Append(m_menuItemSpecificImshow);
     
     m_menuImage = new wxMenu();
     m_menuBar->Append(m_menuImage, _("Image..."));
@@ -205,11 +213,17 @@ MainFrameBaseClass::MainFrameBaseClass(wxWindow* parent, wxWindowID id, const wx
     m_menuOralCancer = new wxMenu();
     m_menuBar->Append(m_menuOralCancer, _("OralCancer"));
     
+    m_menuMultipleFiles = new wxMenu();
+    m_menuOralCancer->AppendSubMenu(m_menuMultipleFiles, _("Run All"));
+    
+    m_menuItemRunAllOralCncer_findMode = new wxMenuItem(m_menuMultipleFiles, wxID_ORALCANCER_RUN_ALL, _("Find Mode distrubution"), wxT(""), wxITEM_NORMAL);
+    m_menuMultipleFiles->Append(m_menuItemRunAllOralCncer_findMode);
+    
+    m_menuItemRunAllOralCancer_GaborMultiScale = new wxMenuItem(m_menuMultipleFiles, wxID_ANY, _("Gabor Filter"), wxT(""), wxITEM_NORMAL);
+    m_menuMultipleFiles->Append(m_menuItemRunAllOralCancer_GaborMultiScale);
+    
     m_menuItemLoadRois = new wxMenuItem(m_menuOralCancer, wxID_ANY, _("Load Rois From jsFile(*.txt)"), wxT(""), wxITEM_NORMAL);
     m_menuOralCancer->Append(m_menuItemLoadRois);
-    
-    m_menuItemRunAllOralCncer = new wxMenuItem(m_menuOralCancer, wxID_ORALCANCER_RUN_ALL, _("Run All"), wxT(""), wxITEM_NORMAL);
-    m_menuOralCancer->Append(m_menuItemRunAllOralCncer);
     
     m_menuPlayGround = new wxMenu();
     m_menuBar->Append(m_menuPlayGround, _("PlayGround"));
@@ -220,14 +234,14 @@ MainFrameBaseClass::MainFrameBaseClass(wxWindow* parent, wxWindowID id, const wx
     m_menuItemScrennshot = new wxMenuItem(m_menuPlayGround, wxID_ANY, _("GetScreenShot\tCtrl+T"), wxT(""), wxITEM_NORMAL);
     m_menuPlayGround->Append(m_menuItemScrennshot);
     
-    m_menu216 = new wxMenu();
-    m_menuBar->Append(m_menu216, _("NN"));
+    m_menuNN = new wxMenu();
+    m_menuBar->Append(m_menuNN, _("NN"));
     
-    m_menu220 = new wxMenu();
-    m_menu216->AppendSubMenu(m_menu220, _("Menu"));
+    m_menuMLP = new wxMenu();
+    m_menuNN->AppendSubMenu(m_menuMLP, _("MLP"));
     
-    m_menuItemMLP_l = new wxMenuItem(m_menu220, wxID_ANY, _("MLP Training"), wxT(""), wxITEM_NORMAL);
-    m_menu220->Append(m_menuItemMLP_l);
+    m_menuItemMLP_l = new wxMenuItem(m_menuMLP, wxID_ANY, _("MLP Training"), wxT(""), wxITEM_NORMAL);
+    m_menuMLP->Append(m_menuItemMLP_l);
     
     m_mainToolbar = this->CreateToolBar(wxTB_FLAT, wxID_ANY);
     m_mainToolbar->SetToolBitmapSize(wxSize(32,32));
@@ -341,8 +355,9 @@ MainFrameBaseClass::MainFrameBaseClass(wxWindow* parent, wxWindowID id, const wx
     this->Connect(m_menuItemGaborFilter->GetId(), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MainFrameBaseClass::OnUpdateImageFunction), NULL, this);
     this->Connect(m_menuPlot1->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnGnuplotSample), NULL, this);
     this->Connect(m_menuItemMSBase->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnMeanShiftBase), NULL, this);
+    this->Connect(m_menuItemRunAllOralCncer_findMode->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnMenuItemClkRunAllOralCancer), NULL, this);
+    this->Connect(m_menuItemRunAllOralCancer_GaborMultiScale->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnMenuItemClkRunAllGaborMultiScaleAndTheta), NULL, this);
     this->Connect(m_menuItemLoadRois->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnMenuClickLoadOralCancerRois), NULL, this);
-    this->Connect(m_menuItemRunAllOralCncer->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnMenuItemClkRunAllOralCancer), NULL, this);
     this->Connect(m_menuItemRaiseArmDetect->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnMenuItemClkRaisArmDetect), NULL, this);
     this->Connect(m_menuItemScrennshot->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnMenuItemScreenShot), NULL, this);
     this->Connect(m_menuItemMLP_l->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnMenuItemNN_MLP_train_Click), NULL, this);
@@ -406,8 +421,9 @@ MainFrameBaseClass::~MainFrameBaseClass()
     this->Disconnect(m_menuItemGaborFilter->GetId(), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MainFrameBaseClass::OnUpdateImageFunction), NULL, this);
     this->Disconnect(m_menuPlot1->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnGnuplotSample), NULL, this);
     this->Disconnect(m_menuItemMSBase->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnMeanShiftBase), NULL, this);
+    this->Disconnect(m_menuItemRunAllOralCncer_findMode->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnMenuItemClkRunAllOralCancer), NULL, this);
+    this->Disconnect(m_menuItemRunAllOralCancer_GaborMultiScale->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnMenuItemClkRunAllGaborMultiScaleAndTheta), NULL, this);
     this->Disconnect(m_menuItemLoadRois->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnMenuClickLoadOralCancerRois), NULL, this);
-    this->Disconnect(m_menuItemRunAllOralCncer->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnMenuItemClkRunAllOralCancer), NULL, this);
     this->Disconnect(m_menuItemRaiseArmDetect->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnMenuItemClkRaisArmDetect), NULL, this);
     this->Disconnect(m_menuItemScrennshot->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnMenuItemScreenShot), NULL, this);
     this->Disconnect(m_menuItemMLP_l->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnMenuItemNN_MLP_train_Click), NULL, this);

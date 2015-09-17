@@ -65,6 +65,9 @@ MainFrame::MainFrame(wxWindow* parent): MainFrameBaseClass(parent)
     //timer use
     m_str_TimerName = "";
     
+    //
+    m_p_pgDlg = NULL;
+    
     // in mac os x
     SetSize(800, 700);
 	Center();
@@ -97,11 +100,37 @@ void MainFrame::startTimer()
 }
 void MainFrame::stopTimer(wxString TimerName)
 {
-    m_time_end = clock();
-   unsigned long seconds, milliseconds;
-   seconds = (m_time_end-m_time_start)/CLOCKS_PER_SEC;
-   milliseconds = ((1000*(m_time_end-m_time_start))/CLOCKS_PER_SEC) - 1000*seconds;
-   showMessage(wxString::Format(_("[Time][%s] %d:%d(s:ms)"),TimerName, seconds, milliseconds));
+   
+    
+    
+    showMessage(wxString::Format(_("[Time][%s] %s"),TimerName, getTimer()));
+}
+wxString MainFrame::getTimer()
+{
+    wxString str_time = "";
+    time_t now = clock();
+    unsigned long seconds       = 0;
+    unsigned long milliseconds  = 0;
+    unsigned long minutes       = 0;
+    unsigned long hours         = 0;
+    seconds         = (now-m_time_start)/CLOCKS_PER_SEC;
+    milliseconds    = ((1000*(now-m_time_start))/CLOCKS_PER_SEC) - 1000*seconds;
+    minutes         = seconds/60;
+    seconds         = seconds - minutes*60;
+    hours           = minutes/60;
+    minutes         = minutes - hours*60;
+    
+    if(hours > 0)
+        str_time.Append(wxString::Format("%dh ",hours));
+    if(minutes > 0)
+        str_time.Append(wxString::Format("%dm ",minutes));
+    if(seconds > 0)
+        str_time.Append(wxString::Format("%ds ",seconds));
+    if(milliseconds > 0)
+        str_time.Append(wxString::Format("%dms ",milliseconds));
+    return str_time;
+    
+    
 }
 void MainFrame::OnAbout(wxCommandEvent& event)
 {
@@ -424,7 +453,7 @@ void MainFrame::DeleteContents(){
 	}
 	m_imgList.clear();
 	m_nCurrentImg = -1 ;
-	
+	m_richTextCtrlTitleList->Clear();
 }
 MyImage* MainFrame::getCurrentImg()
 {
@@ -474,6 +503,18 @@ void MainFrame::addNewImageState(MyImage* plmg){
 
 	m_imgList.push_back(plmg);
 	m_nCurrentImg++;
+    
+    m_richTextCtrlTitleList->AppendText(plmg->title<<"\n");
+    int last_pos = m_richTextCtrlTitleList->GetLastPosition();
+    m_richTextCtrlTitleList->ShowPosition(last_pos);
+    
+    
+    if(m_menuItemSpecificImshow->IsChecked())
+    {
+        cv::Mat temp_show = plmg->getMat().clone();
+        drawAllRois(temp_show);
+        cv::imshow(std::string(plmg->title.mb_str()), temp_show);
+    }
 }
 
 
@@ -878,6 +919,7 @@ void MainFrame::OnColorChangeNormal(wxColourPickerEvent& event)
 }
 void MainFrame::drawAllRois(cv::Mat img)
 {
+
     if(m_checkBoxCancerRoi->GetValue())
     {
         MyUtil::drawRois(img, m_rois_cancer, m_c_roi_cancer, m_n_index_ofSelCancerRoi);
@@ -1002,16 +1044,19 @@ void MainFrame::OnMenuItemClkRaisArmDetect(wxCommandEvent& event)
 }
 void MainFrame::OnMenuItemClkRunAllOralCancer(wxCommandEvent& event)
 {
+    wxString path = "";
     wxDirDialog dlg(this, "Choose input directory", "",wxDD_DEFAULT_STYLE | wxDD_DIR_MUST_EXIST);
     if(dlg.ShowModal() == wxID_OK){
-		wxString DirPath = dlg.GetPath();
-        openMultiOralCancerDataByDir(DirPath);
+        path = dlg.GetPath();
 	}
     dlg.Destroy();
-}
-void MainFrame::openMultiOralCancerDataByDir(wxString path)
-{
-    startTimer();
+    if(path.IsEmpty())
+    {
+        showMessage("path empty...");
+        return;
+    }
+    
+    // get all subDirPath
     wxDir dir_oralDir(path);
     wxArrayString aryStr_SubDirs;
     if(!dir_oralDir.HasSubDirs())
@@ -1034,6 +1079,12 @@ void MainFrame::openMultiOralCancerDataByDir(wxString path)
         b_cont = dir_oralDir.GetNext(&str_subDir);
         
     }
+    openMultiOralCancerDataByDir(aryStr_SubDirs);
+}
+void MainFrame::openMultiOralCancerDataByDir(wxArrayString aryStr_SubDirs)
+{
+    startTimer();
+    
     FILE* fp_cancer = fopen("cancer.csv", "w");
     FILE* fp_normal = fopen("normal.csv", "w");
     for(int i = 0; i< aryStr_SubDirs.size(); i++)
@@ -1073,22 +1124,22 @@ void MainFrame::openMultiOralCancerDataByDir(wxString path)
                     // cancer roi's mode
                 if(m_rois_cancer.size() > 0)
                 {
-#if defined(__WINDOWS__)
-                    cv::imwrite(path375.AfterLast('\\').append("_c.jpg").mb_str().data(),getCurrentImg()->getContourHistorgam(m_rois_cancer[0]));
-#else
-                    cv::imwrite(path375.AfterLast('/').append("_c.jpg").mb_str().data(),getCurrentImg()->getContourHistorgam(m_rois_cancer[0]));
-#endif
+//#if defined(__WINDOWS__)
+//                    cv::imwrite(path375.AfterLast('\\').append("_c.jpg").mb_str().data(),getCurrentImg()->getContourHistorgam(m_rois_cancer[0]));
+//#else
+//                    cv::imwrite(path375.AfterLast('/').append("_c.jpg").mb_str().data(),getCurrentImg()->getContourHistorgam(m_rois_cancer[0]));
+//#endif
                     mode_375_c = getCurrentImg()->getOralCancerMode();
                 
                 }
                     //normak roi's mode
                 if(m_rois_normal.size() > 0)
                 {
-#if defined(__WINDOWS__)
-                    cv::imwrite(path375.AfterLast('\\').append("_n.jpg").mb_str().data(),getCurrentImg()->getContourHistorgam(m_rois_normal[0]));
-#else
-                    cv::imwrite(path375.AfterLast('/').append("_n.jpg").mb_str().data(),getCurrentImg()->getContourHistorgam(m_rois_normal[0]));
-#endif
+//#if defined(__WINDOWS__)
+//                    cv::imwrite(path375.AfterLast('\\').append("_n.jpg").mb_str().data(),getCurrentImg()->getContourHistorgam(m_rois_normal[0]));
+//#else
+//                    cv::imwrite(path375.AfterLast('/').append("_n.jpg").mb_str().data(),getCurrentImg()->getContourHistorgam(m_rois_normal[0]));
+//#endif
                     mode_375_n = getCurrentImg()->getOralCancerMode();
                 
                 }
@@ -1098,22 +1149,22 @@ void MainFrame::openMultiOralCancerDataByDir(wxString path)
                     //cancer roi's mode
                 if(m_rois_cancer.size() > 0)
                 {
-#if defined(__WINDOWS__)
-                    cv::imwrite(path460.AfterLast('\\').append("_c.jpg").mb_str().data(),getCurrentImg()->getContourHistorgam(m_rois_cancer[0]));
-#else
-                    cv::imwrite(path460.AfterLast('/').append("_c.jpg").mb_str().data(),getCurrentImg()->getContourHistorgam(m_rois_cancer[0]));
-#endif
+//#if defined(__WINDOWS__)
+//                    cv::imwrite(path460.AfterLast('\\').append("_c.jpg").mb_str().data(),getCurrentImg()->getContourHistorgam(m_rois_cancer[0]));
+//#else
+//                    cv::imwrite(path460.AfterLast('/').append("_c.jpg").mb_str().data(),getCurrentImg()->getContourHistorgam(m_rois_cancer[0]));
+//#endif
                     mode_460_c = getCurrentImg()->getOralCancerMode();
                 
                 }
                     //normal roi's mode
                 if(m_rois_normal.size() > 0)
                 {
-#if defined(__WINDOWS__)
-                    cv::imwrite(path460.AfterLast('\\').append("_n.jpg").mb_str().data(),getCurrentImg()->getContourHistorgam(m_rois_normal[0]));
-#else
-                    cv::imwrite(path460.AfterLast('/').append("_n.jpg").mb_str().data(),getCurrentImg()->getContourHistorgam(m_rois_normal[0]));
-#endif
+//#if defined(__WINDOWS__)
+//                    cv::imwrite(path460.AfterLast('\\').append("_n.jpg").mb_str().data(),getCurrentImg()->getContourHistorgam(m_rois_normal[0]));
+//#else
+//                    cv::imwrite(path460.AfterLast('/').append("_n.jpg").mb_str().data(),getCurrentImg()->getContourHistorgam(m_rois_normal[0]));
+//#endif
                     mode_460_n = getCurrentImg()->getOralCancerMode();
                 }
                 
@@ -1141,7 +1192,14 @@ void MainFrame::openMultiOralCancerDataByDir(wxString path)
     
     
 }
-
+void MainFrame::OnMenuItemClkRunAllGaborMultiScaleAndTheta(wxCommandEvent& event)
+{
+    
+    
+    
+    
+    
+}
 void MainFrame::OnMenuItemScreenShot(wxCommandEvent& event)
 {
     m_scrollWin->setImage(getScreenShot());
@@ -1184,18 +1242,54 @@ cv::Mat MainFrame::getScreenShot()
 void MainFrame::OnMenuItemClickGaborFilter(wxCommandEvent& event)
 {
     startTimer();
-    MyImage* img = getCurrentImg()->clone()->gaborFilter(40);
-    if(img)
+    
+    //minuma kernel size
+    int n_kernel_min        = 7; // odd value
+    //each step add value
+    int n_kernel_step       = 18; // even value
+    //how many kernel use
+    int n_kernel_numScale   = 3;
+    //threta
+    int n_threta_divide     = 16;
+    
+    
+    for(int i = 1; i <= n_kernel_numScale; i++)
     {
-        addNewImageState(img);
-        UpdateView();
+        for(int j = 1; j<= n_threta_divide; j++)
+        {
+            int k_sz        = n_kernel_min+i*n_kernel_step;
+            double sigma    = 4;
+            double threta   = CV_PI*j/n_threta_divide;
+            MyImage* img_real   = getCurrentImg()->clone()->gaborFilter(true, k_sz, sigma, threta);
+            char buffer[30] = "";
+            sprintf(buffer, "%d-%.2f_.jpg", k_sz, threta);
+            cv::Mat m_save = img_real->getMatRef().clone();
+            
+            MyUtil::drawRois(m_save, m_rois_cancer, m_c_roi_cancer, m_n_index_ofSelCancerRoi);
+            cv::imwrite(std::string(buffer), m_save);
+            //MyImage* img_image  = getCurrentImg()->clone()->gaborFilter(false, k_sz, sigma, threta);
+//            if(img_real)
+//            {
+//                addNewImageState(img_real);
+//                //UpdateView();
+//            }
+//            if(img_image)
+//            {
+//                addNewImageState(img_image);
+//                UpdateView();
+//            }
+        }
     }
+    
+    
+    
     stopTimer("Gabor Filter");
     return;
 }
 
 void MainFrame::OnMenuItemNN_MLP_train_Click(wxCommandEvent& event)
 {
+    
     wxString pathName = "";
     wxString fileType = _("All suported formats(*.*)|*.*");
 	
@@ -1208,17 +1302,24 @@ void MainFrame::OnMenuItemNN_MLP_train_Click(wxCommandEvent& event)
         MainFrame::showMessage("[MLP]File error");
     else
     {
+        m_p_pgDlg = new wxProgressDialog("MLP Training", "training", 100, this);
         startTimer();
-        MLP mMlp;
-        mMlp.openSampleFile(pathName);
-        if(mMlp.train())
-        {
-            MainFrame::showMessage(wxString::Format("[MLP]%s", mMlp.getErrorMessage()));
-        }
-        else
-        {
-            MainFrame::showMessage(wxString::Format("[MLP]%s", mMlp.getErrorMessage()));
-        }
+        MLP* mMlp = new MLP();
+        mMlp->openSampleFile(pathName);
+        mMlp->GetThread()->Run();
+//        if()
+//        {
+//            MainFrame::showMessage(wxString::Format("[MLP]%s", mMlp->getErrorMessage()));
+//        }
+//        else
+//        {
+//            MainFrame::showMessage(wxString::Format("[MLP]%s", mMlp->getErrorMessage()));
+//        }
         stopTimer("MLP");
+        
+        m_p_pgDlg->Destroy();
+        //delete mMlp;
     }
+   
 }
+

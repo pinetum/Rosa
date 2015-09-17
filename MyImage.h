@@ -18,6 +18,7 @@ public:
 	bool saveBmpImage(std::string filename);
 	bool saveHisBmpImage(std::string filename);
 	cv::Size getSize(){return cv::Size(m_cvMat.cols, m_cvMat.rows);}
+    wxString title;
 	int getImgWidth(){return m_cvMat.cols;}
 	int getImgHeight() { return m_cvMat.rows; }
 	int getType() { return m_cvMat.type(); }
@@ -28,13 +29,14 @@ public:
 	cv::Mat& getMatRef() { return m_cvMat; }
 	cv::Mat getMatHistogram();
 	cv::Mat getContourHistorgam(std::vector<cv::Point > contour);
-    
+    cv::Mat getGaborKernel(bool realPart, cv::Size ksize, double sigma, double theta, double lambd, double gamma, double psi = CV_PI*0.5, int ktype = CV_64F);
     
     cv::Mat* getMatAddr() { return &m_cvMat; }
 	wxString getFormatString();
 	template <class T>
 	void getPixelValue(wxPoint pt, T& v) { v = m_cvMat.at<T>(pt.y, pt.x);}
 	
+    
 	MyImage* Gray2BGR();
 	MyImage* BGR2Gray();
 	MyImage* Threshold(int thV,bool inverse);
@@ -45,7 +47,7 @@ public:
 	MyImage* resize(cv::Size size);
     MyImage* resize(double zoom);
 	MyImage* split(int nTargetCh);
-    MyImage* gaborFilter(int ksz=43, double sigma=3, double theta=12, double lambd=11, double gamma=0.2, double psi=CV_PI*0.5);
+    MyImage* gaborFilter(bool realPart, int ksz=43, double sigma=3, double theta=12, double lambd=9, double gamma=0.2, double psi=CV_PI*0.5);
 	
     MyImage* meanShift(int *x, int* y);
     int getOralCancerMode();

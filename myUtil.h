@@ -3,7 +3,7 @@
 #define MYUTIL_H
 
 #include <stdio.h>
-
+#include <wx/textfile.h>
 class MyUtil
 {
  public:
@@ -117,6 +117,39 @@ class MyUtil
         
         
         
+    }
+    static bool LogMat(wxString outputName, cv::Mat* data )
+    {
+        if(data->channels() > 1)
+            return false;
+        
+        wxTextFile  tfile;
+        tfile.Open(outputName);
+        for(int j = 0; j < data->rows; j++)
+        {
+            wxString str_line = "";
+            for(int i = 0; i < data->cols; i++)
+            {
+                if(i != 0) //結尾逗號問題
+                    str_line.append(",");
+                switch(data->type())
+                {
+                    case CV_64F:
+                        str_line.append(wxString::Format("%f",data->at<double>(cv::Point(i, j))));
+                        break;
+                    case CV_32F:
+                        str_line.append(wxString::Format("%f",data->at<float>(cv::Point(i, j))));
+                        break;
+                    case CV_8U:
+                        str_line.append(wxString::Format("%d",data->at<uchar>(cv::Point(i, j))));
+                        break;
+                }
+                
+            }
+            tfile.AddLine(str_line);
+        }
+        tfile.Write();
+        return true;
     }
 };
 #endif

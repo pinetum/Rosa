@@ -44,10 +44,11 @@ class MainFrameBaseClass : public wxFrame
 {
 public:
     enum {
-        wxID_GABOR_FILTER = 1001,
-        wxID_ORALCANCER_RUN_ALL = 1002,
-        wxID_RESIZE_FIT_WINDOW = 1003,
-        wxID_SAVE_AS = 1004,
+        wxID_CHECK_SPEC_SHOW = 1001,
+        wxID_GABOR_FILTER = 1002,
+        wxID_ORALCANCER_RUN_ALL = 1003,
+        wxID_RESIZE_FIT_WINDOW = 1004,
+        wxID_SAVE_AS = 1005,
     };
 protected:
     MyImageWin* m_scrollWin;
@@ -60,6 +61,7 @@ protected:
     wxStaticLine* m_staticLine74;
     wxPanel* m_mainPanel;
     wxRichTextCtrl* m_richTextCtrl;
+    wxRichTextCtrl* m_richTextCtrlTitleList;
     wxStaticText* m_staticTextSlideValue;
     wxSlider* m_sliderFilterWidth;
     MyImageWin* m_scrollWinHis;
@@ -74,6 +76,7 @@ protected:
     wxMenuItem* m_menuItemUndo;
     wxMenuItem* m_menuItemRedo;
     wxMenuItem* m_menuItemDestroyAllWindow;
+    wxMenuItem* m_menuItemSpecificImshow;
     wxMenu* m_menuImage;
     wxMenu* m_menuFind;
     wxMenuItem* m_menuItemFindFace;
@@ -93,13 +96,15 @@ protected:
     wxMenu* m_menu104;
     wxMenuItem* m_menuItemMSBase;
     wxMenu* m_menuOralCancer;
+    wxMenu* m_menuMultipleFiles;
+    wxMenuItem* m_menuItemRunAllOralCncer_findMode;
+    wxMenuItem* m_menuItemRunAllOralCancer_GaborMultiScale;
     wxMenuItem* m_menuItemLoadRois;
-    wxMenuItem* m_menuItemRunAllOralCncer;
     wxMenu* m_menuPlayGround;
     wxMenuItem* m_menuItemRaiseArmDetect;
     wxMenuItem* m_menuItemScrennshot;
-    wxMenu* m_menu216;
-    wxMenu* m_menu220;
+    wxMenu* m_menuNN;
+    wxMenu* m_menuMLP;
     wxMenuItem* m_menuItemMLP_l;
     wxToolBar* m_mainToolbar;
     wxBitmapToggleButton* m_bmpToggleBtnMarkNormalRoi;
@@ -147,8 +152,9 @@ protected:
     virtual void OnMenuItemClickGaborFilter(wxCommandEvent& event) { event.Skip(); }
     virtual void OnGnuplotSample(wxCommandEvent& event) { event.Skip(); }
     virtual void OnMeanShiftBase(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnMenuClickLoadOralCancerRois(wxCommandEvent& event) { event.Skip(); }
     virtual void OnMenuItemClkRunAllOralCancer(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnMenuItemClkRunAllGaborMultiScaleAndTheta(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnMenuClickLoadOralCancerRois(wxCommandEvent& event) { event.Skip(); }
     virtual void OnMenuItemClkRaisArmDetect(wxCommandEvent& event) { event.Skip(); }
     virtual void OnMenuItemScreenShot(wxCommandEvent& event) { event.Skip(); }
     virtual void OnMenuItemNN_MLP_train_Click(wxCommandEvent& event) { event.Skip(); }
@@ -163,6 +169,7 @@ public:
     wxColourPickerCtrl* GetColourPickerNormalRoi() { return m_colourPickerNormalRoi; }
     wxStaticLine* GetStaticLine74() { return m_staticLine74; }
     wxRichTextCtrl* GetRichTextCtrl() { return m_richTextCtrl; }
+    wxRichTextCtrl* GetRichTextCtrlTitleList() { return m_richTextCtrlTitleList; }
     wxStaticText* GetStaticTextSlideValue() { return m_staticTextSlideValue; }
     wxSlider* GetSliderFilterWidth() { return m_sliderFilterWidth; }
     MyImageWin* GetScrollWinHis() { return m_scrollWinHis; }

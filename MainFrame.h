@@ -7,6 +7,7 @@
 #include "myUtil.h"
 #include "wxcrafter.h"
 #include <deque>
+#include <wx/progdlg.h>
 //#include "gnuplot_i.hpp"
 
 class MainFrame : public MainFrameBaseClass
@@ -27,19 +28,21 @@ public:
     void loadNormalRoi(wxString filePath);
     cv::Mat getHistorgram();
     void drawAllRois(cv::Mat img);
-    void openMultiOralCancerDataByDir(wxString path);
+    void openMultiOralCancerDataByDir(wxArrayString aryStr_SubDirs);
     void startTimer();
     void stopTimer(wxString TimerName = "None");
+    wxString getTimer();
+    wxProgressDialog* m_p_pgDlg;
     cv::Mat getScreenShot();
 	MyImage* getCurrentImg();
     wxString m_str_TimerName ;
     time_t m_time_start;
-    time_t m_time_end;
     CMyPlotWin* m_plot_win;
     //Gnuplot* g1;
 	
 	
 protected:
+    virtual void OnMenuItemClkRunAllGaborMultiScaleAndTheta(wxCommandEvent& event);
     virtual void OnMenuItemNN_MLP_train_Click(wxCommandEvent& event);
     virtual void OnMenuItemClickGaborFilter(wxCommandEvent& event);
     virtual void OnMenuItemScreenShot(wxCommandEvent& event);

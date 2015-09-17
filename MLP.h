@@ -2,7 +2,9 @@
 #define MLP_H
 #include <opencv2/opencv.hpp>
 #include <wx/string.h>
-class MLP
+#include <wx/thread.h>
+#include <wx/event.h> 
+class MLP: public wxThreadHelper
 {
 public:
     MLP();
@@ -27,6 +29,8 @@ private:
     void writeMat(wxString outputName, cv::Mat* data);
 
     void readDataLine(cv::Mat* data, wxString line);
+protected:
+    virtual wxThread::ExitCode Entry();
+    wxCriticalSection m_dataCS;
 };
-
 #endif // MLP_H
