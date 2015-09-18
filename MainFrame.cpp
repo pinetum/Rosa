@@ -16,7 +16,7 @@
 
 #include "MLP.h"
 
-
+#include <libiomp/omp.h>
 #define SLIDER_MAX_VALUE 128
 #define ROI_RECT_SIZE 13
 
@@ -1087,6 +1087,7 @@ void MainFrame::openMultiOralCancerDataByDir(wxArrayString aryStr_SubDirs)
     
     FILE* fp_cancer = fopen("cancer.csv", "w");
     FILE* fp_normal = fopen("normal.csv", "w");
+    
     for(int i = 0; i< aryStr_SubDirs.size(); i++)
     {
         wxDir dir_recordDir(aryStr_SubDirs[i]);
@@ -1250,11 +1251,12 @@ void MainFrame::OnMenuItemClickGaborFilter(wxCommandEvent& event)
     //how many kernel use
     int n_kernel_numScale   = 3;
     //threta
-    int n_threta_divide     = 16;
+    int n_threta_divide     = 8;
     
-    
+    #pragma omp parallel for
     for(int i = 1; i <= n_kernel_numScale; i++)
     {
+        #pragma omp parallel for
         for(int j = 1; j<= n_threta_divide; j++)
         {
             int k_sz        = n_kernel_min+i*n_kernel_step;
@@ -1268,11 +1270,11 @@ void MainFrame::OnMenuItemClickGaborFilter(wxCommandEvent& event)
             MyUtil::drawRois(m_save, m_rois_cancer, m_c_roi_cancer, m_n_index_ofSelCancerRoi);
             cv::imwrite(std::string(buffer), m_save);
             //MyImage* img_image  = getCurrentImg()->clone()->gaborFilter(false, k_sz, sigma, threta);
-//            if(img_real)
-//            {
-//                addNewImageState(img_real);
-//                //UpdateView();
-//            }
+            if(img_real)
+            {
+                addNewImageState(img_real);
+                //UpdateView();
+            }
 //            if(img_image)
 //            {
 //                addNewImageState(img_image);

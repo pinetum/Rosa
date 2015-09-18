@@ -15,8 +15,8 @@ CurrentFileFullPath    :=
 User                   :=QT Lin
 Date                   :=18/09/2015
 CodeLitePath           :="/Users/Pinetum/Library/Application Support/codelite"
-LinkerName             :=/usr/bin/g++
-SharedObjectLinkerName :=/usr/bin/g++ -dynamiclib -fPIC
+LinkerName             :=/usr/bin/clang++
+SharedObjectLinkerName :=/usr/bin/clang++ -dynamiclib -fPIC
 ObjectSuffix           :=.o
 DependSuffix           :=.o.d
 PreprocessSuffix       :=.i
@@ -36,11 +36,11 @@ ObjectsFileList        :="Rosa.txt"
 PCHCompileFlags        :=
 MakeDirCommand         :=mkdir -p
 LinkOptions            :=  $(shell /usr/local/bin/wx-config --libs --debug)
-IncludePath            :=  $(IncludeSwitch). $(IncludeSwitch). 
+IncludePath            :=  $(IncludeSwitch). $(IncludeSwitch). $(IncludeSwitch)/usr/local/include 
 IncludePCH             := 
 RcIncludePath          := 
-Libs                   := $(LibrarySwitch)opencv_calib3d.3.0.0 $(LibrarySwitch)opencv_imgproc.3.0.0 $(LibrarySwitch)opencv_superres.3.0.0 $(LibrarySwitch)opencv_core.3.0.0 $(LibrarySwitch)opencv_ml.3.0.0 $(LibrarySwitch)opencv_video.3.0.0 $(LibrarySwitch)opencv_features2d.3.0.0 $(LibrarySwitch)opencv_objdetect.3.0.0 $(LibrarySwitch)opencv_videoio.3.0.0 $(LibrarySwitch)opencv_flann.3.0.0 $(LibrarySwitch)opencv_photo.3.0.0 $(LibrarySwitch)opencv_videostab.3.0.0 $(LibrarySwitch)opencv_highgui.3.0.0 $(LibrarySwitch)opencv_shape.3.0.0 $(LibrarySwitch)opencv_imgcodecs.3.0.0 $(LibrarySwitch)opencv_stitching.3.0.0 
-ArLibs                 :=  "libopencv_calib3d.3.0.0.dylib" "libopencv_imgproc.3.0.0.dylib" "libopencv_superres.3.0.0.dylib" "libopencv_core.3.0.0.dylib" "libopencv_ml.3.0.0.dylib" "libopencv_video.3.0.0.dylib" "libopencv_features2d.3.0.0.dylib" "libopencv_objdetect.3.0.0.dylib" "libopencv_videoio.3.0.0.dylib" "libopencv_flann.3.0.0.dylib" "libopencv_photo.3.0.0.dylib" "libopencv_videostab.3.0.0.dylib" "libopencv_highgui.3.0.0.dylib" "libopencv_shape.3.0.0.dylib" "libopencv_imgcodecs.3.0.0.dylib" "libopencv_stitching.3.0.0.dylib" 
+Libs                   := $(LibrarySwitch)iomp5 $(LibrarySwitch)opencv_calib3d.3.0.0 $(LibrarySwitch)opencv_imgproc.3.0.0 $(LibrarySwitch)opencv_superres.3.0.0 $(LibrarySwitch)opencv_core.3.0.0 $(LibrarySwitch)opencv_ml.3.0.0 $(LibrarySwitch)opencv_video.3.0.0 $(LibrarySwitch)opencv_features2d.3.0.0 $(LibrarySwitch)opencv_objdetect.3.0.0 $(LibrarySwitch)opencv_videoio.3.0.0 $(LibrarySwitch)opencv_flann.3.0.0 $(LibrarySwitch)opencv_photo.3.0.0 $(LibrarySwitch)opencv_videostab.3.0.0 $(LibrarySwitch)opencv_highgui.3.0.0 $(LibrarySwitch)opencv_shape.3.0.0 $(LibrarySwitch)opencv_imgcodecs.3.0.0 $(LibrarySwitch)opencv_stitching.3.0.0 
+ArLibs                 :=  "libiomp5.dylib" "libopencv_calib3d.3.0.0.dylib" "libopencv_imgproc.3.0.0.dylib" "libopencv_superres.3.0.0.dylib" "libopencv_core.3.0.0.dylib" "libopencv_ml.3.0.0.dylib" "libopencv_video.3.0.0.dylib" "libopencv_features2d.3.0.0.dylib" "libopencv_objdetect.3.0.0.dylib" "libopencv_videoio.3.0.0.dylib" "libopencv_flann.3.0.0.dylib" "libopencv_photo.3.0.0.dylib" "libopencv_videostab.3.0.0.dylib" "libopencv_highgui.3.0.0.dylib" "libopencv_shape.3.0.0.dylib" "libopencv_imgcodecs.3.0.0.dylib" "libopencv_stitching.3.0.0.dylib" 
 LibPath                := $(LibraryPathSwitch). $(LibraryPathSwitch)/usr/local/lib 
 
 ##
@@ -48,9 +48,9 @@ LibPath                := $(LibraryPathSwitch). $(LibraryPathSwitch)/usr/local/l
 ## AR, CXX, CC, AS, CXXFLAGS and CFLAGS can be overriden using an environment variables
 ##
 AR       := /usr/bin/ar rcu
-CXX      := /usr/bin/g++
-CC       := /usr/bin/gcc
-CXXFLAGS :=  -g -O0 $(shell /usr/local/bin/wx-config --cflags --debug) $(Preprocessors)
+CXX      := /usr/bin/clang++
+CC       := /usr/bin/clang
+CXXFLAGS :=  -g -O0 -fopenmp $(shell /usr/local/bin/wx-config --cflags --debug) $(Preprocessors)
 CFLAGS   :=  -g -O0 -Wall $(Preprocessors)
 ASFLAGS  := 
 AS       := /usr/bin/as

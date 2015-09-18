@@ -30,7 +30,6 @@
     <File Name="MyJSParser.cpp"/>
     <File Name="fams.cpp"/>
     <File Name="MyTaskBarIcon.cpp"/>
-    <File Name="CMyPlotWin.h"/>
     <File Name="CMyPlotWin.cpp"/>
     <File Name="MLP.cpp"/>
   </VirtualDirectory>
@@ -46,10 +45,15 @@
     <File Name="MyTaskBarIcon.h"/>
     <File Name="fams.h"/>
     <File Name="MLP.h"/>
+    <File Name="CMyPlotWin.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="resources">
     <File Name="wxcrafter.wxcp"/>
     <File Name="win_resources.rc"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="osx">
+    <File Name="Info.plist"/>
+    <File Name="Rosa.icns"/>
   </VirtualDirectory>
   <Settings Type="Executable">
     <GlobalSettings>
@@ -61,12 +65,14 @@
       </Linker>
       <ResourceCompiler Options=""/>
     </GlobalSettings>
-    <Configuration Name="Debug" CompilerType="GCC" DebuggerType="LLDB Debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-g;-O0;$(shell /usr/local/bin/wx-config --cflags --debug)" C_Options="-g;-O0;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
+    <Configuration Name="Debug" CompilerType="clang( based on LLVM 3.6.0svn )" DebuggerType="LLDB Debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="-g;-O0;-fopenmp;$(shell /usr/local/bin/wx-config --cflags --debug)" C_Options="-g;-O0;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
+        <IncludePath Value="/usr/local/include"/>
       </Compiler>
       <Linker Options="$(shell /usr/local/bin/wx-config --libs --debug)" Required="yes">
         <LibraryPath Value="/usr/local/lib"/>
+        <Library Value="libiomp5.dylib"/>
         <Library Value="libopencv_calib3d.3.0.0.dylib"/>
         <Library Value="libopencv_imgproc.3.0.0.dylib"/>
         <Library Value="libopencv_superres.3.0.0.dylib"/>
@@ -117,14 +123,34 @@
         <SearchPaths/>
       </Completion>
     </Configuration>
-    <Configuration Name="Release" CompilerType="GCC" DebuggerType="LLDB Debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-O2;-Wall;$(shell wx-config --cflags)" C_Options="-O2;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
+    <Configuration Name="Release" CompilerType="clang( based on LLVM 3.6.0svn )" DebuggerType="LLDB Debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="-O2;-fopenmp;$(shell /usr/local/bin/wx-config --cflags)" C_Options="-O2;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
+        <IncludePath Value="/usr/local/include"/>
         <Preprocessor Value="NDEBUG"/>
       </Compiler>
-      <Linker Options="$(shell wx-config --libs)" Required="yes"/>
+      <Linker Options="$(shell /usr/local/bin/wx-config --libs)" Required="yes">
+        <LibraryPath Value="/usr/local/lib"/>
+        <Library Value="libiomp5.dylib"/>
+        <Library Value="libopencv_calib3d.3.0.0.dylib"/>
+        <Library Value="libopencv_imgproc.3.0.0.dylib"/>
+        <Library Value="libopencv_superres.3.0.0.dylib"/>
+        <Library Value="libopencv_core.3.0.0.dylib"/>
+        <Library Value="libopencv_ml.3.0.0.dylib"/>
+        <Library Value="libopencv_video.3.0.0.dylib"/>
+        <Library Value="libopencv_features2d.3.0.0.dylib"/>
+        <Library Value="libopencv_objdetect.3.0.0.dylib"/>
+        <Library Value="libopencv_videoio.3.0.0.dylib"/>
+        <Library Value="libopencv_flann.3.0.0.dylib"/>
+        <Library Value="libopencv_photo.3.0.0.dylib"/>
+        <Library Value="libopencv_videostab.3.0.0.dylib"/>
+        <Library Value="libopencv_highgui.3.0.0.dylib"/>
+        <Library Value="libopencv_shape.3.0.0.dylib"/>
+        <Library Value="libopencv_imgcodecs.3.0.0.dylib"/>
+        <Library Value="libopencv_stitching.3.0.0.dylib"/>
+      </Linker>
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="no"/>
-      <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./Release" Command="./$(ProjectName)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="no" IsGUIProgram="no" IsEnabled="yes"/>
+      <General OutputFile="$(IntermediateDirectory)/$(ProjectName).app/Contents/MacOS/$(ProjectName)" IntermediateDirectory="./Release" Command="./$(ProjectName).app/Contents/MacOS/$(ProjectName)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="no" IsGUIProgram="yes" IsEnabled="yes"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>
       </Environment>
@@ -147,7 +173,14 @@
       </CustomBuild>
       <AdditionalRules>
         <CustomPostBuild/>
-        <CustomPreBuild/>
+        <CustomPreBuild>$(IntermediateDirectory)/$(ProjectName).app/Contents/Info.plist $(IntermediateDirectory)/$(ProjectName).app/Contents/Resources/Rosa.icns
+## rule to copy the Info.plist file into the bundle
+$(IntermediateDirectory)/$(ProjectName).app/Contents/Info.plist: Info.plist
+	mkdir -p '$(IntermediateDirectory)/$(ProjectName).app/Contents' &amp;&amp; cp -f Info.plist '$(IntermediateDirectory)/$(ProjectName).app/Contents/Info.plist'
+## rule to copy the icon file into the bundle
+$(IntermediateDirectory)/$(ProjectName).app/Contents/Resources/Rosa.icns: Rosa.icns
+	mkdir -p '$(IntermediateDirectory)/$(ProjectName).app/Contents/Resources/' &amp;&amp; cp -f Rosa.icns '$(IntermediateDirectory)/$(ProjectName).app/Contents/Resources/Rosa.icns'
+</CustomPreBuild>
       </AdditionalRules>
       <Completion EnableCpp11="no" EnableCpp14="no">
         <ClangCmpFlagsC/>
