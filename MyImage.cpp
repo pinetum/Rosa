@@ -3,7 +3,7 @@
 #include <wx/log.h> 
 #include <vector>
 #include "math.h"
-
+#include "myUtil.h"
 #define HISTORGAM_IMG_WIDTH     512
 #define HISTORGAM_IMG_HEIGHT    300
 #define HISTORGAM_LINE_THICKNESS 1
@@ -582,8 +582,9 @@ cv::Mat MyImage::getGaborKernel(bool realPart, cv::Size ksize, double sigma, dou
 }
 
 
-MyImage* MyImage::getRedoxOral(cv::Mat inputAnother, bool AnotherType)
+MyImage* MyImage::getRedoxOral(cv::Mat inputAnother, bool AnotherType, int median_k_sz)
 {
+    
     MyImage* pNew = clone();
     MyImage imgAnother(inputAnother);
     cv::Mat m_8u1_NADH;
@@ -605,4 +606,28 @@ MyImage* MyImage::getRedoxOral(cv::Mat inputAnother, bool AnotherType)
         delete p;
         
     //TODO-redox
+    
+    cv::Mat redoxResult_64, redoxResult_8;
+    cv::Mat m_64f_NADH, m_64f_FAD;
+    cv::medianBlur(m_8u1_FAD, m_8u1_FAD, median_k_sz);
+    cv::medianBlur(m_8u1_NADH, m_8u1_NADH, median_k_sz);
+    
+    
+    //cv::imshow("FAD", m_8u1_FAD);
+    //cv::imshow("NADH", m_8u1_NADH);
+    
+    m_8u1_FAD.convertTo(m_64f_FAD, CV_64FC1);
+    m_8u1_NADH.convertTo(m_64f_NADH, CV_64FC1);
+    
+    
+    
+    redoxResult_64 = m_64f_NADH/(m_64f_NADH + m_64f_FAD);
+    //MyUtil::LogMat("o.csv", &redoxResult_64);
+    //cv::normalize(redoxResult_64, redoxResult_64, 0, 255, cv::NORM_MINMAX, -1, cv::Mat() );
+    redoxResult_64.convertTo(redoxResult_8, CV_8U,255,0);
+    //cv::imshow("redox", redoxResult_8);
+    pNew->m_cvMat = redoxResult_8;
+    return pNew;
+    
+    
 }
