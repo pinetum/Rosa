@@ -34,7 +34,7 @@ MainFrameBaseClass::MainFrameBaseClass(wxWindow* parent, wxWindowID id, const wx
     
     boxSizer70->Add(boxSizer150, 4, wxALL|wxEXPAND, 5);
     
-    m_scrollWin = new MyImageWin(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxHSCROLL|wxVSCROLL);
+    m_scrollWin = new MyImageWin(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxFULL_REPAINT_ON_RESIZE|wxHSCROLL|wxVSCROLL);
     m_scrollWin->SetBackgroundColour(wxColour(wxT("rgb(205,205,205)")));
     m_scrollWin->SetScrollRate(5, 5);
     

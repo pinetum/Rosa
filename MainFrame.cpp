@@ -59,8 +59,9 @@ MainFrame::MainFrame(wxWindow* parent): MainFrameBaseClass(parent)
 	
    
     // connect drag file event (can drag file into windw to open)
-    m_scrollWin->Connect(wxEVT_DROP_FILES, wxDropFilesEventHandler(MainFrame::OnDropFile), NULL, this);
-    m_scrollWin->DragAcceptFiles(true);
+    //m_scrollWin->Connect(wxEVT_DROP_FILES, wxDropFilesEventHandler(MainFrame::OnDropFile), NULL, this);
+    //m_scrollWin->DragAcceptFiles(true);
+    
     
     //timer use
     m_str_TimerName = "";
@@ -1244,37 +1245,46 @@ void MainFrame::OnMenuItemClickGaborFilter(wxCommandEvent& event)
 {
     startTimer();
     
+    
     //minuma kernel size
-    int n_kernel_min        = 7; // odd value
+    int n_kernel_min        = 3; // odd value
     //each step add value
-    int n_kernel_step       = 18; // even value
+    int n_kernel_step       = 12; // even value
     //how many kernel use
-    int n_kernel_numScale   = 3;
+    int n_kernel_numScale   = 4;
     //threta
     int n_threta_divide     = 8;
     
-    #pragma omp parallel for
+    //#pragma omp parallel for
     for(int i = 1; i <= n_kernel_numScale; i++)
     {
-        #pragma omp parallel for
+        //#pragma omp parallel for
         for(int j = 1; j<= n_threta_divide; j++)
         {
             int k_sz        = n_kernel_min+i*n_kernel_step;
             double sigma    = 4;
             double threta   = CV_PI*j/n_threta_divide;
             MyImage* img_real   = getCurrentImg()->clone()->gaborFilter(true, k_sz, sigma, threta);
-            char buffer[30] = "";
-            sprintf(buffer, "%d-%.2f_.jpg", k_sz, threta);
-            cv::Mat m_save = img_real->getMatRef().clone();
             
-            MyUtil::drawRois(m_save, m_rois_cancer, m_c_roi_cancer, m_n_index_ofSelCancerRoi);
-            cv::imwrite(std::string(buffer), m_save);
+            wxString outPutFileName = wxString::Format("%s%s-%d-%.2f_.jpg", m_strFileFolder,m_strFileName, k_sz, threta);
+            
+            
+            cv::Mat m_save = img_real->getMatRef();
+            
+            
+            cv::cvtColor(m_save, m_save, CV_GRAY2BGR);
+            //MyUtil::drawRois(m_save, m_rois_cancer, m_c_roi_cancer);
+            
+            cv::drawContours(m_save, m_rois_cancer, -1, m_c_roi_cancer, 2);
+            
+            cv::imwrite(std::string(outPutFileName.mb_str()), m_save);
+            delete img_real;
             //MyImage* img_image  = getCurrentImg()->clone()->gaborFilter(false, k_sz, sigma, threta);
-            if(img_real)
-            {
-                addNewImageState(img_real);
-                //UpdateView();
-            }
+//            if(img_real)
+//            {
+//                addNewImageState(img_real);
+//                UpdateView();
+//            }
 //            if(img_image)
 //            {
 //                addNewImageState(img_image);
@@ -1282,7 +1292,6 @@ void MainFrame::OnMenuItemClickGaborFilter(wxCommandEvent& event)
 //            }
         }
     }
-    
     
     
     stopTimer("Gabor Filter");

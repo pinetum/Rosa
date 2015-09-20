@@ -29,7 +29,14 @@ public:
 	cv::Mat& getMatRef() { return m_cvMat; }
 	cv::Mat getMatHistogram();
 	cv::Mat getContourHistorgam(std::vector<cv::Point > contour);
-    cv::Mat getGaborKernel(bool realPart, cv::Size ksize, double sigma, double theta, double lambd, double gamma, double psi = CV_PI*0.5, int ktype = CV_64F);
+    cv::Mat getGaborKernel( bool realPart, 
+                            cv::Size ksize, 
+                            double sigma, 
+                            double theta, 
+                            double lambd, 
+                            double gamma, 
+                            double psi = CV_PI*0.5, 
+                            int ktype = CV_64F);
     
     cv::Mat* getMatAddr() { return &m_cvMat; }
 	wxString getFormatString();
@@ -47,8 +54,13 @@ public:
 	MyImage* resize(cv::Size size);
     MyImage* resize(double zoom);
 	MyImage* split(int nTargetCh);
-    MyImage* gaborFilter(bool realPart, int ksz=43, double sigma=3, double theta=12, double lambd=9, double gamma=0.2, double psi=CV_PI*0.5);
-	
+    MyImage* gaborFilter(   bool realPart, 
+                            int ksz=43, 
+                            double sigma=3, 
+                            double theta=12, 
+                            double lambd=9, 
+                            double gamma=0.2, 
+                            double psi=CV_PI*0.5);
     MyImage* meanShift(int *x, int* y);
     int getOralCancerMode();
 private:
