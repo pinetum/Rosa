@@ -42,6 +42,7 @@ public:
 	
 	
 protected:
+    virtual void OnImageRedox(wxCommandEvent& event);
     virtual void OnMenuItemClkRunAllGaborMultiScaleAndTheta(wxCommandEvent& event);
     virtual void OnMenuItemNN_MLP_train_Click(wxCommandEvent& event);
     virtual void OnMenuItemClickGaborFilter(wxCommandEvent& event);

@@ -520,7 +520,7 @@ MyImage* MyImage::gaborFilter(bool realPart,int ksz, double sigma, double theta,
     mDataMat.convertTo(src_64f, CV_64F);
     cv::Mat gaborKernel = getGaborKernel(realPart, cv::Size(ksz, ksz), sigma, theta, lambd, gamma, psi);
     cv::filter2D(src_64f, pNew->m_cvMat, CV_64F, gaborKernel);
-    pNew->m_cvMat = cv::abs(pNew->m_cvMat);
+    //pNew->m_cvMat = cv::abs(pNew->m_cvMat);
     
     cv::normalize(pNew->m_cvMat, pNew->m_cvMat, 0, 255, cv::NORM_MINMAX, -1, cv::Mat() );
     pNew->m_cvMat.convertTo(pNew->m_cvMat, CV_8UC1);
@@ -579,4 +579,30 @@ cv::Mat MyImage::getGaborKernel(bool realPart, cv::Size ksize, double sigma, dou
         }
 
     return kernel;
+}
+
+
+MyImage* MyImage::getRedoxOral(cv::Mat inputAnother, bool AnotherType)
+{
+    MyImage* pNew = clone();
+    MyImage imgAnother(inputAnother);
+    cv::Mat m_8u1_NADH;
+    cv::Mat m_8u1_FAD;
+    MyImage* p = NULL;
+    switch (AnotherType){
+        case ORAL_IMG_FAD_GREEN:
+            p = imgAnother.split(1);
+            m_8u1_FAD   = p->getMatRef();
+            m_8u1_NADH  = pNew->getMatRef();
+            break;
+        case ORAL_IMG_NADH_BLUE:
+            p = imgAnother.split(0);
+            m_8u1_FAD   = pNew->getMatRef();
+            m_8u1_NADH  = p->getMatRef();
+            break;
+    }
+    if(p!=NULL)
+        delete p;
+        
+    //TODO-redox
 }

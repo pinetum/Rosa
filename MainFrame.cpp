@@ -1247,50 +1247,62 @@ void MainFrame::OnMenuItemClickGaborFilter(wxCommandEvent& event)
     
     
     //minuma kernel size
-    int n_kernel_min        = 3; // odd value
+    int n_kernel_min        = 11; // odd value
     //each step add value
-    int n_kernel_step       = 12; // even value
+    int n_kernel_step       = 4; // even value
     //how many kernel use
-    int n_kernel_numScale   = 4;
+    int n_kernel_numScale   = 8;
     //threta
     int n_threta_divide     = 8;
     
     //#pragma omp parallel for
     for(int i = 1; i <= n_kernel_numScale; i++)
     {
+        cv::Mat m_output ;
+                                        
+        int k_sz        = n_kernel_min+i*n_kernel_step;
+        double sigma    = 3;
         //#pragma omp parallel for
         for(int j = 1; j<= n_threta_divide; j++)
         {
-            int k_sz        = n_kernel_min+i*n_kernel_step;
-            double sigma    = 4;
+            
             double threta   = CV_PI*j/n_threta_divide;
             MyImage* img_real   = getCurrentImg()->clone()->gaborFilter(true, k_sz, sigma, threta);
             
             wxString outPutFileName = wxString::Format("%s%s-%d-%.2f_.jpg", m_strFileFolder,m_strFileName, k_sz, threta);
             
             
+            
+            
             cv::Mat m_save = img_real->getMatRef();
+            cv::Mat buffer;
+            m_save.convertTo(buffer, CV_64F);
             
-            
-            cv::cvtColor(m_save, m_save, CV_GRAY2BGR);
-            //MyUtil::drawRois(m_save, m_rois_cancer, m_c_roi_cancer);
-            
-            cv::drawContours(m_save, m_rois_cancer, -1, m_c_roi_cancer, 2);
-            
-            cv::imwrite(std::string(outPutFileName.mb_str()), m_save);
+            if(j == 1)
+                m_output = cv::Mat::zeros(   m_save.rows, m_save.cols, CV_64F);
+            if(m_output.rows == m_save.rows && m_output.cols == m_save.cols)
+                m_output+=buffer;
+            else
+                wxLogMessage("rows or cols Not equal.");
+            //draw Rois and save
+//            cv::cvtColor(m_save, m_save, CV_GRAY2BGR);
+//            cv::drawContours(m_save, m_rois_cancer, -1, m_c_roi_cancer, 2);
+//            cv::imwrite(std::string(outPutFileName.mb_str()), m_save);
             delete img_real;
-            //MyImage* img_image  = getCurrentImg()->clone()->gaborFilter(false, k_sz, sigma, threta);
-//            if(img_real)
-//            {
-//                addNewImageState(img_real);
-//                UpdateView();
-//            }
-//            if(img_image)
-//            {
-//                addNewImageState(img_image);
-//                UpdateView();
-//            }
+
         }
+        
+        cv::normalize(m_output, m_output, 0, 255, cv::NORM_MINMAX, -1, cv::Mat() );
+        m_output.convertTo(m_output, CV_8U);
+        
+        wxString outPutFileName = wxString::Format("%s%s-%d-_Sum.jpg", m_strFileFolder,m_strFileName, k_sz);
+        
+        
+        //draw Rois
+        cv::cvtColor(m_output, m_output, CV_GRAY2BGR);
+        cv::drawContours(m_output, m_rois_cancer, -1, m_c_roi_cancer, 2);
+        cv::imwrite(outPutFileName.ToStdString(), m_output);
+        
     }
     
     
@@ -1334,3 +1346,36 @@ void MainFrame::OnMenuItemNN_MLP_train_Click(wxCommandEvent& event)
    
 }
 
+void MainFrame::OnImageRedox(wxCommandEvent& event)
+{
+    
+    // another file that wii open
+    wxString    filePath        = m_strFileFolder.Clone();
+    bool        b_anotherType;
+    if(m_strFileName.StartsWith("460nm"))
+    {
+        filePath.append(m_strFileName.Clone());
+        filePath.Replace("460nm", "375nm");
+        b_anotherType = ORAL_IMG_NADH_BLUE;
+    }
+    else if(m_strFileName.StartsWith("375nm"))
+    {
+        filePath.append(m_strFileName.Clone());
+        filePath.Replace("375nm", "460nm");
+        b_anotherType = ORAL_IMG_FAD_GREEN;
+    }
+    else
+    {
+        wxLogMessage("Image is not Oral Cancer data.");
+        return;
+    }
+    
+    cv::Mat ImgAnother = cv::imread(filePath.ToStdString(), -1);
+    if(!ImgAnother.data)
+    {
+        wxLogMessage("opencv read file error..");
+        return;
+    }
+    addNewImageState(getCurrentImg()->getRedoxOral(ImgAnother, b_anotherType));
+    UpdateView();
+}

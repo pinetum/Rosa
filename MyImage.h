@@ -5,6 +5,10 @@
 #include <wx/gdicmn.h>
 #include <string>
 
+#define ORAL_IMG_NADH_BLUE    true
+#define ORAL_IMG_FAD_GREEN    false
+
+
 class MyImage
 {
 public:
@@ -54,11 +58,12 @@ public:
 	MyImage* resize(cv::Size size);
     MyImage* resize(double zoom);
 	MyImage* split(int nTargetCh);
+    MyImage* getRedoxOral(cv::Mat inputAnother, bool AnotherType);
     MyImage* gaborFilter(   bool realPart, 
                             int ksz=43, 
                             double sigma=3, 
                             double theta=12, 
-                            double lambd=9, 
+                            double lambd=36, 
                             double gamma=0.2, 
                             double psi=CV_PI*0.5);
     MyImage* meanShift(int *x, int* y);

@@ -100,6 +100,7 @@ protected:
     wxMenuItem* m_menuItemRunAllOralCncer_findMode;
     wxMenuItem* m_menuItemRunAllOralCancer_GaborMultiScale;
     wxMenuItem* m_menuItemLoadRois;
+    wxMenuItem* m_menuItemRedox;
     wxMenu* m_menuPlayGround;
     wxMenuItem* m_menuItemRaiseArmDetect;
     wxMenuItem* m_menuItemScrennshot;
@@ -155,6 +156,7 @@ protected:
     virtual void OnMenuItemClkRunAllOralCancer(wxCommandEvent& event) { event.Skip(); }
     virtual void OnMenuItemClkRunAllGaborMultiScaleAndTheta(wxCommandEvent& event) { event.Skip(); }
     virtual void OnMenuClickLoadOralCancerRois(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnImageRedox(wxCommandEvent& event) { event.Skip(); }
     virtual void OnMenuItemClkRaisArmDetect(wxCommandEvent& event) { event.Skip(); }
     virtual void OnMenuItemScreenShot(wxCommandEvent& event) { event.Skip(); }
     virtual void OnMenuItemNN_MLP_train_Click(wxCommandEvent& event) { event.Skip(); }
