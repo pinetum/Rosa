@@ -198,12 +198,6 @@ MainFrameBaseClass::MainFrameBaseClass(wxWindow* parent, wxWindowID id, const wx
     m_menuItemGaborFilter = new wxMenuItem(m_menuImage, wxID_GABOR_FILTER, _("Gabor Filter"), wxT(""), wxITEM_NORMAL);
     m_menuImage->Append(m_menuItemGaborFilter);
     
-    m_menu_gnuEtc = new wxMenu();
-    m_menuBar->Append(m_menu_gnuEtc, _("gnuplot"));
-    
-    m_menuPlot1 = new wxMenuItem(m_menu_gnuEtc, wxID_ANY, _("Item18"), wxT(""), wxITEM_NORMAL);
-    m_menu_gnuEtc->Append(m_menuPlot1);
-    
     m_menu104 = new wxMenu();
     m_menuBar->Append(m_menu104, _("Mean-shift"));
     
@@ -356,7 +350,6 @@ MainFrameBaseClass::MainFrameBaseClass(wxWindow* parent, wxWindowID id, const wx
     this->Connect(m_menuItemSplitChnl->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnMenuItemSplit), NULL, this);
     this->Connect(m_menuItemGaborFilter->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnMenuItemClickGaborFilter), NULL, this);
     this->Connect(m_menuItemGaborFilter->GetId(), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MainFrameBaseClass::OnUpdateImageFunction), NULL, this);
-    this->Connect(m_menuPlot1->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnGnuplotSample), NULL, this);
     this->Connect(m_menuItemMSBase->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnMeanShiftBase), NULL, this);
     this->Connect(m_menuItemRunAllOralCncer_findMode->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnMenuItemClkRunAllOralCancer), NULL, this);
     this->Connect(m_menuItemRunAllOralCancer_GaborMultiScale->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnMenuItemClkRunAllGaborMultiScaleAndTheta), NULL, this);
@@ -424,7 +417,6 @@ MainFrameBaseClass::~MainFrameBaseClass()
     this->Disconnect(m_menuItemSplitChnl->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnMenuItemSplit), NULL, this);
     this->Disconnect(m_menuItemGaborFilter->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnMenuItemClickGaborFilter), NULL, this);
     this->Disconnect(m_menuItemGaborFilter->GetId(), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MainFrameBaseClass::OnUpdateImageFunction), NULL, this);
-    this->Disconnect(m_menuPlot1->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnGnuplotSample), NULL, this);
     this->Disconnect(m_menuItemMSBase->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnMeanShiftBase), NULL, this);
     this->Disconnect(m_menuItemRunAllOralCncer_findMode->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnMenuItemClkRunAllOralCancer), NULL, this);
     this->Disconnect(m_menuItemRunAllOralCancer_GaborMultiScale->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnMenuItemClkRunAllGaborMultiScaleAndTheta), NULL, this);

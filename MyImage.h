@@ -58,7 +58,7 @@ public:
 	MyImage* resize(cv::Size size);
     MyImage* resize(double zoom);
 	MyImage* split(int nTargetCh);
-    MyImage* getRedoxOral(cv::Mat inputAnother, bool AnotherType, int median_k_sz = 9);
+    MyImage* getRedoxOral(cv::Mat inputAnother, bool AnotherType, int median_k_sz);
     MyImage* gaborFilter(   bool realPart, 
                             int ksz=43, 
                             double sigma=3, 

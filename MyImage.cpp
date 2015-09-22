@@ -187,13 +187,16 @@ MyImage* 	MyImage::BGR2Gray(){
 	
 }
 MyImage* 	MyImage::split(int nTargetCh){
-		MyImage* pNew = new MyImage();
-        pNew->title= wxString::Format("Spilt to channel %d", nTargetCh);
-		std::vector<cv::Mat> mats_splited;
+        MyImage* pNew = clone();
+        pNew->title="split channel";
+        if(m_cvMat.channels() == 1)
+            return pNew;
+        std::vector<cv::Mat> mats_splited;
 		if(m_cvMat.channels() <= nTargetCh){
             wxLogMessage("Error:Split Channel:chanel not exist.");
-			return this;
+			return pNew;
 		}
+        pNew->title= wxString::Format("Spilt to channel %d", nTargetCh);
 		cv::split(m_cvMat, mats_splited);
 		pNew->m_cvMat = mats_splited[nTargetCh];
 		MainFrame::showMessage( wxString::Format("[Split] chanel-%d", nTargetCh));
@@ -520,7 +523,7 @@ MyImage* MyImage::gaborFilter(bool realPart,int ksz, double sigma, double theta,
     mDataMat.convertTo(src_64f, CV_64F);
     cv::Mat gaborKernel = getGaborKernel(realPart, cv::Size(ksz, ksz), sigma, theta, lambd, gamma, psi);
     cv::filter2D(src_64f, pNew->m_cvMat, CV_64F, gaborKernel);
-    //pNew->m_cvMat = cv::abs(pNew->m_cvMat);
+    pNew->m_cvMat = cv::abs(pNew->m_cvMat);
     
     cv::normalize(pNew->m_cvMat, pNew->m_cvMat, 0, 255, cv::NORM_MINMAX, -1, cv::Mat() );
     pNew->m_cvMat.convertTo(pNew->m_cvMat, CV_8UC1);
@@ -584,49 +587,80 @@ cv::Mat MyImage::getGaborKernel(bool realPart, cv::Size ksize, double sigma, dou
 
 MyImage* MyImage::getRedoxOral(cv::Mat inputAnother, bool AnotherType, int median_k_sz)
 {
-    
+    std::vector<cv::Mat> mats_splited;
     MyImage* pNew = clone();
-    MyImage imgAnother(inputAnother);
     cv::Mat m_8u1_NADH;
     cv::Mat m_8u1_FAD;
-    MyImage* p = NULL;
-    switch (AnotherType){
-        case ORAL_IMG_FAD_GREEN:
-            p = imgAnother.split(1);
-            m_8u1_FAD   = p->getMatRef();
-            m_8u1_NADH  = pNew->getMatRef();
-            break;
-        case ORAL_IMG_NADH_BLUE:
-            p = imgAnother.split(0);
-            m_8u1_FAD   = pNew->getMatRef();
-            m_8u1_NADH  = p->getMatRef();
-            break;
+    
+    // step1:check input mat's channel (gray or bgr mat?)
+    
+   // gray single channel mat
+   if(inputAnother.channels() == 1)
+   {
+       if(AnotherType == ORAL_IMG_FAD_GREEN)
+       {
+           m_8u1_FAD    = inputAnother;
+           m_8u1_NADH   = pNew->getMatRef();
+       }
+       else
+       {
+           m_8u1_FAD    = pNew->getMatRef();
+           m_8u1_NADH   = inputAnother;
+       }
+   }
+   else // bgr mat
+   {
+        cv::split(inputAnother, mats_splited);
+        if(AnotherType == ORAL_IMG_FAD_GREEN)
+        {
+           m_8u1_FAD    = mats_splited[1];
+           m_8u1_NADH   = pNew->getMatRef();
+        }
+       else
+       {
+           m_8u1_FAD    = pNew->getMatRef();
+           m_8u1_NADH   = mats_splited[0];
+       }
+   }
+    // step1.5:medianBlur (if user want)
+    if(median_k_sz > 0 && median_k_sz%2 == 1)
+    {
+        cv::medianBlur(m_8u1_FAD, m_8u1_FAD, median_k_sz);
+        cv::medianBlur(m_8u1_NADH, m_8u1_NADH, median_k_sz);
     }
-    if(p!=NULL)
-        delete p;
-        
-    //TODO-redox
+
+    // step2: convert mat from 8u to 64f (for calculate)
+    
+    if(!m_8u1_NADH.data || !m_8u1_FAD.data)
+        return pNew;
     
     cv::Mat redoxResult_64, redoxResult_8;
     cv::Mat m_64f_NADH, m_64f_FAD;
-    cv::medianBlur(m_8u1_FAD, m_8u1_FAD, median_k_sz);
-    cv::medianBlur(m_8u1_NADH, m_8u1_NADH, median_k_sz);
-    
-    
-    //cv::imshow("FAD", m_8u1_FAD);
-    //cv::imshow("NADH", m_8u1_NADH);
     
     m_8u1_FAD.convertTo(m_64f_FAD, CV_64FC1);
     m_8u1_NADH.convertTo(m_64f_NADH, CV_64FC1);
     
-    
-    
+    if(m_64f_NADH.cols != m_64f_FAD.cols)
+    {
+        wxLogMessage("reodx:cols not equal");
+        return pNew;
+    }
+        
+    if(m_64f_NADH.rows != m_64f_FAD.rows)
+    {
+        wxLogMessage("reodx:rows not equal");
+        return pNew;
+    }
     redoxResult_64 = m_64f_NADH/(m_64f_NADH + m_64f_FAD);
     //MyUtil::LogMat("o.csv", &redoxResult_64);
-    //cv::normalize(redoxResult_64, redoxResult_64, 0, 255, cv::NORM_MINMAX, -1, cv::Mat() );
-    redoxResult_64.convertTo(redoxResult_8, CV_8U,255,0);
+    
+    // step3:output...
+    
+    cv::normalize(redoxResult_64, redoxResult_64, 0, 255, cv::NORM_MINMAX, -1, cv::Mat() );
+    redoxResult_64.convertTo(redoxResult_8, CV_8U);
     //cv::imshow("redox", redoxResult_8);
     pNew->m_cvMat = redoxResult_8;
+    pNew->title = wxString::Format("redox Image.");
     return pNew;
     
     

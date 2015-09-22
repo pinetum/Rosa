@@ -631,15 +631,6 @@ void MainFrame::OnMenuItemSplit(wxCommandEvent& event)
 		UpdateView();
 	}
 }
-void MainFrame::OnGnuplotSample(wxCommandEvent& event)
-{
-	Gnuplot g1("lines");
-	g1.reset_all();
-	g1.set_title("gnuPlotSample");
-	g1.plot_slope(1.0,0.0,"y=x");
-	g1.plot_equation("sin(12*x)*exp(-x)").plot_equation("exp(-x)");
-	g1.showonscreen();
-}
 void MainFrame::OnMeanShiftBase(wxCommandEvent& event)
 {
 	
@@ -1247,15 +1238,15 @@ void MainFrame::OnMenuItemClickGaborFilter(wxCommandEvent& event)
     
     
     //minuma kernel size
-    int n_kernel_min        = 11; // odd value
+    int n_kernel_min        = 3; // odd value
     //each step add value
-    int n_kernel_step       = 4; // even value
+    int n_kernel_step       = 2; // even value
     //how many kernel use
     int n_kernel_numScale   = 8;
     //threta
     int n_threta_divide     = 8;
-    
-    //#pragma omp parallel for
+    n_kernel_min = n_kernel_min - n_kernel_step;
+    #pragma omp parallel for
     for(int i = 1; i <= n_kernel_numScale; i++)
     {
         cv::Mat m_output ;
@@ -1271,9 +1262,6 @@ void MainFrame::OnMenuItemClickGaborFilter(wxCommandEvent& event)
             
             wxString outPutFileName = wxString::Format("%s%s-%d-%.2f_.jpg", m_strFileFolder,m_strFileName, k_sz, threta);
             
-            
-            
-            
             cv::Mat m_save = img_real->getMatRef();
             cv::Mat buffer;
             m_save.convertTo(buffer, CV_64F);
@@ -1285,6 +1273,7 @@ void MainFrame::OnMenuItemClickGaborFilter(wxCommandEvent& event)
             else
                 wxLogMessage("rows or cols Not equal.");
             //draw Rois and save
+            //do not need: will combine 8 angle image to 1 image(add)
 //            cv::cvtColor(m_save, m_save, CV_GRAY2BGR);
 //            cv::drawContours(m_save, m_rois_cancer, -1, m_c_roi_cancer, 2);
 //            cv::imwrite(std::string(outPutFileName.mb_str()), m_save);
@@ -1299,8 +1288,14 @@ void MainFrame::OnMenuItemClickGaborFilter(wxCommandEvent& event)
         
         
         //draw Rois
-        cv::cvtColor(m_output, m_output, CV_GRAY2BGR);
-        cv::drawContours(m_output, m_rois_cancer, -1, m_c_roi_cancer, 2);
+        
+        if(m_checkBoxCancerRoi->IsChecked())
+        {
+            cv::cvtColor(m_output, m_output, CV_GRAY2BGR);
+            cv::drawContours(m_output, m_rois_cancer, -1, m_c_roi_cancer, 2);
+        
+        }
+        
         cv::imwrite(outPutFileName.ToStdString(), m_output);
         
     }
@@ -1376,6 +1371,14 @@ void MainFrame::OnImageRedox(wxCommandEvent& event)
         wxLogMessage("opencv read file error..");
         return;
     }
-    addNewImageState(getCurrentImg()->getRedoxOral(ImgAnother, b_anotherType));
+    CDlgGetValue dlg_v(this);
+    dlg_v.setDefaultValue("3");
+    dlg_v.setItemTitle("k size (odd)");
+    if( dlg_v.ShowModal() != 1001 )
+		return;
+    addNewImageState(getCurrentImg()->getRedoxOral(ImgAnother, b_anotherType, dlg_v.getIntValue()));
     UpdateView();
+    
+    
+    
 }

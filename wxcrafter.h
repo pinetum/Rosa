@@ -91,8 +91,6 @@ protected:
     wxMenuItem* m_menuItemMedianBlur;
     wxMenuItem* m_menuItemSplitChnl;
     wxMenuItem* m_menuItemGaborFilter;
-    wxMenu* m_menu_gnuEtc;
-    wxMenuItem* m_menuPlot1;
     wxMenu* m_menu104;
     wxMenuItem* m_menuItemMSBase;
     wxMenu* m_menuOralCancer;
@@ -151,7 +149,6 @@ protected:
     virtual void OnImageMedianBlur(wxCommandEvent& event) { event.Skip(); }
     virtual void OnMenuItemSplit(wxCommandEvent& event) { event.Skip(); }
     virtual void OnMenuItemClickGaborFilter(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnGnuplotSample(wxCommandEvent& event) { event.Skip(); }
     virtual void OnMeanShiftBase(wxCommandEvent& event) { event.Skip(); }
     virtual void OnMenuItemClkRunAllOralCancer(wxCommandEvent& event) { event.Skip(); }
     virtual void OnMenuItemClkRunAllGaborMultiScaleAndTheta(wxCommandEvent& event) { event.Skip(); }
@@ -204,7 +201,7 @@ public:
     wxStaticText* GetStaticTextTitle() { return m_staticTextTitle; }
     wxTextCtrl* GetTextValue() { return m_textValue; }
     wxButton* GetButtonSubmit() { return m_buttonSubmit; }
-    CDlgGetValueBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("getValue"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxDEFAULT_DIALOG_STYLE);
+    CDlgGetValueBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Parameter"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxDEFAULT_DIALOG_STYLE);
     virtual ~CDlgGetValueBase();
 };
 

@@ -2799,76 +2799,6 @@
 							"m_properties":	[{
 									"type":	"string",
 									"m_label":	"Name:",
-									"m_value":	"m_menu_gnuEtc"
-								}, {
-									"type":	"string",
-									"m_label":	"Label:",
-									"m_value":	"gnuplot"
-								}],
-							"m_events":	[],
-							"m_children":	[{
-									"m_type":	4459,
-									"proportion":	0,
-									"border":	5,
-									"gbSpan":	"1,1",
-									"gbPosition":	"0,0",
-									"m_styles":	[],
-									"m_sizerFlags":	[],
-									"m_properties":	[{
-											"type":	"winid",
-											"m_label":	"ID:",
-											"m_winid":	"wxID_ANY"
-										}, {
-											"type":	"string",
-											"m_label":	"Name:",
-											"m_value":	"m_menuPlot1"
-										}, {
-											"type":	"string",
-											"m_label":	"Label:",
-											"m_value":	"Item18"
-										}, {
-											"type":	"string",
-											"m_label":	"Shortcut:",
-											"m_value":	""
-										}, {
-											"type":	"string",
-											"m_label":	"Help String:",
-											"m_value":	""
-										}, {
-											"type":	"bitmapPicker",
-											"m_label":	"Bitmap File:",
-											"m_path":	""
-										}, {
-											"type":	"choice",
-											"m_label":	"Kind:",
-											"m_selection":	0,
-											"m_options":	["normal", "checkable", "radio", "separator"]
-										}, {
-											"type":	"bool",
-											"m_label":	"Checked",
-											"m_value":	false
-										}],
-									"m_events":	[{
-											"m_eventName":	"wxEVT_COMMAND_MENU_SELECTED",
-											"m_eventClass":	"wxCommandEvent",
-											"m_eventHandler":	"wxCommandEventHandler",
-											"m_functionNameAndSignature":	"OnGnuplotSample(wxCommandEvent& event)",
-											"m_description":	"Menu item has been clicked",
-											"m_noBody":	false
-										}],
-									"m_children":	[]
-								}]
-						}, {
-							"m_type":	4458,
-							"proportion":	0,
-							"border":	5,
-							"gbSpan":	"1,1",
-							"gbPosition":	"0,0",
-							"m_styles":	[],
-							"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
-							"m_properties":	[{
-									"type":	"string",
-									"m_label":	"Name:",
 									"m_value":	"m_menu104"
 								}, {
 									"type":	"string",
@@ -4193,11 +4123,11 @@
 				}, {
 					"type":	"string",
 					"m_label":	"Title:",
-					"m_value":	"getValue"
+					"m_value":	"Parameter"
 				}, {
 					"type":	"virtualFolderPicker",
 					"m_label":	"Virtual Folder:",
-					"m_path":	"showImage:resources"
+					"m_path":	"Rosa:resources"
 				}, {
 					"type":	"choice",
 					"m_label":	"Centre:",

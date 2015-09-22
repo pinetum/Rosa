@@ -13,7 +13,7 @@ CurrentFileName        :=
 CurrentFilePath        :=
 CurrentFileFullPath    :=
 User                   :=QT Lin
-Date                   :=20/09/2015
+Date                   :=21/09/2015
 CodeLitePath           :="/Users/Pinetum/Library/Application Support/codelite"
 LinkerName             :=/usr/bin/clang++
 SharedObjectLinkerName :=/usr/bin/clang++ -dynamiclib -fPIC
@@ -51,7 +51,7 @@ AR       := /usr/bin/ar rcu
 CXX      := /usr/bin/clang++
 CC       := /usr/bin/clang
 CXXFLAGS :=  -g -O0 -fopenmp $(shell /usr/local/bin/wx-config --cflags --debug) $(Preprocessors)
-CFLAGS   :=  -g -O0 -Wall $(Preprocessors)
+CFLAGS   :=  -g -O0  $(Preprocessors)
 ASFLAGS  := 
 AS       := /usr/bin/as
 

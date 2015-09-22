@@ -71,7 +71,6 @@ protected:
     virtual void OnMenuItemResizeManual(wxCommandEvent& event);
     virtual void OnItemDestroyWindowClose(wxCommandEvent& event);
     virtual void OnMeanShiftBase(wxCommandEvent& event);
-    virtual void OnGnuplotSample(wxCommandEvent& event);
     virtual void OnMenuItemSplit(wxCommandEvent& event);
    
     virtual void OnImageFindFace(wxCommandEvent& event);
