@@ -216,6 +216,7 @@ protected:
 
 protected:
     #if wxUSE_WEBVIEW
+    virtual void OnWebViewLoaded(wxWebViewEvent& event) { event.Skip(); }
     #endif // wxUSE_WEBVIEW
 
 public:

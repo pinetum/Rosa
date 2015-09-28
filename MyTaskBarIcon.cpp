@@ -1,6 +1,6 @@
 #include "MyTaskBarIcon.h"
 #include <wx/menu.h>
-
+#include "MainFrame.h"
 
 
 MyTaskBarIcon::MyTaskBarIcon(wxTaskBarIconType iconType):wxTaskBarIcon(iconType)
@@ -10,18 +10,11 @@ MyTaskBarIcon::MyTaskBarIcon(wxTaskBarIconType iconType):wxTaskBarIcon(iconType)
 MyTaskBarIcon::~MyTaskBarIcon()
 {
 }
-void MyTaskBarIcon::setPopUpMenu(wxMenu* menu)
-{
-    m_menu_popUp = menu;
-}
 wxMenu* MyTaskBarIcon::CreatePopupMenu()
 {
     wxMenu* mMenu = NULL;
     mMenu = new wxMenu(0);
-    for(int i =0; i< m_menu_popUp->GetMenuItemCount(); i++)
-    {
-        mMenu->Append(m_menu_popUp->FindItemByPosition(i));
-    }
+    //mMenu->Append(new wxMenuItem(mMenu, wxID_OPEN, _("OpenFile\tCtrl+O"), wxT(""), wxITEM_NORMAL));
     
     return mMenu;
 }

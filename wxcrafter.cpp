@@ -518,7 +518,7 @@ CMyPlotWinBase::CMyPlotWinBase(wxWindow* parent, wxWindowID id, const wxString& 
 #endif
     // Connect events
     #if wxUSE_WEBVIEW
-    
+    m_webView->Connect(wxEVT_COMMAND_WEBVIEW_LOADED, wxWebViewEventHandler(CMyPlotWinBase::OnWebViewLoaded), NULL, this);
     #endif // wxUSE_WEBVIEW
     
 }
@@ -526,7 +526,7 @@ CMyPlotWinBase::CMyPlotWinBase(wxWindow* parent, wxWindowID id, const wxString& 
 CMyPlotWinBase::~CMyPlotWinBase()
 {
     #if wxUSE_WEBVIEW
-    
+    m_webView->Disconnect(wxEVT_COMMAND_WEBVIEW_LOADED, wxWebViewEventHandler(CMyPlotWinBase::OnWebViewLoaded), NULL, this);
     #endif // wxUSE_WEBVIEW
     
 }

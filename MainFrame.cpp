@@ -14,7 +14,7 @@
 #include <wx/dcmemory.h>
 #include "gnuplot_i.hpp"
 
-#include "MLP.h"
+
 
 #include <libiomp/omp.h>
 #define SLIDER_MAX_VALUE 128
@@ -73,9 +73,10 @@ MainFrame::MainFrame(wxWindow* parent): MainFrameBaseClass(parent)
     SetSize(800, 700);
 	Center();
     Maximize(true);
-    m_taskBarIcon->setPopUpMenu(m_menuPlayGround);
+    
     m_plot_win = new CMyPlotWin(this);
     m_plot_win->Show();
+    
 }
 
 MainFrame::~MainFrame()
@@ -1308,36 +1309,7 @@ void MainFrame::OnMenuItemClickGaborFilter(wxCommandEvent& event)
 void MainFrame::OnMenuItemNN_MLP_train_Click(wxCommandEvent& event)
 {
     
-    wxString pathName = "";
-    wxString fileType = _("All suported formats(*.*)|*.*");
-	
-    wxFileDialog* openDialog = new wxFileDialog(this,_("openFile"),wxEmptyString,wxEmptyString,fileType,wxFD_OPEN,wxDefaultPosition);
-	if(openDialog->ShowModal() == wxID_OK){
-        pathName = openDialog->GetPath();
-    }
-    openDialog->Destroy();
-    if(pathName.length() == 0)
-        MainFrame::showMessage("[MLP]File error");
-    else
-    {
-        m_p_pgDlg = new wxProgressDialog("MLP Training", "training", 100, this);
-        startTimer();
-        MLP* mMlp = new MLP();
-        mMlp->openSampleFile(pathName);
-        mMlp->GetThread()->Run();
-//        if()
-//        {
-//            MainFrame::showMessage(wxString::Format("[MLP]%s", mMlp->getErrorMessage()));
-//        }
-//        else
-//        {
-//            MainFrame::showMessage(wxString::Format("[MLP]%s", mMlp->getErrorMessage()));
-//        }
-        stopTimer("MLP");
-        
-        m_p_pgDlg->Destroy();
-        //delete mMlp;
-    }
+    
    
 }
 

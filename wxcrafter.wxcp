@@ -4660,7 +4660,14 @@
 									"m_label":	"URL:",
 									"m_value":	"about:blank"
 								}],
-							"m_events":	[],
+							"m_events":	[{
+									"m_eventName":	"wxEVT_COMMAND_WEBVIEW_LOADED",
+									"m_eventClass":	"wxWebViewEvent",
+									"m_eventHandler":	"wxWebViewEventHandler",
+									"m_functionNameAndSignature":	"OnWebViewLoaded(wxWebViewEvent& event)",
+									"m_description":	"Process a wxEVT_COMMAND_WEBVIEW_LOADED event generated when the document is fully loaded and displayed. Note that if the displayed HTML document has several frames, one such event will be generated per frame.",
+									"m_noBody":	false
+								}],
 							"m_children":	[]
 						}]
 				}]
