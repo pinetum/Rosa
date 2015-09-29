@@ -8,6 +8,7 @@
 #include "wxcrafter.h"
 #include <deque>
 #include <wx/progdlg.h>
+#include "wx/socket.h"
 //#include "gnuplot_i.hpp"
 
 class MainFrame : public MainFrameBaseClass
@@ -32,6 +33,7 @@ public:
     void startTimer();
     void stopTimer(wxString TimerName = "None");
     wxString getTimer();
+    wxSocketServer* m_socketServer;
     wxProgressDialog* m_p_pgDlg;
     cv::Mat getScreenShot();
 	MyImage* getCurrentImg();
@@ -40,8 +42,17 @@ public:
     CMyPlotWin* m_plot_win;
     //Gnuplot* g1;
 	
+    
+    void OnSocketServerEvent(wxSocketEvent& event);
+    void OnSocketEvent(wxSocketEvent& event);
+    
 	
 protected:
+    virtual void OnSocketServerStart(wxCommandEvent& event);
+    virtual void OnSocketServerStop(wxCommandEvent& event);
+    virtual void OnCheckPlotWin(wxCommandEvent& event);
+    virtual void OnUpdatePlotWin(wxUpdateUIEvent& event);
+    virtual void OnPlotWinTest(wxCommandEvent& event);
     virtual void OnImageRedox(wxCommandEvent& event);
     virtual void OnMenuItemClkRunAllGaborMultiScaleAndTheta(wxCommandEvent& event);
     virtual void OnMenuItemNN_MLP_train_Click(wxCommandEvent& event);

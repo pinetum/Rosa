@@ -77,6 +77,7 @@ protected:
     wxMenuItem* m_menuItemRedo;
     wxMenuItem* m_menuItemDestroyAllWindow;
     wxMenuItem* m_menuItemSpecificImshow;
+    wxMenuItem* m_menuItemPlotWin;
     wxMenu* m_menuImage;
     wxMenu* m_menuFind;
     wxMenuItem* m_menuItemFindFace;
@@ -102,6 +103,10 @@ protected:
     wxMenu* m_menuPlayGround;
     wxMenuItem* m_menuItemRaiseArmDetect;
     wxMenuItem* m_menuItemScrennshot;
+    wxMenuItem* m_menuItemPlotTest;
+    wxMenu* m_menuSocket;
+    wxMenuItem* m_menuItemSocketServerStart;
+    wxMenuItem* m_menuItemSocketServerStop;
     wxMenu* m_menuNN;
     wxMenu* m_menuMLP;
     wxMenuItem* m_menuItemMLP_l;
@@ -137,6 +142,8 @@ protected:
     virtual void OnMenuItemRedo(wxCommandEvent& event) { event.Skip(); }
     virtual void OnUpdateItemRedo(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnItemDestroyWindowClose(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnCheckPlotWin(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnUpdatePlotWin(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnUpdateImageFunction(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnImageFindFace(wxCommandEvent& event) { event.Skip(); }
     virtual void OnImageFindMouth(wxCommandEvent& event) { event.Skip(); }
@@ -156,6 +163,9 @@ protected:
     virtual void OnImageRedox(wxCommandEvent& event) { event.Skip(); }
     virtual void OnMenuItemClkRaisArmDetect(wxCommandEvent& event) { event.Skip(); }
     virtual void OnMenuItemScreenShot(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnPlotWinTest(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnSocketServerStart(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnSocketServerStop(wxCommandEvent& event) { event.Skip(); }
     virtual void OnMenuItemNN_MLP_train_Click(wxCommandEvent& event) { event.Skip(); }
 
 public:

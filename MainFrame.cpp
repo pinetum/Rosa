@@ -14,14 +14,18 @@
 #include <wx/dcmemory.h>
 #include "gnuplot_i.hpp"
 
-
+#include <math.h>
 
 #include <libiomp/omp.h>
 #define SLIDER_MAX_VALUE 128
 #define ROI_RECT_SIZE 13
 
 MainFrame *MainFrame::m_pThis = NULL;
-
+enum
+{
+    SERVER_ID,
+    SOCKET_ID
+};
 
 // some inital action
 MainFrame::MainFrame(wxWindow* parent): MainFrameBaseClass(parent)
@@ -68,14 +72,14 @@ MainFrame::MainFrame(wxWindow* parent): MainFrameBaseClass(parent)
     
     //
     m_p_pgDlg = NULL;
-    
+    m_socketServer = NULL;
     // in mac os x
     SetSize(800, 700);
 	Center();
     Maximize(true);
     
     m_plot_win = new CMyPlotWin(this);
-    m_plot_win->Show();
+    
     
 }
 
@@ -85,6 +89,12 @@ MainFrame::~MainFrame()
     m_scrollWin->Disconnect(wxEVT_DROP_FILES, wxDropFilesEventHandler(MainFrame::OnDropFile), NULL, this);
 	DeleteContents();
     m_plot_win->Destroy();
+    if(m_socketServer!=NULL)
+    {
+        m_socketServer->Close();
+        delete m_socketServer;
+        m_socketServer = NULL;
+    }
 }
 void MainFrame::showMessage(wxString msg){
 		m_pThis->m_richTextCtrl->AppendText(msg<<"\n");
@@ -1353,4 +1363,121 @@ void MainFrame::OnImageRedox(wxCommandEvent& event)
     
     
     
+}
+void MainFrame::OnPlotWinTest(wxCommandEvent& event)
+{
+    std::vector<double > x;
+    std::vector<double > y;
+    std::vector<double > z;
+    
+    for(int i =0; i<100; i++)
+    {
+        for(int j =0; j<100; j++)
+        {
+            x.push_back(i*1.0);
+            y.push_back(j*1.0);
+            double r = sin(i/50*3.14)*cos(j/50*3.14)*10.0+10;
+            z.push_back(r);
+        }
+        
+    }
+    m_plot_win->draw3dSurface(x, y, z);
+}
+void MainFrame::OnCheckPlotWin(wxCommandEvent& event)
+{
+    bool nowState = m_plot_win->IsShown();
+    m_plot_win->Show(!nowState);
+}
+void MainFrame::OnUpdatePlotWin(wxUpdateUIEvent& event)
+{
+    m_menuItemPlotWin->Check(m_plot_win->IsShown());
+}
+void MainFrame::OnSocketServerStart(wxCommandEvent& event)
+{
+    int port = 8520;
+    if(m_socketServer == NULL)
+    {
+        //create address
+        wxIPV4address addr;
+        addr.Service(port);
+        
+        //create socket
+        m_socketServer = new wxSocketServer(addr);
+        
+        if(!m_socketServer->Ok())
+        {
+            delete m_socketServer;
+            m_socketServer = NULL;
+            wxLogMessage("Socket Server start fail.");
+            return;
+        }
+        m_socketServer->SetEventHandler(*this, SOCKET_ID);
+        
+        this->Connect(SERVER_ID, wxEVT_SOCKET, 
+            (wxObjectEventFunction) &MainFrame::OnSocketServerEvent);
+        this->Connect(SOCKET_ID, wxEVT_SOCKET, 
+            (wxObjectEventFunction) &MainFrame::OnSocketEvent);
+        
+        m_socketServer->SetNotify(wxSOCKET_CONNECTION_FLAG);
+        m_socketServer->Notify(true);
+        showMessage(wxString::Format("Socket server running, port:%d", port));
+        
+    }
+    else
+    {
+        wxLogMessage("Socket Server is running.");
+    }
+}
+void MainFrame::OnSocketServerStop(wxCommandEvent& event)
+{
+    if(m_socketServer!=NULL)
+    {
+        m_socketServer->Close();
+        delete m_socketServer;
+        m_socketServer = NULL;
+        showMessage("Socket Server Stop.");
+    }
+    else
+    {
+        wxLogMessage("Socket Server is not running.");
+    }
+}
+void MainFrame::OnSocketServerEvent(wxSocketEvent& event)
+{
+    wxSocketBase* sock = m_socketServer->Accept(false);
+    sock->SetEventHandler(*this, SOCKET_ID);   
+    sock->SetNotify(wxSOCKET_INPUT_FLAG | wxSOCKET_LOST_FLAG);   
+    sock->Notify(true);
+    showMessage("Accept incoming connection.");
+}
+void MainFrame::OnSocketEvent(wxSocketEvent& event)
+{
+    wxSocketBase *sock = event.GetSocket();
+     switch(event.GetSocketEvent())   
+    {   
+        case wxSOCKET_INPUT:   
+        {    
+            char buf[10];   
+   
+            // Read the data   
+            sock->Read(buf, sizeof(buf));   
+   
+            showMessage(wxString(_("Received from client: ")) + wxString(buf, wxConvUTF8, 10) + _("\n"));   
+   
+            // Write it back   
+            sock->Write(buf, sizeof(buf));   
+   
+            showMessage(_("Wrote string back to client.\n"));   
+   
+            // We are done with the socket, destroy it   
+            sock->Destroy();   
+   
+            break;   
+        }   
+        case wxSOCKET_LOST:   
+        {   
+            sock->Destroy();   
+            break;   
+        }   
+    } 
 }

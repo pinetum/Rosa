@@ -156,6 +156,9 @@ MainFrameBaseClass::MainFrameBaseClass(wxWindow* parent, wxWindowID id, const wx
     m_menuItemSpecificImshow = new wxMenuItem(m_menuEdit, wxID_CHECK_SPEC_SHOW, _("Specific show"), wxT(""), wxITEM_CHECK);
     m_menuEdit->Append(m_menuItemSpecificImshow);
     
+    m_menuItemPlotWin = new wxMenuItem(m_menuEdit, wxID_ANY, _("Plot Window"), wxT(""), wxITEM_CHECK);
+    m_menuEdit->Append(m_menuItemPlotWin);
+    
     m_menuImage = new wxMenu();
     m_menuBar->Append(m_menuImage, _("Image..."));
     
@@ -230,6 +233,18 @@ MainFrameBaseClass::MainFrameBaseClass(wxWindow* parent, wxWindowID id, const wx
     
     m_menuItemScrennshot = new wxMenuItem(m_menuPlayGround, wxID_ANY, _("GetScreenShot\tCtrl+T"), wxT(""), wxITEM_NORMAL);
     m_menuPlayGround->Append(m_menuItemScrennshot);
+    
+    m_menuItemPlotTest = new wxMenuItem(m_menuPlayGround, wxID_ANY, _("PlotWin Test"), wxT(""), wxITEM_NORMAL);
+    m_menuPlayGround->Append(m_menuItemPlotTest);
+    
+    m_menuSocket = new wxMenu();
+    m_menuPlayGround->AppendSubMenu(m_menuSocket, _("Socket Server"));
+    
+    m_menuItemSocketServerStart = new wxMenuItem(m_menuSocket, wxID_ANY, _("Server start"), wxT(""), wxITEM_NORMAL);
+    m_menuSocket->Append(m_menuItemSocketServerStart);
+    
+    m_menuItemSocketServerStop = new wxMenuItem(m_menuSocket, wxID_ANY, _("Server stop"), wxT(""), wxITEM_NORMAL);
+    m_menuSocket->Append(m_menuItemSocketServerStop);
     
     m_menuNN = new wxMenu();
     m_menuBar->Append(m_menuNN, _("NN"));
@@ -327,6 +342,8 @@ MainFrameBaseClass::MainFrameBaseClass(wxWindow* parent, wxWindowID id, const wx
     this->Connect(m_menuItemRedo->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnMenuItemRedo), NULL, this);
     this->Connect(m_menuItemRedo->GetId(), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MainFrameBaseClass::OnUpdateItemRedo), NULL, this);
     this->Connect(m_menuItemDestroyAllWindow->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnItemDestroyWindowClose), NULL, this);
+    this->Connect(m_menuItemPlotWin->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnCheckPlotWin), NULL, this);
+    this->Connect(m_menuItemPlotWin->GetId(), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MainFrameBaseClass::OnUpdatePlotWin), NULL, this);
     m_menuFind->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MainFrameBaseClass::OnUpdateImageFunction), NULL, this);
     this->Connect(m_menuItemFindFace->GetId(), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MainFrameBaseClass::OnUpdateImageFunction), NULL, this);
     this->Connect(m_menuItemFindFace->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnImageFindFace), NULL, this);
@@ -358,6 +375,9 @@ MainFrameBaseClass::MainFrameBaseClass(wxWindow* parent, wxWindowID id, const wx
     this->Connect(m_menuItemRedox->GetId(), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MainFrameBaseClass::OnUpdateImageFunction), NULL, this);
     this->Connect(m_menuItemRaiseArmDetect->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnMenuItemClkRaisArmDetect), NULL, this);
     this->Connect(m_menuItemScrennshot->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnMenuItemScreenShot), NULL, this);
+    this->Connect(m_menuItemPlotTest->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnPlotWinTest), NULL, this);
+    this->Connect(m_menuItemSocketServerStart->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnSocketServerStart), NULL, this);
+    this->Connect(m_menuItemSocketServerStop->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnSocketServerStop), NULL, this);
     this->Connect(m_menuItemMLP_l->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnMenuItemNN_MLP_train_Click), NULL, this);
     
 }
@@ -394,6 +414,8 @@ MainFrameBaseClass::~MainFrameBaseClass()
     this->Disconnect(m_menuItemRedo->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnMenuItemRedo), NULL, this);
     this->Disconnect(m_menuItemRedo->GetId(), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MainFrameBaseClass::OnUpdateItemRedo), NULL, this);
     this->Disconnect(m_menuItemDestroyAllWindow->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnItemDestroyWindowClose), NULL, this);
+    this->Disconnect(m_menuItemPlotWin->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnCheckPlotWin), NULL, this);
+    this->Disconnect(m_menuItemPlotWin->GetId(), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MainFrameBaseClass::OnUpdatePlotWin), NULL, this);
     m_menuFind->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MainFrameBaseClass::OnUpdateImageFunction), NULL, this);
     this->Disconnect(m_menuItemFindFace->GetId(), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MainFrameBaseClass::OnUpdateImageFunction), NULL, this);
     this->Disconnect(m_menuItemFindFace->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnImageFindFace), NULL, this);
@@ -425,6 +447,9 @@ MainFrameBaseClass::~MainFrameBaseClass()
     this->Disconnect(m_menuItemRedox->GetId(), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MainFrameBaseClass::OnUpdateImageFunction), NULL, this);
     this->Disconnect(m_menuItemRaiseArmDetect->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnMenuItemClkRaisArmDetect), NULL, this);
     this->Disconnect(m_menuItemScrennshot->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnMenuItemScreenShot), NULL, this);
+    this->Disconnect(m_menuItemPlotTest->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnPlotWinTest), NULL, this);
+    this->Disconnect(m_menuItemSocketServerStart->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnSocketServerStart), NULL, this);
+    this->Disconnect(m_menuItemSocketServerStop->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnSocketServerStop), NULL, this);
     this->Disconnect(m_menuItemMLP_l->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnMenuItemNN_MLP_train_Click), NULL, this);
     
 wxDELETE(m_taskBarIcon);
