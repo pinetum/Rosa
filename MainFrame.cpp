@@ -15,7 +15,7 @@
 #include "gnuplot_i.hpp"
 
 #include <math.h>
-
+#include <thread>
 #include <libiomp/omp.h>
 #define SLIDER_MAX_VALUE 128
 #define ROI_RECT_SIZE 13
@@ -1379,7 +1379,8 @@ void MainFrame::OnPlotWinTest(wxCommandEvent& event)
             double r = sin(i/50*3.14)*cos(j/50*3.14)*10.0+10;
             z.push_back(r);
         }
-        
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+        m_plot_win->draw3dSurface(x, y, z);
     }
     m_plot_win->draw3dSurface(x, y, z);
 }

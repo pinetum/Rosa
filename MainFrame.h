@@ -11,6 +11,12 @@
 #include "wx/socket.h"
 //#include "gnuplot_i.hpp"
 
+wxDEFINE_EVENT(wxEVT_COMMAND_VIDEOTHREAD_START, wxThreadEvent);
+wxDEFINE_EVENT(wxEVT_COMMAND_VIDEOTHREAD_COMPLETED, wxThreadEvent);
+wxDEFINE_EVENT(wxEVT_COMMAND_VIDEOTHREAD_UPDATE, wxThreadEvent);
+
+
+
 class MainFrame : public MainFrameBaseClass
 {
 public:

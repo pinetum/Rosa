@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<CodeLite_Workspace Name="Rosa" Database="" SWTLW="No">
+<CodeLite_Workspace Name="Rosa" Database="">
   <Project Name="Rosa" Path="Rosa.project" Active="Yes"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Debug" Selected="yes">

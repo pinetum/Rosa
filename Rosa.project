@@ -2,10 +2,19 @@
 <CodeLite_Project Name="Rosa" InternalType="GUI">
   <Plugins>
     <Plugin Name="qmake">
-      <![CDATA[00010001N0011win64-Debug000000000000]]>
+      <![CDATA[00020001N0005Debug0000000000000001N0011win64-Debug000000000000]]>
     </Plugin>
     <Plugin Name="CMakePlugin">
       <![CDATA[[{
+  "name": "Debug",
+  "enabled": false,
+  "buildDirectory": "build",
+  "sourceDirectory": "$(ProjectPath)",
+  "generator": "",
+  "buildType": "",
+  "arguments": [],
+  "parentProject": ""
+ }, {
   "name": "win64-Debug",
   "enabled": false,
   "buildDirectory": "build",
