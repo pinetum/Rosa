@@ -3,6 +3,8 @@
 
 ##How to build?
 use librarys:
--opencv
--wxwidgets
--Ide:codelite(optional)
+--opencv
+--wxwidgets
+
+
+###Ide:codelite(optional)
